@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://listentolife.github.io/2018/06/10/High-Performance-JavaScript-Reading-Note-I/</loc>
-    <lastmod>2018-06-10T14:11:37.419Z</lastmod>
+    <lastmod>2018-06-11T00:31:32.963Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(一)</title>
@@ -15,6 +15,9 @@
          
          
            
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
         </display>
     </data>
     </url>
