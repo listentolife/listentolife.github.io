@@ -4,14 +4,46 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2018/06/18/High-Performance-JavaScript-Reading-Note-II/</loc>
+    <lastmod>2018-06-18T09:36:11.536Z</lastmod>
+    <data>
+        <display>
+        <title>High-Performance-JavaScript-Reading-Note-II</title>
+        <pubTime>2018-06-18T09:24:49.000Z</pubTime>
+        
+        <tag>高性能JavaScript</tag>
+         
+        <tag>读书笔记</tag>
+         
+        <tag>JavaScript</tag>
+         
+        <tag>作用域</tag>
+         
+        <tag>原型链</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/06/10/High-Performance-JavaScript-Reading-Note-I/</loc>
-    <lastmod>2018-06-11T00:31:32.963Z</lastmod>
+    <lastmod>2018-06-18T09:36:01.266Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(一)</title>
         <pubTime>2018-06-10T14:10:21.000Z</pubTime>
         
-        <tag>高性能JavaScript, 读书笔记</tag>
+        <tag>高性能JavaScript</tag>
+         
+        <tag>读书笔记</tag>
+         
+        <tag>JavaScript</tag>
          
          
            
