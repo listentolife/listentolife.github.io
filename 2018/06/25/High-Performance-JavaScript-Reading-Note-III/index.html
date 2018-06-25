@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="高性能JavaScript,读书笔记,JavaScript,DOM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。 DOM操作的优化问题DOM操作涉及以下三类问题：  访问和修改DOM元素 修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow) 通过DOM事件处理与用户的交互  DOMDOM，文档对象模型，是独立于语言，">
+<meta name="keywords" content="高性能JavaScript,读书笔记,JavaScript,DOM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《高性能JavaScript》读书笔记(三)">
+<meta property="og:url" content="http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。 DOM操作的优化问题DOM操作涉及以下三类问题：  访问和修改DOM元素 修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow) 通过DOM事件处理与用户的交互  DOMDOM，文档对象模型，是独立于语言，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-25T00:40:23.047Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《高性能JavaScript》读书笔记(三)">
+<meta name="twitter:description" content="《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。 DOM操作的优化问题DOM操作涉及以下三类问题：  访问和修改DOM元素 修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow) 通过DOM事件处理与用户的交互  DOMDOM，文档对象模型，是独立于语言，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/"/>
+
+
+
+
+
+  <title>《高性能JavaScript》读书笔记(三) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《高性能JavaScript》读书笔记(三)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T08:35:07+08:00">
+                2018-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。</p>
+<h3 id="DOM操作的优化问题"><a href="#DOM操作的优化问题" class="headerlink" title="DOM操作的优化问题"></a>DOM操作的优化问题</h3><p>DOM操作涉及以下三类问题：</p>
+<ol>
+<li>访问和修改DOM元素</li>
+<li>修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow)</li>
+<li>通过DOM事件处理与用户的交互</li>
+</ol>
+<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>DOM，文档对象模型，是独立于语言，用于操作XML跟HTML文档的程序接口。DOM是有规范的，但是实现是由各个浏览器方独自实现支持，因此，我们在开发页面时，需要对不同的浏览器做不同的兼容处理（比如IE，不过现在IE已经很少了）。</p>
+<p>DOM是程序接口，我们在开发的时候，会根据需求去实现页面与用户的互动。但因为DOM是独立的，每次需要获取节点都需要各种调用，因此这些调用的增多会影响页面的性能。</p>
+<h4 id="DOM访问与修改"><a href="#DOM访问与修改" class="headerlink" title="DOM访问与修改"></a>DOM访问与修改</h4><p>其实DOM的访问跟修改可以联系上一章提及的嵌套对象的内容。DOM中的每个节点都是一个对象，如果节点下存在子节点，则这个节点就是一个嵌套对象的例子。其一是DOM是程序接口，相对独立，调用接口都是存在一定的响应时间；其二是DOM中存在大量的嵌套对象，在搜索查询上也是需要一定的处理时间。因此，DOM的访问与修改会存在以下优化点：</p>
+<ol>
+<li>DOM的重复调用</li>
+<li>DOM集合元素的重复查询</li>
+<li>准确的获得DOM元素集合</li>
+</ol>
+<h4 id="DOM的重复调用"><a href="#DOM的重复调用" class="headerlink" title="DOM的重复调用"></a>DOM的重复调用</h4><p>简单的说，开发中经常会把后端穿来的数据修改渲染到页面上，书中提到最坏的情况是循环访问或修改元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function innerHTMLLoop () &#123;</span><br><span class="line">	for (var count = 0; count &lt; 15000; count++) &#123;</span><br><span class="line">		document.getElementById(&apos;here&apos;).innerHTML += &apos;a&apos;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码的问题在于每次循环中都会读取一次跟重写一次<code>innerHTML</code>，而且循环次数越多，读取跟重写都会不断增加。</p>
+<p>所以，优化的方案是，先把需要添加的节点保存在局部变量中，然后在一次性读取跟重写页面结构。<br>如果出现大量的重复节点，则可以考虑克隆已有的元素，即使用<code>element.cloneNode()</code>替代<code>document.createElement()</code>。</p>
+<h4 id="DOM元素集合的重复查询"><a href="#DOM元素集合的重复查询" class="headerlink" title="DOM元素集合的重复查询"></a>DOM元素集合的重复查询</h4><p>HTML集合是包含DOM节点引用的类数组对象，包括我们常用的<code>document.getElementByName()</code>，<code>document.images</code>等类似的方法所得到的元素集合。这些元素集合只是一个类似数组的列表，但同样提供了类似数组的<code>length</code>属性。</p>
+<p>首先，在利用<code>document.getElementByName()</code>这类查询方法的时候，因为每次查询都会调用document，所以查询的速度回比较慢。但当因为需要多次获取元素集合的属性时，则会形成一个非常大的性能消耗。</p>
+<p>另外，元素集合的<code>length</code>属性不同于数组的<code>length</code>属性，不仅当HTML文档发生更新的时候会自动更新，当调用它的时候也会重复查询，加上集合中的元素都是DOM对象，查询速度更慢，消耗更大。</p>
+<p>解决的方案，重点放在减少对<code>document</code>的调用跟文档查询。当遇到需要重复调动<code>document.getElementByName()</code>这类查询方法，可以根据不同的情况，进行不同的优化。比如当需要重复查询同一个DOM节点时，可以考虑用局部变量去复制；当代码中多次需要调动document的方法时，也可以先把document复制到局部变量中(这个做法也有风险，当HTML文档结构发生改变时，局部变量是不会改变的)；当需要多次调用<code>length</code>属性时，同样先用局部变量存储下来，再执行其他操作。</p>
+<h4 id="准确的获得DOM元素集合"><a href="#准确的获得DOM元素集合" class="headerlink" title="准确的获得DOM元素集合"></a>准确的获得DOM元素集合</h4><p>大多数情况下，我们都是需要获得一些准确的DOM元素集合进行操作，但是存在两类问题：有些方法得到的元素集合会比我们需要的要多(比如空的文本节点)，这个时候就会在处理集合是需要花时间去过滤筛选的；另外，获取DOM元素集合的调用太复杂。因此，有两类方法可以更准确的获取DOM元素集合：</p>
+<ol>
+<li>使用以下表格(书中给出的)左边的属性，替代右边的属性，可以更准确的获得DOM元素集合：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">属性名</th>
+<th style="text-align:left">被替代的属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">children</td>
+<td style="text-align:left">childNodes</td>
+</tr>
+<tr>
+<td style="text-align:left">ChildElementCount</td>
+<td style="text-align:left">childNodes.length</td>
+</tr>
+<tr>
+<td style="text-align:left">firstElementChild</td>
+<td style="text-align:left">firstChild</td>
+</tr>
+<tr>
+<td style="text-align:left">lastElementChild</td>
+<td style="text-align:left">lastChild</td>
+</tr>
+<tr>
+<td style="text-align:left">nextElementSibling</td>
+<td style="text-align:left">nextSibling</td>
+</tr>
+<tr>
+<td style="text-align:left">previousElementSibling</td>
+<td style="text-align:left">previousSibling</td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li>使用<code>querySeletorALL()</code>方法跟<code>querySeletor()</code>方法。这两个方法可以免掉多次使用<code>getElementById()</code>跟<code>getElementByClass()</code>这类方法，通过CSS选择器一步到位。</li>
+</ol>
+<h3 id="重排-reflow-与重绘-repaint"><a href="#重排-reflow-与重绘-repaint" class="headerlink" title="重排(reflow)与重绘(repaint)"></a>重排(reflow)与重绘(repaint)</h3><p>简单的说，HTML文档跟CSS文件在首次加载时，得到DOM树跟渲染树，然后才会开始绘制。当DOM出现变化时，浏览器就需要重新计算元素的几何属性，并重新构造渲染树，这个过程叫重排(reflow)。浏览器也会重新绘制受影响的部分，这个过程叫重绘(repaint)。但有些情况下只会发生重绘，不需要重排。每次重排跟重绘都会导致页面的反应迟钝，使客户体验变差。所以我们要了解什么情况会触发重排跟重绘。</p>
+<h4 id="触发重排的条件"><a href="#触发重排的条件" class="headerlink" title="触发重排的条件"></a>触发重排的条件</h4><p>这些情况下会发生重排：</p>
+<ol>
+<li>添加或删除可见的DOM元素</li>
+<li>元素位置改变</li>
+<li>元素尺寸改变(包括：外边距、内边距、边框厚度、宽度、高度等属性改变)</li>
+<li>内容改变，例如：文本改变或图片被另一个不同尺寸的图片替代</li>
+<li>页面渲染器初始化</li>
+<li>浏览器窗口尺寸改变</li>
+</ol>
+<p>也有当滚动条出现时触发整个页面的重排。</p>
+<h4 id="触发重绘的条件"><a href="#触发重绘的条件" class="headerlink" title="触发重绘的条件"></a>触发重绘的条件</h4><p>重绘只发生在当元素的可见的外观被改变，但并没有影响到布局的时候。比如背景颜色，字体颜色。</p>
+<h4 id="渲染树渲染队列与刷新"><a href="#渲染树渲染队列与刷新" class="headerlink" title="渲染树渲染队列与刷新"></a>渲染树渲染队列与刷新</h4><p>大多数浏览器是通过队列来修改并批量执行重排过程，这样可以优化并降低消耗，但同时也会让程序在不知不觉中就触发了重排。以下获取布局信息的方法会导致列队刷新：</p>
+<ol>
+<li>offsetTop, offsetLeft, offsetWidth, offsetHeight</li>
+<li>scrollTop, scrollLeft, scrollWidth, scrollHeight</li>
+<li>clientTop, clientLeft, clientWidth, clientHeight</li>
+<li>getComputedStyle() (currentStyle in IE)</li>
+</ol>
+<p>这些方法需要返回最新的布局信息，浏览器就会不得不执行渲染队列中待处理的变化并触发重排以返回正确的值。</p>
+<h4 id="最小化重绘与重排"><a href="#最小化重绘与重排" class="headerlink" title="最小化重绘与重排"></a>最小化重绘与重排</h4><p>以下的几种方式可以减少重绘与重排的次数：</p>
+<ol>
+<li>改变样式。改变样式时，如果要对元素进行多个样式的修改，可以用<code>element.style.cssText</code>来一次处理，代替掉对每个样式单独的修改；</li>
+<li>修改DOM。修改DOM时，有几个思路可以参考：可以把需要修改的DOM元素脱离文档流，再做修改，最后再放回文档中；可以把需要修改的DOM元素复制出来，修改完毕后直接替换到文档中；</li>
+<li>减少使用会触发渲染队列刷新的方法；</li>
+<li>让元素脱离动画流。当页面有带动画交互效果的元素时，最好在动画开始前把动画的元素做绝对定位，同时把其他元素先移到动画结束时的位置，再执行动画效果。这样可以减少动画过程中这个页面的大规模重排；</li>
+<li>针对IE，减少大规模使用:hover。</li>
+</ol>
+<h3 id="通过DOM事件处理与用户的交互"><a href="#通过DOM事件处理与用户的交互" class="headerlink" title="通过DOM事件处理与用户的交互"></a>通过DOM事件处理与用户的交互</h3><p>现在很多页面都是存在大量的交互，而这些交互如果都要单独绑定事件处理器，则会应该性能。因此，书中提出建议使用事件代理，只需在外层元素绑定一个处理器，来处理所有子元素上触发的事件。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本章主要是针对DOM做优化，更多的是讨论如何减少DOM的调用修改。每种操作都可以根据不同的需求进行不同的实现以达到优化的目的。</p>
+<p>文中用到的代码参考《高性能JavaScript》第三章。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/高性能JavaScript/" rel="tag"># 高性能JavaScript</a>
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/DOM/" rel="tag"># DOM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/18/High-Performance-JavaScript-Reading-Note-II/" rel="next" title="《高性能JavaScript》读书笔记(二)">
+                <i class="fa fa-chevron-left"></i> 《高性能JavaScript》读书笔记(二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#DOM操作的优化问题"><span class="nav-number">1.</span> <span class="nav-text">DOM操作的优化问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DOM"><span class="nav-number">2.</span> <span class="nav-text">DOM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM访问与修改"><span class="nav-number">2.1.</span> <span class="nav-text">DOM访问与修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM的重复调用"><span class="nav-number">2.2.</span> <span class="nav-text">DOM的重复调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM元素集合的重复查询"><span class="nav-number">2.3.</span> <span class="nav-text">DOM元素集合的重复查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准确的获得DOM元素集合"><span class="nav-number">2.4.</span> <span class="nav-text">准确的获得DOM元素集合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重排-reflow-与重绘-repaint"><span class="nav-number">3.</span> <span class="nav-text">重排(reflow)与重绘(repaint)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#触发重排的条件"><span class="nav-number">3.1.</span> <span class="nav-text">触发重排的条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#触发重绘的条件"><span class="nav-number">3.2.</span> <span class="nav-text">触发重绘的条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#渲染树渲染队列与刷新"><span class="nav-number">3.3.</span> <span class="nav-text">渲染树渲染队列与刷新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最小化重绘与重排"><span class="nav-number">3.4.</span> <span class="nav-text">最小化重绘与重排</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过DOM事件处理与用户的交互"><span class="nav-number">4.</span> <span class="nav-text">通过DOM事件处理与用户的交互</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
