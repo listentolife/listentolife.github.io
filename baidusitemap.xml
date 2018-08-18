@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2018/08/16/Canvas-Game-I/</loc>
+    <lastmod>2018-08-16T15:31:35.162Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(一)</title>
+        <pubTime>2018-08-16T15:30:14.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>js面向对象</tag>
+         
+        <tag>Canvas</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/</loc>
     <lastmod>2018-06-26T14:19:01.148Z</lastmod>
     <data>
@@ -11,11 +35,11 @@
         <title>《高性能JavaScript》读书笔记(四)</title>
         <pubTime>2018-06-26T14:15:32.000Z</pubTime>
         
+        <tag>JavaScript</tag>
+         
         <tag>高性能JavaScript</tag>
          
         <tag>读书笔记</tag>
-         
-        <tag>JavaScript</tag>
          
         <tag>程序优化</tag>
          
@@ -37,11 +61,11 @@
         <title>《高性能JavaScript》读书笔记(三)</title>
         <pubTime>2018-06-25T00:35:07.000Z</pubTime>
         
+        <tag>JavaScript</tag>
+         
         <tag>高性能JavaScript</tag>
          
         <tag>读书笔记</tag>
-         
-        <tag>JavaScript</tag>
          
         <tag>DOM</tag>
          
@@ -63,11 +87,11 @@
         <title>《高性能JavaScript》读书笔记(二)</title>
         <pubTime>2018-06-18T09:24:49.000Z</pubTime>
         
+        <tag>JavaScript</tag>
+         
         <tag>高性能JavaScript</tag>
          
         <tag>读书笔记</tag>
-         
-        <tag>JavaScript</tag>
          
         <tag>作用域</tag>
          
@@ -91,11 +115,11 @@
         <title>《高性能JavaScript》读书笔记(一)</title>
         <pubTime>2018-06-10T14:10:21.000Z</pubTime>
         
+        <tag>JavaScript</tag>
+         
         <tag>高性能JavaScript</tag>
          
         <tag>读书笔记</tag>
-         
-        <tag>JavaScript</tag>
          
          
            
