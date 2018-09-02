@@ -4,23 +4,24 @@
 
     
   <url>
-    <loc>http://listentolife.github.io/2018/08/16/Canvas-Game-I/</loc>
-    <lastmod>2018-08-16T15:31:35.162Z</lastmod>
+    <loc>http://listentolife.github.io/2018/04/23/scope/</loc>
+    <lastmod>2018-09-02T15:42:17.940Z</lastmod>
     <data>
         <display>
-        <title>Canvas 射击小游戏详解系列(一)</title>
-        <pubTime>2018-08-16T15:30:14.000Z</pubTime>
+        <title>JavaScript 作用域</title>
+        <pubTime>2018-04-23T14:00:41.000Z</pubTime>
         
         <tag>JavaScript</tag>
          
-        <tag>js面向对象</tag>
-         
-        <tag>Canvas</tag>
+        <tag>作用域</tag>
          
          
            
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="杂谈" url="http://listentolife.github.io/categories/JavaScript/%E6%9D%82%E8%B0%88/"/>
           
         </display>
     </data>
@@ -29,7 +30,7 @@
     
   <url>
     <loc>http://listentolife.github.io/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/</loc>
-    <lastmod>2018-06-26T14:19:01.148Z</lastmod>
+    <lastmod>2018-09-02T15:41:23.046Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(四)</title>
@@ -48,6 +49,9 @@
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
           
+             
+              <breadCrumb title="读书笔记" url="http://listentolife.github.io/categories/JavaScript/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+          
         </display>
     </data>
     </url>
@@ -55,7 +59,7 @@
     
   <url>
     <loc>http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/</loc>
-    <lastmod>2018-06-25T00:40:23.047Z</lastmod>
+    <lastmod>2018-09-02T15:41:21.696Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(三)</title>
@@ -74,6 +78,9 @@
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
           
+             
+              <breadCrumb title="读书笔记" url="http://listentolife.github.io/categories/JavaScript/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+          
         </display>
     </data>
     </url>
@@ -81,7 +88,7 @@
     
   <url>
     <loc>http://listentolife.github.io/2018/06/18/High-Performance-JavaScript-Reading-Note-II/</loc>
-    <lastmod>2018-06-25T00:40:20.881Z</lastmod>
+    <lastmod>2018-09-02T15:41:19.984Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(二)</title>
@@ -102,6 +109,9 @@
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
           
+             
+              <breadCrumb title="读书笔记" url="http://listentolife.github.io/categories/JavaScript/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+          
         </display>
     </data>
     </url>
@@ -109,7 +119,7 @@
     
   <url>
     <loc>http://listentolife.github.io/2018/06/10/High-Performance-JavaScript-Reading-Note-I/</loc>
-    <lastmod>2018-06-18T09:36:01.266Z</lastmod>
+    <lastmod>2018-09-02T15:41:18.435Z</lastmod>
     <data>
         <display>
         <title>《高性能JavaScript》读书笔记(一)</title>
@@ -126,27 +136,120 @@
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
           
+             
+              <breadCrumb title="读书笔记" url="http://listentolife.github.io/categories/JavaScript/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+          
         </display>
     </data>
     </url>
 
     
   <url>
-    <loc>http://listentolife.github.io/2018/04/23/scope/</loc>
-    <lastmod>2018-05-05T13:24:17.508Z</lastmod>
+    <loc>http://listentolife.github.io/2018/09/02/Canvas-Game-IV/</loc>
+    <lastmod>2018-09-02T15:41:13.206Z</lastmod>
     <data>
         <display>
-        <title>JavaScript 作用域</title>
-        <pubTime>2018-04-23T14:00:41.000Z</pubTime>
+        <title>Canvas 射击小游戏详解系列(四)</title>
+        <pubTime>2018-09-02T15:32:44.000Z</pubTime>
         
         <tag>JavaScript</tag>
          
-        <tag>作用域</tag>
+        <tag>js面向对象</tag>
+         
+        <tag>对象设计</tag>
          
          
            
              
               <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="对象设计" url="http://listentolife.github.io/categories/JavaScript/%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/09/02/Canvas-Game-III/</loc>
+    <lastmod>2018-09-02T15:41:10.976Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(三)</title>
+        <pubTime>2018-09-02T15:21:32.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>js面向对象</tag>
+         
+        <tag>继承</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="对象设计" url="http://listentolife.github.io/categories/JavaScript/%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/09/02/Canvas-Game-II/</loc>
+    <lastmod>2018-09-02T15:41:09.104Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(二)</title>
+        <pubTime>2018-09-02T15:16:53.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>js面向对象</tag>
+         
+        <tag>工厂模式</tag>
+         
+        <tag>构造函数模式</tag>
+         
+        <tag>原型模式</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="对象设计" url="http://listentolife.github.io/categories/JavaScript/%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/08/16/Canvas-Game-I/</loc>
+    <lastmod>2018-09-02T15:41:06.854Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(一)</title>
+        <pubTime>2018-08-16T15:30:14.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>js面向对象</tag>
+         
+        <tag>Canvas</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="对象设计" url="http://listentolife.github.io/categories/JavaScript/%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/"/>
           
         </display>
     </data>

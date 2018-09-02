@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="JavaScript,js面向对象,Canvas," />
+  <meta name="keywords" content="JavaScript,js面向对象,对象设计," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
-<meta name="keywords" content="JavaScript,js面向对象,Canvas">
+<meta name="description" content="写着写着内容有点多了，不过还是觉得这些东西记下来还是很有用的。下面开始介绍项目中对象的设计。 项目中主要对象的设计整个项目中最重要的是游戏中的三个对象元素：飞机，怪兽，子弹。 元素分析飞机支持在画布的底部进行左右的连续移动，移动时依赖玩家的操作，并仅支持左右键的操作。飞机还可以进行射击，玩家点击空格键，上键或Enter键会可以让飞机射击出子弹，并且支持连续射击。 上面总结的飞机行为可以得到，飞机有">
+<meta name="keywords" content="JavaScript,js面向对象,对象设计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Canvas 射击小游戏详解系列(一)">
-<meta property="og:url" content="http://listentolife.github.io/2018/08/16/Canvas-Game-I/index.html">
+<meta property="og:title" content="Canvas 射击小游戏详解系列(四)">
+<meta property="og:url" content="http://listentolife.github.io/2018/09/02/Canvas-Game-IV/index.html">
 <meta property="og:site_name" content="Listentolife">
-<meta property="og:description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
+<meta property="og:description" content="写着写着内容有点多了，不过还是觉得这些东西记下来还是很有用的。下面开始介绍项目中对象的设计。 项目中主要对象的设计整个项目中最重要的是游戏中的三个对象元素：飞机，怪兽，子弹。 元素分析飞机支持在画布的底部进行左右的连续移动，移动时依赖玩家的操作，并仅支持左右键的操作。飞机还可以进行射击，玩家点击空格键，上键或Enter键会可以让飞机射击出子弹，并且支持连续射击。 上面总结的飞机行为可以得到，飞机有">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-02T15:41:06.854Z">
+<meta property="og:updated_time" content="2018-09-02T15:41:13.206Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Canvas 射击小游戏详解系列(一)">
-<meta name="twitter:description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
+<meta name="twitter:title" content="Canvas 射击小游戏详解系列(四)">
+<meta name="twitter:description" content="写着写着内容有点多了，不过还是觉得这些东西记下来还是很有用的。下面开始介绍项目中对象的设计。 项目中主要对象的设计整个项目中最重要的是游戏中的三个对象元素：飞机，怪兽，子弹。 元素分析飞机支持在画布的底部进行左右的连续移动，移动时依赖玩家的操作，并仅支持左右键的操作。飞机还可以进行射击，玩家点击空格键，上键或Enter键会可以让飞机射击出子弹，并且支持连续射击。 上面总结的飞机行为可以得到，飞机有">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/"/>
+  <link rel="canonical" href="http://listentolife.github.io/2018/09/02/Canvas-Game-IV/"/>
 
 
 
 
 
-  <title>Canvas 射击小游戏详解系列(一) | Listentolife</title>
+  <title>Canvas 射击小游戏详解系列(四) | Listentolife</title>
   
 
 
@@ -245,7 +245,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-IV/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Listentolife">
@@ -262,7 +262,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Canvas 射击小游戏详解系列(一)</h1>
+          <h1 class="post-title" itemprop="name headline">Canvas 射击小游戏详解系列(四)</h1>
         
 
         <div class="post-meta">
@@ -274,8 +274,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T23:30:14+08:00">
-                2018-08-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:32:44+08:00">
+                2018-09-02
               </time>
             
 
@@ -345,18 +345,26 @@
       
 
       
-        <p>前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。</p>
-<p>整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的框架已经建好，主要的功能逻辑代码及对象文件都是自己设计实现的。整个项目的关键点是JavaScript中的面向对象设计跟Canvas。页面的渲染都是通过Canvas进行渲染，然后把整个游戏设计成一个对象，里面的角色及零件也都是设计成一个个的对象。下面就给整个项目做一个详细的分析。</p>
-<h2 id="项目整体分析"><a href="#项目整体分析" class="headerlink" title="项目整体分析"></a>项目整体分析</h2><p>虽然项目的框架并不是自己设计的，但是毕竟整个设计还是非常好的，值得我们去分析，所以我就先把整个游戏的框架跟自己的设计做一下分析。</p>
-<p>游戏页面分为四个部分，根据游戏的状态进行切换展示：游戏首页，游戏成功页面，游戏失败页面及游戏通关页面，通过状态start, failed, success及all-success来控制。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data-status=&quot;start&quot;] .game-intro &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg.png) no-repeat 430px 180px;</span><br><span class="line">  background-size: 200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[data-status=&quot;failed&quot;] .game-failed, </span><br><span class="line">[data-status=&quot;success&quot;] .game-success,</span><br><span class="line">[data-status=&quot;all-success&quot;] .game-all-success &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg-end.png) no-repeat 380px 190px;</span><br><span class="line">  background-size: 250px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由此，整个游戏就设计成一个名为GAME的对象进行管理。当页面渲染完之后，GAME对象就会进行初始化，设定最初的状态为start，即展示游戏首页，并初始化四个部分的按钮，设置监听事件。</p>
-<p>这就是项目原有的框架部分。后面为我根据框架跟游戏设计实现的部分。</p>
-<p>不同的按钮会根据游戏状态设置不同的触发内容，不过因为游戏最初，游戏失败后及游戏通关后重玩的触发内容都是从一个新的游戏开始玩起，所以内容都是初始化游戏数据<code>dataInit()</code>及开始游戏<code>play()</code>，只有游戏通关后继续不需要初始化游戏数据即可进入游戏。</p>
-<p>初始化游戏数据<code>dataInit()</code>主要是实现一些游戏的配置数据，比如游戏关卡数，游戏分数及怪兽和飞机的配置数据等。</p>
-<p>开始游戏<code>play()</code>操作比较多，所以把步骤都拆分成独立的函数方法：<code>setState()</code>用于设置游戏状态，<code>dataReset()</code>用于重置游戏关卡数据，包括难度，位置及键盘监听，<code>createObject()</code>用于创建初始化画布上的对象，比如小飞机，怪兽等，最后的<code>animate()</code>则设置动画效果，涉及渲染画布上所有对象每一帧的变化及位移，并判断游戏的状态。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">play: function () &#123;</span><br><span class="line">    this.setStatus(&apos;playing&apos;);</span><br><span class="line">    // 重置每一关数据</span><br><span class="line">    this.dataReset();</span><br><span class="line">    // 创建画布上飞机，怪兽军团及分数的初始化对象</span><br><span class="line">    this.createObject();</span><br><span class="line">    // 开始动画</span><br><span class="line">    this.animate();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>这里就大致的说明了一下这个小游戏项目框架的设计。下一篇会分析项目中对象的设计。</p>
+        <p>写着写着内容有点多了，不过还是觉得这些东西记下来还是很有用的。下面开始介绍项目中对象的设计。</p>
+<h3 id="项目中主要对象的设计"><a href="#项目中主要对象的设计" class="headerlink" title="项目中主要对象的设计"></a>项目中主要对象的设计</h3><p>整个项目中最重要的是游戏中的三个对象元素：飞机，怪兽，子弹。</p>
+<h4 id="元素分析"><a href="#元素分析" class="headerlink" title="元素分析"></a>元素分析</h4><p>飞机支持在画布的底部进行左右的连续移动，移动时依赖玩家的操作，并仅支持左右键的操作。飞机还可以进行射击，玩家点击空格键，上键或Enter键会可以让飞机射击出子弹，并且支持连续射击。</p>
+<p>上面总结的飞机行为可以得到，飞机有渲染，移动，临界判断跟射击的功能。需要的参数包括渲染时的画布对象，坐标，飞机图片，飞机尺寸，移动的速度，临界判断的画布上渲染的最大最小x坐标及射击的子弹长度跟移动速度参数。</p>
+<p>怪兽只是在画布上部的一个区域进行从上到下蛇形自动移动。被子弹击中会有爆炸效果并消失。</p>
+<p>上面总结的怪兽行为可以得到，怪兽有渲染，移动，临界判断的功能。需要的参数包括渲染时的画布对象，坐标，怪兽图片，爆炸图片，怪兽尺寸，移动的速度，临界判断的画布上渲染的最大最小x坐标。怪兽的下移移动不在对象中实现。</p>
+<p>子弹通过飞机射击射出，保持一定速度向上移动，如果碰到怪兽会消失，如果一直到达画布顶部也会自动消失。</p>
+<p>上面总结的子弹行为可以得到，子弹有渲染，移动，临界判断，清除的功能。需要的参数包括渲染时的画布对象，坐标，子弹长度，移动的速度。临界判断不在对象中设置方法。</p>
+<h4 id="对象设计"><a href="#对象设计" class="headerlink" title="对象设计"></a>对象设计</h4><p>通过对三个元素的分析，飞机跟怪兽有可抽象成一致的属性(<code>options</code>属性及<code>context</code>画布)跟方法<code>drawing()</code>，<code>move()</code>，<code>translate()</code>。</p>
+<p><code>options</code>传入的参数为JSON对象，包括了大量的参数，如果对象所渲染到画布上的图片，图片渲染的坐标点，图片尺寸，在画布上的可渲染的最大最小x坐标，移动速度等。Plane父类跟Enemy子类的<code>options</code>传入的参数会有差异，但是做了抽象统一。</p>
+<p>两个元素的移动可以统一实现，所以我让怪兽的构造函数继承飞机的构造函数。</p>
+<p>Enemy类虽然继承了Plane类，但是还是有一些差异点。Plane类中还有一个创建子弹的<code>shoot()</code>方法，这个方法也有被Enemy类继承，但是当前项目中Enemy类的实例并没有使用这个类，是存在代码冗余的问题。但是也支持了项目进一步优化，Enemy类的实例可以进一步提高难度，增加项目的趣味。</p>
+<p>Enemy类的方法<code>drawing()</code>做了重写，因为怪兽有一个爆炸的渲染判断，涉及判断是否存活(属性<code>isLive</code>)。</p>
+<p>子弹的行为跟前两者不同，虽然也是一样的属性，但是方法基本需要重写，所以不做继承。</p>
+<h3 id="键盘对象设计"><a href="#键盘对象设计" class="headerlink" title="键盘对象设计"></a>键盘对象设计</h3><p>因为飞机的移动跟射击都是支持连续，如果只是在Game对象中实现键盘事件监听，实际的移动跟射击都会有卡顿感，所以把键盘事件转换成点击状态，效果上会更加顺畅。</p>
+<p>键盘对象包括了左右上键，空格键，Enter键的状态，并把<code>document.onkeydown</code>跟<code>document.onkeyup</code>都指向了自身的方法，在放在中判断键盘按键是否按下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @constructor KeyBoard</span><br><span class="line"> * @description 键盘监听对象</span><br><span class="line"> * @see The &lt;a href=&quot;#&quot;&gt;KeyBoard&lt;/a &gt;.</span><br><span class="line"> * @example </span><br><span class="line"> * this.keyBoard = new KeyBoard();</span><br><span class="line"> */</span><br><span class="line">function KeyBoard () &#123;</span><br><span class="line">  document.onkeydown = this.keydown.bind(this);</span><br><span class="line">  document.onkeyup = this.keyup.bind(this);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">KeyBoard.prototype = &#123;</span><br><span class="line">  pressedLeft: false, // 是否点击左键</span><br><span class="line">  pressedRight: false, // 是否点击右键</span><br><span class="line">  pressedUp: false, // 是否按了上报</span><br><span class="line">  pressedSpace: false, // 是否按了上报</span><br><span class="line">  pressedEnter: false, // 是否按了上报</span><br><span class="line">  keydown: function (event) &#123;</span><br><span class="line">    // 判断哪个按键按下，修改按键状态</span><br><span class="line">  &#125;,</span><br><span class="line">  keyup: function (event) &#123;</span><br><span class="line">    // 判断哪个按键松开，修改按键状态</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>除了这几个对象的设计，因为还涉及对象的继承，所以还另外齐起了一个文件common.js放处理继承父类原型对象的函数<code>inheritPrototype()</code>。具体的介绍可以会看上一篇关于继承的介绍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @description 继承父类原型对象的函数</span><br><span class="line"> * @param &#123;Object&#125; subType 子类对象</span><br><span class="line"> * @param &#123;Object&#125; subType 父类对象</span><br><span class="line"> */</span><br><span class="line">var inheritPrototype = function (subType, superType) &#123;</span><br><span class="line">  // 把父类对象的原型对象赋值给proto</span><br><span class="line">  var protoType = Object.create(superType.prototype);</span><br><span class="line">  // proto的constructor指向子类对象，进行重置</span><br><span class="line">  protoType.constructor = subType;</span><br><span class="line">  // 把子类的原型指向原型</span><br><span class="line">  subType.prototype = protoType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于对象中设计到的Canvas的部分，下一篇将介绍。</p>
 
       
     </div>
@@ -378,7 +386,7 @@
           
             <a href="/tags/js面向对象/" rel="tag"># js面向对象</a>
           
-            <a href="/tags/Canvas/" rel="tag"># Canvas</a>
+            <a href="/tags/对象设计/" rel="tag"># 对象设计</a>
           
         </div>
       
@@ -391,8 +399,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/" rel="next" title="《高性能JavaScript》读书笔记(四)">
-                <i class="fa fa-chevron-left"></i> 《高性能JavaScript》读书笔记(四)
+              <a href="/2018/09/02/Canvas-Game-III/" rel="next" title="Canvas 射击小游戏详解系列(三)">
+                <i class="fa fa-chevron-left"></i> Canvas 射击小游戏详解系列(三)
               </a>
             
           </div>
@@ -400,10 +408,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/02/Canvas-Game-II/" rel="prev" title="Canvas 射击小游戏详解系列(二)">
-                Canvas 射击小游戏详解系列(二) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -549,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目整体分析"><span class="nav-number">1.</span> <span class="nav-text">项目整体分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目中主要对象的设计"><span class="nav-number">1.</span> <span class="nav-text">项目中主要对象的设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#元素分析"><span class="nav-number">1.1.</span> <span class="nav-text">元素分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象设计"><span class="nav-number">1.2.</span> <span class="nav-text">对象设计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#键盘对象设计"><span class="nav-number">2.</span> <span class="nav-text">键盘对象设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a></li></ol></div>
             
 
           </div>

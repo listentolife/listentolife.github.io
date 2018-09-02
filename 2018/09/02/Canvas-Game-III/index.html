@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="JavaScript,js面向对象,Canvas," />
+  <meta name="keywords" content="JavaScript,js面向对象,继承," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
-<meta name="keywords" content="JavaScript,js面向对象,Canvas">
+<meta name="description" content="上一篇讲了一下创建对象的三种模式，本篇就来讲一下继承。 继承这里说的继承是指构造函数的继承。一般继承是在设计中把一些不同类型的对象的共同点抽象出来，或者是在原有的构造函数中继承出新的构造函数，减少代码冗余。 继承可以使子类拥有父类的属性跟方法，而且不会出现重复的代码。 最简单的方式就是在子类的构造函数中创建一个父类的实例对象，再把子类自有的属性跟对象添加到这个实例对象上，在返回出来。 代码1 项目">
+<meta name="keywords" content="JavaScript,js面向对象,继承">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Canvas 射击小游戏详解系列(一)">
-<meta property="og:url" content="http://listentolife.github.io/2018/08/16/Canvas-Game-I/index.html">
+<meta property="og:title" content="Canvas 射击小游戏详解系列(三)">
+<meta property="og:url" content="http://listentolife.github.io/2018/09/02/Canvas-Game-III/index.html">
 <meta property="og:site_name" content="Listentolife">
-<meta property="og:description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
+<meta property="og:description" content="上一篇讲了一下创建对象的三种模式，本篇就来讲一下继承。 继承这里说的继承是指构造函数的继承。一般继承是在设计中把一些不同类型的对象的共同点抽象出来，或者是在原有的构造函数中继承出新的构造函数，减少代码冗余。 继承可以使子类拥有父类的属性跟方法，而且不会出现重复的代码。 最简单的方式就是在子类的构造函数中创建一个父类的实例对象，再把子类自有的属性跟对象添加到这个实例对象上，在返回出来。 代码1 项目">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-02T15:41:06.854Z">
+<meta property="og:updated_time" content="2018-09-02T15:41:10.976Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Canvas 射击小游戏详解系列(一)">
-<meta name="twitter:description" content="前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。 整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的">
+<meta name="twitter:title" content="Canvas 射击小游戏详解系列(三)">
+<meta name="twitter:description" content="上一篇讲了一下创建对象的三种模式，本篇就来讲一下继承。 继承这里说的继承是指构造函数的继承。一般继承是在设计中把一些不同类型的对象的共同点抽象出来，或者是在原有的构造函数中继承出新的构造函数，减少代码冗余。 继承可以使子类拥有父类的属性跟方法，而且不会出现重复的代码。 最简单的方式就是在子类的构造函数中创建一个父类的实例对象，再把子类自有的属性跟对象添加到这个实例对象上，在返回出来。 代码1 项目">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/"/>
+  <link rel="canonical" href="http://listentolife.github.io/2018/09/02/Canvas-Game-III/"/>
 
 
 
 
 
-  <title>Canvas 射击小游戏详解系列(一) | Listentolife</title>
+  <title>Canvas 射击小游戏详解系列(三) | Listentolife</title>
   
 
 
@@ -245,7 +245,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-III/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Listentolife">
@@ -262,7 +262,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Canvas 射击小游戏详解系列(一)</h1>
+          <h1 class="post-title" itemprop="name headline">Canvas 射击小游戏详解系列(三)</h1>
         
 
         <div class="post-meta">
@@ -274,8 +274,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T23:30:14+08:00">
-                2018-08-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:21:32+08:00">
+                2018-09-02
               </time>
             
 
@@ -345,18 +345,21 @@
       
 
       
-        <p>前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。</p>
-<p>整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的框架已经建好，主要的功能逻辑代码及对象文件都是自己设计实现的。整个项目的关键点是JavaScript中的面向对象设计跟Canvas。页面的渲染都是通过Canvas进行渲染，然后把整个游戏设计成一个对象，里面的角色及零件也都是设计成一个个的对象。下面就给整个项目做一个详细的分析。</p>
-<h2 id="项目整体分析"><a href="#项目整体分析" class="headerlink" title="项目整体分析"></a>项目整体分析</h2><p>虽然项目的框架并不是自己设计的，但是毕竟整个设计还是非常好的，值得我们去分析，所以我就先把整个游戏的框架跟自己的设计做一下分析。</p>
-<p>游戏页面分为四个部分，根据游戏的状态进行切换展示：游戏首页，游戏成功页面，游戏失败页面及游戏通关页面，通过状态start, failed, success及all-success来控制。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data-status=&quot;start&quot;] .game-intro &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg.png) no-repeat 430px 180px;</span><br><span class="line">  background-size: 200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[data-status=&quot;failed&quot;] .game-failed, </span><br><span class="line">[data-status=&quot;success&quot;] .game-success,</span><br><span class="line">[data-status=&quot;all-success&quot;] .game-all-success &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg-end.png) no-repeat 380px 190px;</span><br><span class="line">  background-size: 250px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由此，整个游戏就设计成一个名为GAME的对象进行管理。当页面渲染完之后，GAME对象就会进行初始化，设定最初的状态为start，即展示游戏首页，并初始化四个部分的按钮，设置监听事件。</p>
-<p>这就是项目原有的框架部分。后面为我根据框架跟游戏设计实现的部分。</p>
-<p>不同的按钮会根据游戏状态设置不同的触发内容，不过因为游戏最初，游戏失败后及游戏通关后重玩的触发内容都是从一个新的游戏开始玩起，所以内容都是初始化游戏数据<code>dataInit()</code>及开始游戏<code>play()</code>，只有游戏通关后继续不需要初始化游戏数据即可进入游戏。</p>
-<p>初始化游戏数据<code>dataInit()</code>主要是实现一些游戏的配置数据，比如游戏关卡数，游戏分数及怪兽和飞机的配置数据等。</p>
-<p>开始游戏<code>play()</code>操作比较多，所以把步骤都拆分成独立的函数方法：<code>setState()</code>用于设置游戏状态，<code>dataReset()</code>用于重置游戏关卡数据，包括难度，位置及键盘监听，<code>createObject()</code>用于创建初始化画布上的对象，比如小飞机，怪兽等，最后的<code>animate()</code>则设置动画效果，涉及渲染画布上所有对象每一帧的变化及位移，并判断游戏的状态。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">play: function () &#123;</span><br><span class="line">    this.setStatus(&apos;playing&apos;);</span><br><span class="line">    // 重置每一关数据</span><br><span class="line">    this.dataReset();</span><br><span class="line">    // 创建画布上飞机，怪兽军团及分数的初始化对象</span><br><span class="line">    this.createObject();</span><br><span class="line">    // 开始动画</span><br><span class="line">    this.animate();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>这里就大致的说明了一下这个小游戏项目框架的设计。下一篇会分析项目中对象的设计。</p>
+        <p>上一篇讲了一下创建对象的三种模式，本篇就来讲一下继承。</p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><p>这里说的继承是指构造函数的继承。一般继承是在设计中把一些不同类型的对象的共同点抽象出来，或者是在原有的构造函数中继承出新的构造函数，减少代码冗余。</p>
+<p>继承可以使子类拥有父类的属性跟方法，而且不会出现重复的代码。</p>
+<p>最简单的方式就是在子类的构造函数中创建一个父类的实例对象，再把子类自有的属性跟对象添加到这个实例对象上，在返回出来。</p>
+<p>代码1 项目中怪兽子类继承飞机父类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.move = function () &#123;</span><br><span class="line">  // 飞机每帧移动</span><br><span class="line">&#125;</span><br><span class="line">// 其他方法省略</span><br><span class="line"></span><br><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  this.prototype = new Plane(option, context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种方案虽然能实现子类对父类的继承，但是出现了以下的几个问题：子类的实例对象的constructor指向了父类的构造函数，原因是子类构造函数中先创建了一个父类的实例对象，这个对象的constructor肯定指向父类的构造函数。<br>因此，在上面的代码基础上，还需要把constructor指向自身，可以解决这个问题了。</p>
+<p>代码2 项目中怪兽子类继承的优化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  this.prototype = new Plane(option, context);</span><br><span class="line">  this.protptype.constructor = Enemy;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是，这里可以看到，有些方法可能会需要重写，这个问题不大，但是会有属性覆盖父类属性的问题，所以这点也是需要优化的，减少创建出来的对象的冗余。</p>
+<p>这里要补充一个，还可以直接通过<code>call()</code>绑定父类构造函数进行继承，但是写在原型上的方法都没法用。但是也是我们参考的一个点</p>
+<p>代码3 项目中怪兽子类绑定飞机父类构造函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  Plane.call(this, option, context);</span><br><span class="line">  // 其他省略</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>以上的问题点其实都是在如何可以准确的继承父类的方法，减少属性覆盖，又保证子类constructor指向子类的构造函数。这里我用到了这个项目前学习到的继承方案，包括以下的函数</p>
+<p>代码4 <code>inheritPrototype()</code>方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @description 继承父类原型对象的函数</span><br><span class="line"> * @param &#123;Object&#125; subType 子类对象</span><br><span class="line"> * @param &#123;Object&#125; subType 父类对象</span><br><span class="line"> */</span><br><span class="line">var inheritPrototype = function (subType, superType) &#123;</span><br><span class="line">  // 把父类对象的原型对象赋值给proto</span><br><span class="line">  var protoType = Object.create(superType.prototype);</span><br><span class="line">  // proto的constructor指向子类对象，进行重置</span><br><span class="line">  protoType.constructor = subType;</span><br><span class="line">  // 把子类的原型指向原型</span><br><span class="line">  subType.prototype = protoType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个方案利用了构造函数继承跟上面的<code>inheritPrototype()</code>方法。前者继承了父类的属性，后者函数继承了父类原型中的所有方法。最终的效果如下：</p>
+<p>代码5 项目中的继承设计<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option,context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Enemy(options,context) &#123;</span><br><span class="line">  // 继承父类Plane的属性</span><br><span class="line">  Plane.call(this, options, context);</span><br><span class="line">&#125;</span><br><span class="line">// 继承父类Plane的原型</span><br><span class="line">inheritPrototype(Enemy, Plane);</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下一篇介绍项目中对象的设计。</p>
 
       
     </div>
@@ -378,7 +381,7 @@
           
             <a href="/tags/js面向对象/" rel="tag"># js面向对象</a>
           
-            <a href="/tags/Canvas/" rel="tag"># Canvas</a>
+            <a href="/tags/继承/" rel="tag"># 继承</a>
           
         </div>
       
@@ -391,8 +394,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/" rel="next" title="《高性能JavaScript》读书笔记(四)">
-                <i class="fa fa-chevron-left"></i> 《高性能JavaScript》读书笔记(四)
+              <a href="/2018/09/02/Canvas-Game-II/" rel="next" title="Canvas 射击小游戏详解系列(二)">
+                <i class="fa fa-chevron-left"></i> Canvas 射击小游戏详解系列(二)
               </a>
             
           </div>
@@ -401,8 +404,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/09/02/Canvas-Game-II/" rel="prev" title="Canvas 射击小游戏详解系列(二)">
-                Canvas 射击小游戏详解系列(二) <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/02/Canvas-Game-IV/" rel="prev" title="Canvas 射击小游戏详解系列(四)">
+                Canvas 射击小游戏详解系列(四) <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -549,7 +552,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目整体分析"><span class="nav-number">1.</span> <span class="nav-text">项目整体分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#继承"><span class="nav-number">1.</span> <span class="nav-text">继承</span></a></li></ol></div>
             
 
           </div>
