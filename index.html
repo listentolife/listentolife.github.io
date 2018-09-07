@@ -245,6 +245,175 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/05/Canvas-Game-V/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/05/Canvas-Game-V/" itemprop="url">Canvas 射击小游戏详解系列(五)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-05T00:32:48+08:00">
+                2018-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTML5/" itemprop="url" rel="index">
+                    <span itemprop="name">HTML5</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTML5/Canvas/" itemprop="url" rel="index">
+                    <span itemprop="name">Canvas</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇开始介绍Canvas的内容。Canvas是属于HTML5的内容。下面就来介绍一下Canvas。</p>
+<h3 id="Canvas元素及画布"><a href="#Canvas元素及画布" class="headerlink" title="Canvas元素及画布"></a>Canvas元素及画布</h3><p>Canvas元素其实写法跟其他的HTML元素写法一样，比如下面的项目中的例子：</p>
+<p>代码1 项目中Canvas元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div id=&quot;game&quot; data-status=&quot;start&quot;&gt;  </span><br><span class="line">    &lt;-- 其他代码 !-&gt;</span><br><span class="line">    &lt;canvas id=&quot;canvas&quot; width=&quot;700&quot; height=&quot;600&quot;&gt;</span><br><span class="line">        &lt;!-- 动画画板 --&gt;</span><br><span class="line">    &lt;/canvas&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;-- 其他代码 !-&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>代码1中，Canvas元素在页面上创建了一个宽700，长600的画布，这个就是Canvas实现图形的基础。</p>
+<p>然后需要在JavaScript代码中写下这么两行代码：</p>
+<p>代码2 获取Canvas对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var canvas = document.getElementById(&apos;canvas&apos;);</span><br><span class="line">var context = canvas.getContext(&apos;2d&apos;);</span><br></pre></td></tr></table></figure></p>
+<p>这段代码先是获取了canvas元素，然后在调用canvas元素的getContext方法访问获取2d渲染上下文。得到的context才能进行绘画的操作。</p>
+<p>下面是一些关于Canvas的绘制的介绍，因为是基础内容的介绍，所以就主要以代码形式说明。</p>
+<h3 id="Canvas绘制"><a href="#Canvas绘制" class="headerlink" title="Canvas绘制"></a>Canvas绘制</h3><p>Canvas绘制分下面几种： 线跟圆弧，几何图形，文本，图片。</p>
+<h4 id="绘制原理"><a href="#绘制原理" class="headerlink" title="绘制原理"></a>绘制原理</h4><p>Canvas绘制的原理是把画布坐标化，以左上角为原点，上边为x坐标正方向，左边为y坐标正方向。所有的绘制方法都是context下的方法。</p>
+<h4 id="线跟圆弧"><a href="#线跟圆弧" class="headerlink" title="线跟圆弧"></a>线跟圆弧</h4><p>代码1 线跟圆弧的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/* 线的绘制 */</span><br><span class="line">// 设置路径</span><br><span class="line">context.beginPath();</span><br><span class="line">// 设置路径起始点</span><br><span class="line">context.moveTo(320,470);</span><br><span class="line">// 设置路径终点</span><br><span class="line">context.lineTo(320,480);</span><br><span class="line">// 绘制路径</span><br><span class="line">context.stroke();</span><br><span class="line"></span><br><span class="line">/* 圆弧的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">// 圆弧的绘制使用context.arc()方法</span><br><span class="line">// context.arc(x, y, radius, startAngle, endAngle, anticlockwise)</span><br><span class="line">// x,y为圆心坐标</span><br><span class="line">// redius为圆的半径</span><br><span class="line">// startAngle，endAngle分别为开始角度跟结束角度（圆的水平右侧为0°）</span><br><span class="line">// anticlockwise为顺/逆时针设置，默认值为false顺时针</span><br><span class="line">context.arc(250, 250, 300, 0, Math.PI, false);</span><br><span class="line">// 绘制路径</span><br><span class="line">context.stroke();</span><br><span class="line">// 使用fill()方法将会把圆弧两端直接闭合填充</span><br><span class="line">// context.fill();</span><br></pre></td></tr></table></figure></p>
+<h4 id="几何图形"><a href="#几何图形" class="headerlink" title="几何图形"></a>几何图形</h4><p>代码2 集合多边形跟圆形的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/* 矩形的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">context.moveTo(320, 470);</span><br><span class="line">context.lineTo(350, 470);</span><br><span class="line">context.lineTo(350, 500);</span><br><span class="line">context.lineTo(320, 500);</span><br><span class="line">// 设置闭合路径</span><br><span class="line">context.closePath();</span><br><span class="line">context.stroke();</span><br><span class="line">// 填充路径用fill()方法</span><br><span class="line">// context.fill();</span><br><span class="line">// 也可以直接使用矩形的绘制方法context.rect(x, y, width, height);</span><br><span class="line">// context.rect(320, 500, 30, 30);</span><br><span class="line"></span><br><span class="line">/* 圆形的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">//context.arc(250, 250, 300, 0, 2 * Math.PI, false);</span><br><span class="line">// 使用fill()方法将填充整个圆形</span><br><span class="line">// context.fill();</span><br></pre></td></tr></table></figure></p>
+<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><p>代码3 文本的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 文本的绘制 */</span><br><span class="line">// 先设置字体样式</span><br><span class="line">context.font = &apos;25px arial&apos;;</span><br><span class="line">// context.strokeText()方法将文本描边绘制</span><br><span class="line">// 三个参数分别为被绘制的字符串，坐标(x,y)</span><br><span class="line">context.strokeText(&quot;描边文本&quot;, 100, 100);</span><br><span class="line">// context.fillText()方法将文本填充绘制</span><br><span class="line">context.strokeText(&quot;描边文本&quot;, 100, 100);</span><br></pre></td></tr></table></figure></p>
+<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><p>代码4 图片的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/* 图片的绘制 */</span><br><span class="line">// 设置图片对象</span><br><span class="line">var image = new Image();</span><br><span class="line">// 设置图片地址</span><br><span class="line">image.src = &apos;plane.png&apos;;</span><br><span class="line">// 设置图片加载完成后的回调函数</span><br><span class="line">image.onload = function () &#123;</span><br><span class="line">    // 绘制图片context.drawImage(img, x, y, width, height)</span><br><span class="line">	context.drawImage(image, 50, 50, 60, 100)</span><br><span class="line">	// 裁剪图片也是用context.drawImage(image, source_x, source_y, source_width, source_height, x, y, width, heigh);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="样式设置"><a href="#样式设置" class="headerlink" title="样式设置"></a>样式设置</h4><p>代码5 绘制样式设置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/* 描边颜色设置 */</span><br><span class="line">context.fillStyle = #999;</span><br><span class="line"></span><br><span class="line">/* 填充颜色设置 */</span><br><span class="line">context.strokeStyle = #333;</span><br><span class="line"></span><br><span class="line">/* 线宽设置 */</span><br><span class="line">context.lineWidth = (Number);</span><br><span class="line"></span><br><span class="line">/* 设置字体样式 */</span><br><span class="line">context.font = &apos;25px arial&apos;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Canvas擦除"><a href="#Canvas擦除" class="headerlink" title="Canvas擦除"></a>Canvas擦除</h4><p>代码6 绘制擦除<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/* 擦除 */</span><br><span class="line">// 擦除可以使用context.clearRect(x, y, width, height)方法</span><br><span class="line">// 下面直接擦除整个画布</span><br><span class="line">context.clearRect(0, 0, canvas.width, canvas.height);</span><br></pre></td></tr></table></figure></p>
+<p>下一篇将会介绍Canvas动画跟项目中的关于Canvas跟动画的设计。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-IV/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1833,264 +2002,13 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/23/scope/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/23/scope/" itemprop="url">JavaScript 作用域</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-23T22:00:41+08:00">
-                2018-04-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/杂谈/" itemprop="url" rel="index">
-                    <span itemprop="name">杂谈</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本篇是我搭建博客的第一篇，其实之前我在自己的微信号已经有写过一些小文章，后面会慢慢的移到这边来。这里废话不多说吧。JavaScript的作用域是一个很关键也很常见的技术点，很关键是因为所有编程语言都有一套作用域的规则，理解所使用的编程语言的作用域可以在开发时少走点弯路，不会踩到奇奇怪怪的坑，很常见是因为作用域存在整个开发项目的任何地方，避不开。再者说面试官也很喜欢考这个问题呢。</p>
-<p>刚好我看了《你不知道的JavaScript(上)》，对作用域有了一些更深入的了解，所以就想整理一下，对作用域的认识做一个详细的介绍。</p>
-<h2 id="一般对js作用域的了解"><a href="#一般对js作用域的了解" class="headerlink" title="一般对js作用域的了解"></a>一般对js作用域的了解</h2><h3 id="怎么理解作用域"><a href="#怎么理解作用域" class="headerlink" title="怎么理解作用域"></a>怎么理解作用域</h3><p>首先，我要说明一下，现在讨论的JavaScript作用域指的是ES5的作用域。在ES5中，只有全局作用域跟函数作用域，没有块作用域，这个会放到<strong>ES6的作用域</strong>一节中做介绍。</p>
-<p>代码1.1：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var i = 10;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">a</span></span>() &#123;</span><br><span class="line">  alert(i);</span><br><span class="line">&#125;</span><br><span class="line">a();</span><br></pre></td></tr></table></figure></p>
-<p>代码1.2：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var i = 10;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">a</span></span>() &#123;</span><br><span class="line">  alert(i);</span><br><span class="line">  var i = 5;</span><br><span class="line">&#125;</span><br><span class="line">a();</span><br></pre></td></tr></table></figure></p>
-<p>代码1.1跟1.2最终输出是不同的。这个就跟作用域有关。</p>
-<p>代码1.1中，在全局声明变量i并赋值10，然后声明了一个函数a()。函数a()中调用了全局变量i，所以alert的结果是<code>10</code>。这个没有什么异议。一般不明白的是代码1.2。</p>
-<h3 id="变量提升"><a href="#变量提升" class="headerlink" title="变量提升"></a>变量提升</h3><p>代码1.2的最终输出为<code>undefined</code>，原因是虽然函数a()中是在<code>alert(i)</code>之后才声明函数中的局部变量i并赋值5，但实际上JavaScript在处理函数a()代码时是先把<code>var i = undefined</code>提前到函数执行其他代码前声明了。也就是说，JavaScript代码在执行时，会在每个作用域内，优先把声明变量，函数的代码提前执行(预处理)，然后在执行其他代码(逐行解读)。这就是变量提升。</p>
-<p>变量提升中，函数的声明是怎么处理的？其实这个问题还得分两种情况：如果函数的声明是写成<code>var a = function () {}</code>，则a是一个变量，在预处理中，只会声明<code>var a = undefined</code>，在后面的逐行解读中，就有可能出现a未定义的情况；如果函数声明是写成<code>function a() {}</code>，则a()是一个函数，在预处理中，会把整个函数进行预处理，当逐行解读，解读到a()时，就会正常执行函数。</p>
-<p>当然，千万不要理解成代码1.2中a()在执行时把<code>var i = 5</code>提前了。变量提升只是提升了变量声明。对于为什么只提前执行了变量声明，我们留一个悬念。</p>
-<blockquote>
-<p><strong>注意：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 如果是在函数（局部作用域）中，出现了如下的情况：</span><br><span class="line">alert(n);</span><br><span class="line">function f1() &#123;</span><br><span class="line">  n = 999;</span><br><span class="line">&#125;</span><br><span class="line">f1();</span><br><span class="line">// 虽然n会变成全局变量，但是alert(n)在这个位置会报错，具体原因也会在后面做解释。</span><br><span class="line">// 一般应该防止变量n这种情况出现</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<h3 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h3><p>代码1.1其实本身也涉及另外一个内容，就是作用域链。简单的说，全局作用域在执行到a()时，会先创建a()的作用域，然后将该作用域放在链表的头部，然后把指针指向全局作用域。当执行到<code>alert(i)</code>时，先会在当前作用域内查找已声明的变量，看是否存在变量i，存在则直接使用，不存在则根据作用域链向上一级父级作用域查找，直到顶级作用域window（网页在浏览器运行，实际是在浏览器这个全局作用域下运行，所以window是网页作用域链的最高作用域）。</p>
-<h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><p>闭包是个很有趣的概念，它有一些特点。我们先举个例子：</p>
-<p>代码1.3：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var foo = function()&#123;</span><br><span class="line">  var i = 0;</span><br><span class="line">  return function inner()&#123;</span><br><span class="line">    i++;</span><br><span class="line">     console.log(i);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">var bar = foo();</span><br><span class="line">bar();</span><br></pre></td></tr></table></figure></p>
-<p>首先，在代码1.3中，先声明了变量foo并引用一个函数，然后函数内部返回函数inner()。inner()调用了foo()中的i。然后在全局作用域声明了bar并引用了foo()，实际最终是得到了函数inner()的引用。这里可以发现一个问题，就是正常来说，在一个作用域链上，父作用域是调用不了子作用域的变量，但是反之可以。但是这里的全局变量bar()执行之后却得到了foo()中的局部变量i的值，实现了在作用域外变量的调用。</p>
-<p>其次，如果再执行一次<code>bar()</code>，会得到2的结果。这个结果表明，当全局变量得到了函数inner()的引用之后，函数inner()会一直保持在内存中，而其依赖的foo()，也因此一直保持在内存中，并没有在调用结束后备垃圾回收机制回收。</p>
-<p>闭包的这些有趣的特点让我想起了克莱因瓶(脑洞有点大，这两个事物确实有点类似)。那为什么会出现这么有趣的闭包呢？下面，我们就带上上面的这些问题，一起来再深入一步了解一下js的作用域吧。</p>
-<h2 id="深入了解js作用域"><a href="#深入了解js作用域" class="headerlink" title="深入了解js作用域"></a>深入了解js作用域</h2><p>想要再深入的了解js作用域，就应该了解js是怎么执行的。简单的说，我们把js代码的执行分成三部分：引擎，编译，作用域。</p>
-<p>引擎，这里简单来说就是负责整个js代码的编译跟执行工作。这个工作又分为两部分，一部分是编译，编译程序员编写的代码字符串，另一部分是执行，执行编译后得到的机器指令，这里涉及了作用域。</p>
-<h3 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h3><p>首先，一般编程语言的编译经历了三个步骤：分词/词法分析(Tokenizing/Lexing)，解析/语法分析(Parsing)及代码生成。js的编译也差不多。</p>
-<h4 id="分词-词法分析-Tokenizing-Lexing"><a href="#分词-词法分析-Tokenizing-Lexing" class="headerlink" title="分词/词法分析(Tokenizing/Lexing)"></a>分词/词法分析(Tokenizing/Lexing)</h4><p>我们平时写的代码，其实对于机器来说是一段字符串。于是，机器就得先把代码做一次拆解，把每一个独立的，有意义的代码块(词法单元)分解出来。比如说，<code>var n;</code>，会被拆解成<code>var</code>，<code>n</code>，<code>;</code>。</p>
-<h4 id="解析-语法分析-Parsing"><a href="#解析-语法分析-Parsing" class="headerlink" title="解析/语法分析(Parsing)"></a>解析/语法分析(Parsing)</h4><p>当完成词法分析之后，就要开始做语法分析了。原本一个个词法单元就需要拼接成一个具有程序语法的结构。那什么结构可以达到这样的效果呢？这个结构我们都应该会想到的吧，就是树，叫抽象语法树(Abstract Syntax Tree, AST)。比如上面的<code>var n;</code>，在拆解成<code>var</code>，<code>n</code>，<code>;</code>之后，就可以开始语法分析。那分析的结果就会解析成一个顶级节点(VariableDeclaration)下，有一个节点(AssignmentExpression)的值为<code>n</code>，这个节点下有一个节点(NumericLiteral)的值为<code>undefined</code>(因为这个代码只是声明了一个变量，所以这里就假定值为undefined)。</p>
-<h4 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h4><p>在生成AST之后，就要把它转换为可执行的代码，这个过程叫做代码生成。比如说，上例中<code>var n;</code>的AST转换后，将变成机器指令，创建变量n。</p>
-<p>JavaScript的编译过程在某些步骤上要复杂一些，但是其编译过程也是大同小异。为了后面比较容易理解作用域，我们可以暂时先这么理解。</p>
-<h3 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h3><p>重点来了，机器指令生成之后，作用域是要干嘛呢？其实，作用域就是要把这些机器指令中涉及的标识符，按一套严格的规则，进行分类维护形成一系列查询，确认机器指令对他们的访问权限。</p>
-<p>怎么理解作用域呢？我这里做一个假设，方便理解。</p>
-<p>作用域是要能把变量跟函数划分作用范围的，比如全局作用域中的变量可以在全局调用，计算跟赋值，函数可以被掉用，而局部作用域中的变量只能在当前作用域及下级作用域中调用计算等等，函数亦是如此，比如：</p>
-<p>代码2.1：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var i = 10;</span><br><span class="line">var x = 5;</span><br><span class="line">function test () &#123;</span><br><span class="line">  var x = i;</span><br><span class="line">  console.log(x);</span><br><span class="line">&#125;</span><br><span class="line">console.log(x);</span><br><span class="line">test();</span><br></pre></td></tr></table></figure></p>
-<p>上例中，在完成代码的编译后，会先扫描出全局作用域所有的变量声明跟函数声明(函数表达式其实只会提升变量声明部分)形成这样一个作用域：</p>
-<p><strong>代码2.1全局作用域(parentScope)</strong>:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">变量/方法</th>
-<th style="text-align:left">地址</th>
-<th style="text-align:left">值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">i</td>
-<td style="text-align:left">地址1</td>
-<td style="text-align:left">undefined</td>
-</tr>
-<tr>
-<td style="text-align:left">x</td>
-<td style="text-align:left">地址2</td>
-<td style="text-align:left">undefined</td>
-</tr>
-<tr>
-<td style="text-align:left">test()</td>
-<td style="text-align:left">地址3</td>
-<td style="text-align:left">{…}</td>
-</tr>
-</tbody>
-</table>
-<p>当执行到<code>test();</code>时，又会扫描test函数的函数作用域：</p>
-<p><strong>test函数作用域</strong>：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">变量/方法/上级作用域</th>
-<th style="text-align:left">地址</th>
-<th style="text-align:left">值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">x</td>
-<td style="text-align:left">地址4</td>
-<td style="text-align:left">undefined</td>
-</tr>
-<tr>
-<td style="text-align:left">parentScope</td>
-<td style="text-align:left">地址0</td>
-<td style="text-align:left">—</td>
-</tr>
-</tbody>
-</table>
-<p>这里我把作用域模拟成以链表的形式，方便理解。</p>
-<p>然后，开始执行机器指令。</p>
-<h3 id="变量的查找"><a href="#变量的查找" class="headerlink" title="变量的查找"></a>变量的查找</h3><p>如当执行到<code>x = 5</code>的指令时，引擎会去找当前作用域，即全局作用域进行变量查询，查询是否存在变量x(准确的说法是引擎为变量x进行LHS查询)。由于我把作用域理解成链表了，所以查询的模拟就是对链表上当前结点的查询。当查询到变量x已存在，就会返回其内存地址，然后进行赋值。</p>
-<p>如执行到<code>x = i</code>的指令时，引擎同样会去当前作用域，即test函数作用域进行LHS查询，返回内存地址。这里就出现了函数作用域中的变量x对全局作用域中的变量x的遮蔽。然后引擎再对i进行查询（引擎为变量i进行RHS查询）。先是从当前作用域开始查询，结果没有找到，因此拿到全局作用域parentScope的地址，找到全局作用域，继续查询找到之后，得到储存的值，然后再做赋值。</p>
-<h3 id="其他概念的理解"><a href="#其他概念的理解" class="headerlink" title="其他概念的理解"></a>其他概念的理解</h3><p>上面的代码从编译到机器指令执行的模拟，还可以对一些概念的做一些理解：变量提升，其实是代码执行运算前的解析，并形成作用域；变量的遮蔽，其实是作用域权限的效果；作用域链，其实是变量查询的规则导致的。当然，还有一些更深的内容，比如上面简单提及的LHS查询，得到的是变量容器(我的理解就是得到变量的内存地址)，RHS查询，得到的是储存的值(并不需要得到变量的内存地址，因为只是做赋值，当然不同的数据类型返回的值也可能是内存地址，比如数组)。</p>
-<p>这里也可以对闭包有了更深入的理解：闭包的操作上，是把一个局部作用域赋值给一个全局变量，使这个局部作用域中的变量可以以一种特殊的方式在全局作用域中获得。但因为这个局部作用域被保留在一个全局变量中，所以它也将无法再调用结束后被回收，并一直保持原有的变量跟值。</p>
-<h2 id="ES6的作用域"><a href="#ES6的作用域" class="headerlink" title="ES6的作用域"></a>ES6的作用域</h2><p>这里之所以要提到ES6的作用域，是因为ES6已经是前端工程师必需学习的内容了，再者ES6的作用域确实跟我们所知道的JavaScript(ES5)的作用域有所不同。这里就做一些介绍。</p>
-<h3 id="let"><a href="#let" class="headerlink" title="let"></a>let</h3><p>估计很多人都知道ES6 let的存在了，这里就只是对一些点做介绍，给后面ES6的作用域做铺垫。</p>
-<p>首先，<strong>let所声明的变量只在所在的代码块内有效</strong>。这个就跟var有比较大的区别了，比如下面的代码：</p>
-<p>代码3.1：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  var a = 5;</span><br><span class="line">  let b = 10;</span><br><span class="line">&#125;</span><br><span class="line">console.log(a);  // 5</span><br><span class="line">console.log(b);  // ReferenceError: b is not defined</span><br></pre></td></tr></table></figure></p>
-<p>上面的代码就可以看出，在{}内用let声明的b在全局作用域上无法调用，直接报错了。</p>
-<p>代码3.2：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  console.log(a);  // undefined</span><br><span class="line">  console.log(b);  // ReferenceError: b is not defined</span><br><span class="line">  var a = 5;</span><br><span class="line">  let b = 10;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>把代码3.1修改成代码3.2，运行的结果也很明显了：<strong>let也不支持变量提升</strong>。let声明的变量必须在声明后使用(包括赋值，运算等)，否则会报错。</p>
-<p>代码3.3：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var b = 15;</span><br><span class="line">var c = 20;</span><br><span class="line">&#123;</span><br><span class="line">  console.log(a);  // undefined</span><br><span class="line">  console.log(c);  // 20</span><br><span class="line">  console.log(b);  // ReferenceError: b is not defined</span><br><span class="line">  var a = 5;</span><br><span class="line">  let b = 10;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>再改成改成代码3.3，运行的结果就可以得到另一个结论：存在let声明的区域不受外部的影响，被锁区了，叫<strong>暂时性死区</strong>。</p>
-<p>当然，还有一个特性，就是<strong>let声明的变量不可以重复声明</strong>，这个大家就自己去尝试了。</p>
-<h3 id="const"><a href="#const" class="headerlink" title="const"></a>const</h3><p>const很多特性跟let一样，比如上面提及let的四个特性也是const的特性。但const跟let有一个比较大的区别，就是const声明的是常量，这个常量只能被读取，不能二次修改写入。而且必须要在声明的同时进行赋值。</p>
-<h3 id="块级作用域"><a href="#块级作用域" class="headerlink" title="块级作用域"></a>块级作用域</h3><p>上面的let跟const其实都是铺垫，最终还是要回归到作用域这个话题上来。ES6跟ES5在作用域上最大的不同就是支持块级作用域，而let跟const就是块级作用域的坚强后盾。</p>
-<p>从我的理解看来，<strong>暂时性死区</strong>其实就是让全局作用域跟函数作用域中的某一块代码变成相对独立的块级作用域，这个块级作用域的形成需要有let或const的声明作为标志。</p>
-<p>块级作用域的特点从let跟const的四个特性可见一斑。外部作用域无法获得块级作用域内let变量跟const常量，块级作用域内部let声明的变量也不会覆盖外部作用域声明的变量。这样就可以防止像for循环中i变量的全局污染。</p>
-<p>还有一个特点可以自己去尝试一下的，<strong>函数本身的作用域在其所在的块级作用域之内</strong>。这是一个需要注意的知识点。</p>
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>关于JavaScript的作用域写了很多，上述一些内容，有来自《你不知道的JavaScript(上)》前面几章，也有来自阮一峰老师的《ES6标准入门(第二版)》相关的章节(目前已经出了第三版了)，掺杂着一些个人的理解跟学习心得。我相信对作用域有这样深一层的理解，会对相关的问题有更准确的判断。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -2134,7 +2052,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2145,7 +2063,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2156,7 +2074,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
