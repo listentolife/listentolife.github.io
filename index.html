@@ -245,6 +245,183 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/07/Canvas-Game-VI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/07/Canvas-Game-VI/" itemprop="url">Canvas 射击小游戏详解系列(六)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-07T23:10:00+08:00">
+                2018-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTML5/" itemprop="url" rel="index">
+                    <span itemprop="name">HTML5</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTML5/Canvas/" itemprop="url" rel="index">
+                    <span itemprop="name">Canvas</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇将介绍页面动画跟项目设计实现。先会对动画做介绍，然后再总结项目中实现动画的设计。</p>
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>这里说的页面动画指的是js动画，使用<code>requestAnimationFrame()</code>实现。</p>
+<p>实现动画效果的原理是把动画拆成一帧帧的画面，当达到每秒至少24帧时，可以给人造成流畅的视觉变化效果。也就算在实现动画效果时，要经历更新画面，清除画面，绘制画面三个部分。</p>
+<p>代码1 每个循环的代码逻辑<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var animate = function () &#123;</span><br><span class="line">  /* </span><br><span class="line">   * 1.更新下一帧画面，比如移动</span><br><span class="line">   * 2.清除当前页面画面</span><br><span class="line">   * 3.绘制下一帧画面</span><br><span class="line">   */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>第一步是更新下一帧的画面，处理完一些画面元素的数据调整跟状态调整；第二步是清除当前页面画布，腾出画布空间；第三步绘制下一帧画面，刷新画布内容。</p>
+<p>完成三步循环之后，还需要通过<code>requestAnimationFrame()</code>进入下一个循环周期。</p>
+<p>另外，既然有动画就需要用暂停或者结束的情况，需要做状态的判断。判断状态转变成暂停或者结束的条件一般有监听事件，碰撞检测，位置范围，超时等等。一般在第一步前判断是否需要更新，调用<code>requestAnimationFrame()</code>前判断是否需要进入下一个循环周期。</p>
+<p>最终，一个完整的动画设计就明了了。</p>
+<p>代码2 完整的动画代码逻辑<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var animate = function () &#123;</span><br><span class="line">  /* </span><br><span class="line">   * 判断条件，选择暂停动画或继续动画</span><br><span class="line">   * 1.更新下一帧画面，比如移动</span><br><span class="line">   * 2.清除当前页面画面</span><br><span class="line">   * 3.绘制下一帧画面</span><br><span class="line">   * 判断条件，选择调用requestAnimationFrame(animate)或结束动画</span><br><span class="line">   */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="项目设计"><a href="#项目设计" class="headerlink" title="项目设计"></a>项目设计</h3><p>项目中的动画主要是在GAME对象中。当玩家点击开始游戏后，会执行<code>play()</code>方法。这个方法会先设置游戏状态，然后重置关卡数据，创建跟初始化画布所有的元素，然后再调用<code>animate()</code>方法。</p>
+<h4 id="动画设计"><a href="#动画设计" class="headerlink" title="动画设计"></a>动画设计</h4><h5 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h5><p>进入<code>animate()</code>方法后，先做判断。先判断暂停状态变量是否为真，是则直接在画布上渲染暂停的图标。但是不是真的停下动画，只是让每一帧的渲染都是一样而已。直到暂停状态变量修改成假，就可以给移动量赋值。</p>
+<p>在项目中，判断前还需要对键盘对象做一次检测，确认玩家是否有出现键盘事件，再根据不同的键盘事件修改。</p>
+<h5 id="更新动画"><a href="#更新动画" class="headerlink" title="更新动画"></a>更新动画</h5><p>完成判断，继续动画时，根据前面得到的移动量，传入到飞机，怪兽类的实例对象中修改坐标位置。调用碰撞测试的方法<code>collision()</code>，判断碰撞是否发生。</p>
+<h5 id="清除画布"><a href="#清除画布" class="headerlink" title="清除画布"></a>清除画布</h5><p>参考上一篇，直接使用<code>context.clearRect(0, 0, canvas.width, canvas.height)</code>。</p>
+<h5 id="绘制画面"><a href="#绘制画面" class="headerlink" title="绘制画面"></a>绘制画面</h5><p>完成清除之后，调用<code>drawOject()</code>方法。这个方法内部会遍历所有画布的对象，调用对象的绘制方法。</p>
+<h5 id="调用requestAnimationFrame-animate"><a href="#调用requestAnimationFrame-animate" class="headerlink" title="调用requestAnimationFrame(animate)"></a>调用<code>requestAnimationFrame(animate)</code></h5><p>这里需要再加一个判断。因为在前面的更新动画中，只是判断了是否暂停，这里判断是否结束动画。前面绘制之后，可能结束的条件是怪兽已经被消灭完或怪兽已经到达底部，其他情况下继续动画，需要调用<code>requestAnimationFrame(animate)</code>。</p>
+<h4 id="碰撞设计"><a href="#碰撞设计" class="headerlink" title="碰撞设计"></a>碰撞设计</h4><p>碰撞设计主要是判断两个画布元素是否有重叠，其次是碰撞之后的状态跟动画效果的处理。这里主要讨论碰撞判断。</p>
+<p>碰撞的判断到底为画布元素的边界是否有交叉。比如矩形的碰撞判断，为两个矩形的左边界与右边界，上边界与下边界的交叉判断。比如圆形，则是判断两个圆形圆心的距离是否小于两个圆形的半径之和。</p>
+<p>如果是考虑矩形跟圆形，则需要判断矩形四个角跟圆形的位置关系及矩形中心到圆心的距离；</p>
+<p>如果是考虑矩形缺角或圆形缺弧，则需要判断矩形各个角跟圆心及弧角的位置关系及矩形中心到圆心的距离。</p>
+<p>如果是跟复杂的图形，则需要增加参考移动行为。比如项目中的怪兽跟子弹。不管怪兽的形状有多复杂，子弹的移动只有向上一个移动行为，所以主要的判断可以是子弹最上方的坐标是否进入怪兽边界内。</p>
+<p>越复杂的碰撞判断，越要参考除了图形之外，其他的因素，比如移动行为，形状变化等等。</p>
+<p>以上就是关于项目中动画部分的总结。</p>
+<h3 id="系列结语"><a href="#系列结语" class="headerlink" title="系列结语"></a>系列结语</h3><p>整个项目其实整体的重点是动画的流程，怎么实现完整的动画每一帧的代码逻辑。然后拆分成两个问题，怎么渲染游戏元素，怎么设计游戏对象。</p>
+<p>这个只是前端的一部分，还需要继续学习。加油！</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/05/Canvas-Game-V/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1874,134 +2051,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/24/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/24/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T08:22:48+08:00">
-                2018-04-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2052,7 +2101,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2074,7 +2123,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -4,6 +4,33 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2018/09/07/Canvas-Game-VI/</loc>
+    <lastmod>2018-09-07T15:14:22.126Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(六)</title>
+        <pubTime>2018-09-07T15:10:00.000Z</pubTime>
+        
+        <tag>Canvas</tag>
+         
+        <tag>HTML5</tag>
+         
+        <tag>Animate</tag>
+         
+         
+           
+             
+              <breadCrumb title="HTML5" url="http://listentolife.github.io/categories/HTML5/"/>
+          
+             
+              <breadCrumb title="Canvas" url="http://listentolife.github.io/categories/HTML5/Canvas/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/09/05/Canvas-Game-V/</loc>
     <lastmod>2018-09-04T16:36:52.604Z</lastmod>
     <data>
@@ -11,9 +38,9 @@
         <title>Canvas 射击小游戏详解系列(五)</title>
         <pubTime>2018-09-04T16:32:48.000Z</pubTime>
         
-        <tag>HTML5</tag>
-         
         <tag>Canvas</tag>
+         
+        <tag>HTML5</tag>
          
          
            
