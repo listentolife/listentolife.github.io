@@ -3,6 +3,60 @@
   
     
     <entry>
+      <title>React-Learning</title>
+      <link href="/2018/09/12/React-Learning/"/>
+      <url>/2018/09/12/React-Learning/</url>
+      <content type="html"><![CDATA[<p>前面写了好几篇关于Canvas射击小游戏的博文，内容还总结了挺多的。不过其实在写之前主要的时间都在学习react。react是一个很热门的mvc框架，支持的插件非常多，从小页面到大工程都是可以hold得住，所以很有必要学习react并要熟练的使用。所以连着做了两个项目。一个是找了些学习资料边学边做的，是比较简单的简书PC端网页项目，学习完后就去拿豆瓣的数据做了一个简单的豆瓣app。现在打算开始写新的系列博客，把中间学习react的内容做一下整理回顾，把掌握的东西再加强一下。</p><p>内容主要涉及react框架及使用过或期间学习过的框架的，有一些内容比较多，会结合代码去说，有一些学得比较浅，就先把项目中有用到的先介绍了，以后在慢慢的深入。再者就是做了两个项目了，对项目的分析跟设计也会想说一下。</p><p>先给后面会涉及到的内容做一个列表，然后一项项的完成。</p><p>列表：<br>react框架<br>styled-components插件<br>PropTypes插件<br>redux及react-redux插件<br>redux-thunk及redux-saga插件<br>redux-immutable插件<br>react-router-dom插件<br>react-transition-group插件<br>jest测试</p><p>列表可能会继续更新，然后下一篇将会从react框架开始。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> React </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+            <tag> React </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>react学习总结系列-react(一)</title>
+      <link href="/2018/09/12/React-Learning-I/"/>
+      <url>/2018/09/12/React-Learning-I/</url>
+      <content type="html"><![CDATA[<p>这里开始总结一下React。最好了解跟学习react的方法当然是去看react的官方文档，所以这里主要写的是各个知识点需要注意的点。</p><h3 id="JSX语法"><a href="#JSX语法" class="headerlink" title="JSX语法"></a>JSX语法</h3><p>JSX语法就是在JS中直接写类似HTML标签，但实际上写的不是HTML代码，这中写法其实是<code>React.creatElement(component, props, ...children)</code>的语法糖。这种语法糖的书写相较于后者的书写更为方便易懂。</p><p>代码1 react文档中的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// JSX语法</span><br><span class="line">&lt;MyButton color=&quot;blue&quot; shadowSize=&#123;2&#125;&gt;</span><br><span class="line">  Click Me</span><br><span class="line">&lt;/MyButton&gt;</span><br><span class="line"></span><br><span class="line">// 编译为:</span><br><span class="line">React.createElement(</span><br><span class="line">  MyButton,</span><br><span class="line">  &#123;color: &apos;blue&apos;, shadowSize: 2&#125;,</span><br><span class="line">  &apos;Click Me&apos;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p><p>react文档有非常详细的介绍，这里主要提一些需要留意的点：</p><p>1.<strong>字母大小写</strong>。标签名(组件名)都是驼峰命名法(大驼峰命名法)，后面也会说到的style-component插件也是用这样的写法。</p><p>2.<strong>className</strong>。因为JSX语法其实是JS封装的，所以class还是js的关键词。所以在标签中如果要使用class类的话，需要写成className而不是class。写成class也不会影响代码的运行，但是会报一个提示。其他的html标签中使用的属性在JSX中都是小驼峰命名法的写法。</p><p>3.<strong>标签之间的值</strong>。如果标签之间没有值，则可以直接一个标签闭合。在html中，有一些标签是单一标签，不用写/闭合也是可以的，但是在JSX中所有标签都需要用<code>/</code>来闭合，所以像input，img都需要写成<code>&lt;input /&gt;</code>、<code>&lt;img /&gt;</code>的闭合形式。如果是标签之间有值，那么支持像html一样直接把字符串写在标签之间，也可以直接写变量，如果遇到数组，可以用map函数枚举数组所有项，但是需要注意的是，标签之间不支持多个语句，最多只支持一个语句。上面用到的map也是一个语句下完成的。不支持if-else判断语句，但是支持三元判断。</p><p>4.<strong>获取dom</strong>。react中支持用<code>ref</code>来获取dom对象，但实际上是react封装的一个React对象。如果要获取原生dom对象，可以使用<code>innerRef</code>。(PS: 这一部分其实涉及起来可以有很多内容，不过先知道这些就好，而且一般也建议少用<code>ref</code>)</p><p>代码2 获取div的React对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// v16之前写法</span><br><span class="line">class MyComponent extends React.Component &#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;div ref=&#123;(myRef) =&gt; &#123;this.myRef = myRef&#125;&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// v16的写法</span><br><span class="line">class MyComponent extends React.Component &#123;</span><br><span class="line">  constructor(props) &#123;</span><br><span class="line">    super(props);</span><br><span class="line">    this.myRef = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;div ref=&#123;this.myRef&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>5.标签中支持写入带html代码的字符串，但是如果直接填入这样的字符串并不会被渲染成相应的内容，因为react也有这方面的安全防御。如果一定要填入这样的字符串，则需要通过<code>dangerouslySetInnerHTML</code>这个属性来传入。`dangerouslySetInnerHTML={{__html: }}`</p><p>代码3 在<code>Content</code>组件中传入带HTML代码的字符串<code>this.props.content</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Content dangerouslySetInnerHTML=&#123;&#123;__html: this.props.content&#125;&#125; /&gt;</span><br></pre></td></tr></table></figure></p><p>6.<strong>JSX语法可以在函数中使用</strong>。一般指函数最后返回的值是直接放在标签中的。其实这些JSX语句在函数中还是以字符串的形式专递的，直到进入<code>render()</code>的return中才会被编译。</p><p>7.<strong>属性</strong>。标签中的属性都是小驼峰命名法。属性支持的值可以是各种类型的（包括Function），也可以是一个执行语句，但是一样不支持多语句，判断语句中只支持三元判断。</p><h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>组件是react中一个很重要的概念。首先，从一个用户来说，整个页面可以分为多个信息块，不同的信息块可以获得不同的信息，而从开发者来说，整个页面可以分为多个开发模块，每个模块都是相对独立，互不干扰，而且有些模块可能在整个网站多个页面都会出现。组件其实就是这些开发模块，它拥有属于自己的数据(信息)，根据自己的样式被渲染到页面上。</p><p>react中组件的写法很简单，上一篇已经提到了JSX语法，针对的就是react的组件。组件中可以直接书写字符串，非引用类型变量，执行一条语句等，也可以什么都不写，自我闭合。</p><p>组件中还可以嵌套子组件，但是前提是子组件必须已经定义或者引入。下面来说一些关于组件开发中的一些需要注意的点：</p><p>1.<strong>组件的返回值只能有一个根元素</strong>。组件的返回值如果不只有一个根元素，则编译的时候回出现报错，无法渲染到页面。一般在实现一个组件时，会在最外层用一个html标签包住内容。</p><p>2.<strong><code>Fragment</code>组件</strong>。有时候因为一些样式的原因，组件最外层的标签会影响页面显示的效果。这个时候可以考虑使用react提供的方案，<code>Fragment</code>。先把<code>Fragment</code>从react中引入，然后把组件最外层的标签替换成<code>&lt;Fragment&gt;</code>。在编译之后，DOM中将不会出现Fragment组件，组件内部直接渲染出来。这样既减少不必要的<code>div</code>标签，还可以保证一些样式的效果。</p><p>3.<strong>React DOM更新</strong>。大家都知道，React是通过虚拟DOM来提高页面性能的。React对DOM的操作其实都是对虚拟DOM的操作。当虚拟DOM的修改完成之后，React在把虚拟DOM跟DOM做比对，把需要更新的部分进行更新。注意，这里是只更新需要更新的部分，其他没变动的部分不会更新。</p><p>4.<strong><code>props</code>跟<code>state</code></strong> 。<code>props</code>跟<code>state</code>其实区别还挺明显的，不过这个还是用得越多也清楚这个区别。<code>props</code>可以理解为传入的参数的集合，因为这个集合内的变量都是传入进来的，所以是不可以修改的。<code>state</code>可以 理解问组件自身的属性值集合，这些属性都是会根据不同状态页面的表现而改变，所以是可以修改的，但是需要调用<code>setState()</code>进行修改，不能随意修改。所有的<code>props</code>在组件外传入，包括父组件，url等等，而<code>state</code>是需要在组件的<code>constructor()</code>中先声明后才可以赋值使用。</p><p>5.<strong><code>super(props);</code></strong> 。在写<code>constructor()</code>，必须要先写一个语句<code>super(props);</code>。我看网上的解释是因为我们写的组件都是继承父类<code>React.component</code>，而我们在组件中写的<code>constructor()</code>会覆盖掉父类的<code>constructor()</code>，导致你父类构造函数没执行，所以手动执行下。</p><p>其他的注意点想到或遇到后更新上来，现在就先写这么多。下一篇会介绍React的父子组件数据传递跟生命周期。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> React </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+            <tag> React </tag>
+            
+            <tag> JSX </tag>
+            
+            <tag> Component </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>Canvas 射击小游戏详解系列(六)</title>
       <link href="/2018/09/07/Canvas-Game-VI/"/>
       <url>/2018/09/07/Canvas-Game-VI/</url>
