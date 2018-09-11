@@ -4,20 +4,16 @@
 
     
   <url>
-    <loc>http://listentolife.github.io/2018/09/12/React-Learning-I/</loc>
-    <lastmod>2018-09-11T16:50:07.213Z</lastmod>
+    <loc>http://listentolife.github.io/2018/09/12/React-Learning/</loc>
+    <lastmod>2018-09-11T16:52:33.742Z</lastmod>
     <data>
         <display>
-        <title>react学习总结系列-react(一)</title>
-        <pubTime>2018-09-11T16:17:14.000Z</pubTime>
+        <title>react学习总结系列-开篇</title>
+        <pubTime>2018-09-11T16:20:52.000Z</pubTime>
         
         <tag>JavaScript</tag>
          
         <tag>React</tag>
-         
-        <tag>JSX</tag>
-         
-        <tag>Component</tag>
          
          
            
@@ -33,16 +29,20 @@
 
     
   <url>
-    <loc>http://listentolife.github.io/2018/09/12/React-Learning/</loc>
-    <lastmod>2018-09-11T16:48:59.047Z</lastmod>
+    <loc>http://listentolife.github.io/2018/09/12/React-Learning-I/</loc>
+    <lastmod>2018-09-11T16:50:07.213Z</lastmod>
     <data>
         <display>
-        <title>React-Learning</title>
-        <pubTime>2018-09-11T16:20:52.000Z</pubTime>
+        <title>react学习总结系列-react(一)</title>
+        <pubTime>2018-09-11T16:17:14.000Z</pubTime>
         
         <tag>JavaScript</tag>
          
         <tag>React</tag>
+         
+        <tag>JSX</tag>
+         
+        <tag>Component</tag>
          
          
            

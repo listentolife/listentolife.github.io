@@ -3,7 +3,7 @@
   
     
     <entry>
-      <title>React-Learning</title>
+      <title>react学习总结系列-开篇</title>
       <link href="/2018/09/12/React-Learning/"/>
       <url>/2018/09/12/React-Learning/</url>
       <content type="html"><![CDATA[<p>前面写了好几篇关于Canvas射击小游戏的博文，内容还总结了挺多的。不过其实在写之前主要的时间都在学习react。react是一个很热门的mvc框架，支持的插件非常多，从小页面到大工程都是可以hold得住，所以很有必要学习react并要熟练的使用。所以连着做了两个项目。一个是找了些学习资料边学边做的，是比较简单的简书PC端网页项目，学习完后就去拿豆瓣的数据做了一个简单的豆瓣app。现在打算开始写新的系列博客，把中间学习react的内容做一下整理回顾，把掌握的东西再加强一下。</p><p>内容主要涉及react框架及使用过或期间学习过的框架的，有一些内容比较多，会结合代码去说，有一些学得比较浅，就先把项目中有用到的先介绍了，以后在慢慢的深入。再者就是做了两个项目了，对项目的分析跟设计也会想说一下。</p><p>先给后面会涉及到的内容做一个列表，然后一项项的完成。</p><p>列表：<br>react框架<br>styled-components插件<br>PropTypes插件<br>redux及react-redux插件<br>redux-thunk及redux-saga插件<br>redux-immutable插件<br>react-router-dom插件<br>react-transition-group插件<br>jest测试</p><p>列表可能会继续更新，然后下一篇将会从react框架开始。</p>]]></content>
