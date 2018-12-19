@@ -245,6 +245,1118 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-IV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/02/Canvas-Game-IV/" itemprop="url">Canvas 射击小游戏详解系列(四)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:32:44+08:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>写着写着内容有点多了，不过还是觉得这些东西记下来还是很有用的。下面开始介绍项目中对象的设计。</p>
+<h3 id="项目中主要对象的设计"><a href="#项目中主要对象的设计" class="headerlink" title="项目中主要对象的设计"></a>项目中主要对象的设计</h3><p>整个项目中最重要的是游戏中的三个对象元素：飞机，怪兽，子弹。</p>
+<h4 id="元素分析"><a href="#元素分析" class="headerlink" title="元素分析"></a>元素分析</h4><p>飞机支持在画布的底部进行左右的连续移动，移动时依赖玩家的操作，并仅支持左右键的操作。飞机还可以进行射击，玩家点击空格键，上键或Enter键会可以让飞机射击出子弹，并且支持连续射击。</p>
+<p>上面总结的飞机行为可以得到，飞机有渲染，移动，临界判断跟射击的功能。需要的参数包括渲染时的画布对象，坐标，飞机图片，飞机尺寸，移动的速度，临界判断的画布上渲染的最大最小x坐标及射击的子弹长度跟移动速度参数。</p>
+<p>怪兽只是在画布上部的一个区域进行从上到下蛇形自动移动。被子弹击中会有爆炸效果并消失。</p>
+<p>上面总结的怪兽行为可以得到，怪兽有渲染，移动，临界判断的功能。需要的参数包括渲染时的画布对象，坐标，怪兽图片，爆炸图片，怪兽尺寸，移动的速度，临界判断的画布上渲染的最大最小x坐标。怪兽的下移移动不在对象中实现。</p>
+<p>子弹通过飞机射击射出，保持一定速度向上移动，如果碰到怪兽会消失，如果一直到达画布顶部也会自动消失。</p>
+<p>上面总结的子弹行为可以得到，子弹有渲染，移动，临界判断，清除的功能。需要的参数包括渲染时的画布对象，坐标，子弹长度，移动的速度。临界判断不在对象中设置方法。</p>
+<h4 id="对象设计"><a href="#对象设计" class="headerlink" title="对象设计"></a>对象设计</h4><p>通过对三个元素的分析，飞机跟怪兽有可抽象成一致的属性(<code>options</code>属性及<code>context</code>画布)跟方法<code>drawing()</code>，<code>move()</code>，<code>translate()</code>。</p>
+<p><code>options</code>传入的参数为JSON对象，包括了大量的参数，如果对象所渲染到画布上的图片，图片渲染的坐标点，图片尺寸，在画布上的可渲染的最大最小x坐标，移动速度等。Plane父类跟Enemy子类的<code>options</code>传入的参数会有差异，但是做了抽象统一。</p>
+<p>两个元素的移动可以统一实现，所以我让怪兽的构造函数继承飞机的构造函数。</p>
+<p>Enemy类虽然继承了Plane类，但是还是有一些差异点。Plane类中还有一个创建子弹的<code>shoot()</code>方法，这个方法也有被Enemy类继承，但是当前项目中Enemy类的实例并没有使用这个类，是存在代码冗余的问题。但是也支持了项目进一步优化，Enemy类的实例可以进一步提高难度，增加项目的趣味。</p>
+<p>Enemy类的方法<code>drawing()</code>做了重写，因为怪兽有一个爆炸的渲染判断，涉及判断是否存活(属性<code>isLive</code>)。</p>
+<p>子弹的行为跟前两者不同，虽然也是一样的属性，但是方法基本需要重写，所以不做继承。</p>
+<h3 id="键盘对象设计"><a href="#键盘对象设计" class="headerlink" title="键盘对象设计"></a>键盘对象设计</h3><p>因为飞机的移动跟射击都是支持连续，如果只是在Game对象中实现键盘事件监听，实际的移动跟射击都会有卡顿感，所以把键盘事件转换成点击状态，效果上会更加顺畅。</p>
+<p>键盘对象包括了左右上键，空格键，Enter键的状态，并把<code>document.onkeydown</code>跟<code>document.onkeyup</code>都指向了自身的方法，在放在中判断键盘按键是否按下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @constructor KeyBoard</span><br><span class="line"> * @description 键盘监听对象</span><br><span class="line"> * @see The &lt;a href=&quot;#&quot;&gt;KeyBoard&lt;/a &gt;.</span><br><span class="line"> * @example </span><br><span class="line"> * this.keyBoard = new KeyBoard();</span><br><span class="line"> */</span><br><span class="line">function KeyBoard () &#123;</span><br><span class="line">  document.onkeydown = this.keydown.bind(this);</span><br><span class="line">  document.onkeyup = this.keyup.bind(this);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">KeyBoard.prototype = &#123;</span><br><span class="line">  pressedLeft: false, // 是否点击左键</span><br><span class="line">  pressedRight: false, // 是否点击右键</span><br><span class="line">  pressedUp: false, // 是否按了上报</span><br><span class="line">  pressedSpace: false, // 是否按了上报</span><br><span class="line">  pressedEnter: false, // 是否按了上报</span><br><span class="line">  keydown: function (event) &#123;</span><br><span class="line">    // 判断哪个按键按下，修改按键状态</span><br><span class="line">  &#125;,</span><br><span class="line">  keyup: function (event) &#123;</span><br><span class="line">    // 判断哪个按键松开，修改按键状态</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>除了这几个对象的设计，因为还涉及对象的继承，所以还另外齐起了一个文件common.js放处理继承父类原型对象的函数<code>inheritPrototype()</code>。具体的介绍可以会看上一篇关于继承的介绍。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @description 继承父类原型对象的函数</span><br><span class="line"> * @param &#123;Object&#125; subType 子类对象</span><br><span class="line"> * @param &#123;Object&#125; subType 父类对象</span><br><span class="line"> */</span><br><span class="line">var inheritPrototype = function (subType, superType) &#123;</span><br><span class="line">  // 把父类对象的原型对象赋值给proto</span><br><span class="line">  var protoType = Object.create(superType.prototype);</span><br><span class="line">  // proto的constructor指向子类对象，进行重置</span><br><span class="line">  protoType.constructor = subType;</span><br><span class="line">  // 把子类的原型指向原型</span><br><span class="line">  subType.prototype = protoType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于对象中设计到的Canvas的部分，下一篇将介绍。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-III/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/02/Canvas-Game-III/" itemprop="url">Canvas 射击小游戏详解系列(三)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:21:32+08:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>上一篇讲了一下创建对象的三种模式，本篇就来讲一下继承。</p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><p>这里说的继承是指构造函数的继承。一般继承是在设计中把一些不同类型的对象的共同点抽象出来，或者是在原有的构造函数中继承出新的构造函数，减少代码冗余。</p>
+<p>继承可以使子类拥有父类的属性跟方法，而且不会出现重复的代码。</p>
+<p>最简单的方式就是在子类的构造函数中创建一个父类的实例对象，再把子类自有的属性跟对象添加到这个实例对象上，在返回出来。</p>
+<p>代码1 项目中怪兽子类继承飞机父类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.move = function () &#123;</span><br><span class="line">  // 飞机每帧移动</span><br><span class="line">&#125;</span><br><span class="line">// 其他方法省略</span><br><span class="line"></span><br><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  this.prototype = new Plane(option, context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种方案虽然能实现子类对父类的继承，但是出现了以下的几个问题：子类的实例对象的constructor指向了父类的构造函数，原因是子类构造函数中先创建了一个父类的实例对象，这个对象的constructor肯定指向父类的构造函数。<br>因此，在上面的代码基础上，还需要把constructor指向自身，可以解决这个问题了。</p>
+<p>代码2 项目中怪兽子类继承的优化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  this.prototype = new Plane(option, context);</span><br><span class="line">  this.protptype.constructor = Enemy;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是，这里可以看到，有些方法可能会需要重写，这个问题不大，但是会有属性覆盖父类属性的问题，所以这点也是需要优化的，减少创建出来的对象的冗余。</p>
+<p>这里要补充一个，还可以直接通过<code>call()</code>绑定父类构造函数进行继承，但是写在原型上的方法都没法用。但是也是我们参考的一个点</p>
+<p>代码3 项目中怪兽子类绑定飞机父类构造函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function Enemy (option, context) &#123;</span><br><span class="line">  Plane.call(this, option, context);</span><br><span class="line">  // 其他省略</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>以上的问题点其实都是在如何可以准确的继承父类的方法，减少属性覆盖，又保证子类constructor指向子类的构造函数。这里我用到了这个项目前学习到的继承方案，包括以下的函数</p>
+<p>代码4 <code>inheritPrototype()</code>方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @description 继承父类原型对象的函数</span><br><span class="line"> * @param &#123;Object&#125; subType 子类对象</span><br><span class="line"> * @param &#123;Object&#125; subType 父类对象</span><br><span class="line"> */</span><br><span class="line">var inheritPrototype = function (subType, superType) &#123;</span><br><span class="line">  // 把父类对象的原型对象赋值给proto</span><br><span class="line">  var protoType = Object.create(superType.prototype);</span><br><span class="line">  // proto的constructor指向子类对象，进行重置</span><br><span class="line">  protoType.constructor = subType;</span><br><span class="line">  // 把子类的原型指向原型</span><br><span class="line">  subType.prototype = protoType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个方案利用了构造函数继承跟上面的<code>inheritPrototype()</code>方法。前者继承了父类的属性，后者函数继承了父类原型中的所有方法。最终的效果如下：</p>
+<p>代码5 项目中的继承设计<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option,context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Enemy(options,context) &#123;</span><br><span class="line">  // 继承父类Plane的属性</span><br><span class="line">  Plane.call(this, options, context);</span><br><span class="line">&#125;</span><br><span class="line">// 继承父类Plane的原型</span><br><span class="line">inheritPrototype(Enemy, Plane);</span><br><span class="line"></span><br><span class="line">Enemy.prototype.drawing = function () &#123;</span><br><span class="line">  // 重写方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下一篇介绍项目中对象的设计。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/02/Canvas-Game-II/" itemprop="url">Canvas 射击小游戏详解系列(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:16:53+08:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>接下来会介绍关于游戏项目中关于对象的设计，但在这之前想先对JavaScript对象做一些总结，然后再介绍项目的对象设计。这里会分三篇介绍。</p>
+<h3 id="JavaScript创建对象的三种模式"><a href="#JavaScript创建对象的三种模式" class="headerlink" title="JavaScript创建对象的三种模式"></a>JavaScript创建对象的三种模式</h3><p>js创建对象的三种模式有工厂模式，构造函数模式及原型模式。</p>
+<p>其实正常来说，创建一个对象是可以直接声明一个Object类型，但是如果需要创建多个对象的时候，这个方法显然不利于开发。而且很多时候需要创建的对象都有一些相似点，比如同一类型，同样的属性跟方法。如果能有一种方式可以用相同的代码处理创建对象的话，就可以提高代码的性能了。上面提及的三种模式就是解决方案。</p>
+<h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><p>工厂模式就是通过传参给一个函数方法，在函数中进行对象的创建，赋值，然后返回。</p>
+<p>代码1 项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function createPlane (option, context) &#123;</span><br><span class="line">  var plane = new Object();</span><br><span class="line">  plane.opts = option;</span><br><span class="line">  plane.context = context;</span><br><span class="line">  plane.drawing = function () &#123;</span><br><span class="line">    // 画布上渲染图片</span><br><span class="line">  &#125;</span><br><span class="line">  plane.move = function () &#123;</span><br><span class="line">    // 飞机每帧移动</span><br><span class="line">  &#125;</span><br><span class="line">  // 其他方法省略</span><br><span class="line">  return plane;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var plane1 = createPlane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>这种方式创建对象比较简单，只需要知道创建对象的函数跟传入需要的参数即可。其不足在于两点：工厂模式是通过函数方法来创建对象，而不是通过new方法来创建，这样的创建方式不够直观，还是会有一些冗余的代码；工厂模式所返回的对象，在后面的程序中，无法识别对象类型，只能识别是Object类型。</p>
+<p>所以就有了构造函数模式。</p>
+<h3 id="构造函数模式"><a href="#构造函数模式" class="headerlink" title="构造函数模式"></a>构造函数模式</h3><p>这种模式是先声明一个构造函数，然后通过new来创建对象。</p>
+<p>代码2  项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">  this.drawing = function () &#123;</span><br><span class="line">    // 画布上渲染图片</span><br><span class="line">  &#125;</span><br><span class="line">  this.move = function () &#123;</span><br><span class="line">    // 飞机每帧移动</span><br><span class="line">  &#125;</span><br><span class="line">  // 其他方法省略</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var plane2 = new Plane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>代码2跟代码1的对比中可以发现，工厂模式是在函数内部通过new一个对象再返回，但是构造函数模式中，new是在构造函数外面，而且函数内部是通过this来进行赋值的。</p>
+<p>在构造函数模式中，程序是先执行了new关键词，即创建了一个对象。然后把构造函数的作用域赋值给了这个对象，也就是构造函数的this指针指向这个对象。然后执行函数，这期间会把属性跟方法全部赋值给这个对象。最后再把对象返回出来。</p>
+<p>构造函数的优点也比较明显，它避免了工厂模式的两个不足。通过构造函数创建的对象，其实就是这个构造函数的一个实例。我们就可以通过<code>instanceof</code>方法判断一个对象的构造函数。</p>
+<p>代码3 instanceof判断对象是否是某个构造函数的实例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">console.log(plane2 instanceof Plane); // true</span><br></pre></td></tr></table></figure></p>
+<p>不过，构造函数模式也有它的一些不足。构造函数所创建出来的每个实例对象都会包含一些属性跟方法，而方法其实在所有实例对象中的功能都是一样的。而这些方法实际上也是Function的实例对象，这样就出现了不必要的冗余，这些方法应该实现复用。</p>
+<p>下面的原型模式就能解决这个不足。</p>
+<h3 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h3><p>原型模式就是利用到JavaScript中对象的原型prototype来实现的。</p>
+<p>每个构造函数上都会有一个属性prototype。prototype就是原型，也是一个对象，而且这个对象prototype是所有通过同一构造函数创建(new)的实例对象所共享的(实际上在浏览器console窗口打印每个实例对象，显示的是属性<code>__proto__</code>指向prototype，实际开发中只要用prototype就好)。prototype下的constructor指向实例对象的构造函数。</p>
+<p>代码4 判断实例的prototype<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object.prototype.isPrototypeOf(object1) // 判断object1挂载的prototype是不是Object的</span><br></pre></td></tr></table></figure></p>
+<p>原型模式根据JavaScript的原型原理，在构造函数的基础上，把方法放到了prototype对象下。创建对象的方法跟构造函数模式一样，内部创建对象的流程也差不多，也是先执行new关键词，创建一个对象，然后把函数的this指向这个对象，在执行属性赋值跟方法声明时，把方法都放在this.prototype原型对象中。</p>
+<p>代码5 项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.move = function () &#123;</span><br><span class="line">  // 飞机每帧移动</span><br><span class="line">&#125;</span><br><span class="line">// 其他方法省略</span><br><span class="line"></span><br><span class="line">var plane3 = new Plane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>这样的创建对象模式，可以使构造函数创建的实例对象，共享原型中的方法。但是也会有问题存在，这个问题是共享本身的问题。当所有的实例对象共享原型时，就可能出现数据污染的情况。</p>
+<p>数据污染的原因在于JavaScript的数据存储方式。JavaScript的数据分为值类型跟引用类型，值类型就是一个变量储存一个值，而引用类型就是一个变量指向内存的一个地址，这个地址储存一个值。值类型变量的赋值是深赋值，赋值完成后两个变量的操作互不影响，但是引用类型的变量之间的赋值其实是复制了指针，这就导致一个变量对指针指向的值进行修改时，另一个变量的值也会跟着改变，就会出现数据污染。</p>
+<p>所以，在使用原型模式时，一般把函数方法放在原型prototype中。</p>
+<p>下一篇介绍继承。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/16/Canvas-Game-I/" itemprop="url">Canvas 射击小游戏详解系列(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T23:30:14+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。</p>
+<p>整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的框架已经建好，主要的功能逻辑代码及对象文件都是自己设计实现的。整个项目的关键点是JavaScript中的面向对象设计跟Canvas。页面的渲染都是通过Canvas进行渲染，然后把整个游戏设计成一个对象，里面的角色及零件也都是设计成一个个的对象。下面就给整个项目做一个详细的分析。</p>
+<h2 id="项目整体分析"><a href="#项目整体分析" class="headerlink" title="项目整体分析"></a>项目整体分析</h2><p>虽然项目的框架并不是自己设计的，但是毕竟整个设计还是非常好的，值得我们去分析，所以我就先把整个游戏的框架跟自己的设计做一下分析。</p>
+<p>游戏页面分为四个部分，根据游戏的状态进行切换展示：游戏首页，游戏成功页面，游戏失败页面及游戏通关页面，通过状态start, failed, success及all-success来控制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data-status=&quot;start&quot;] .game-intro &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg.png) no-repeat 430px 180px;</span><br><span class="line">  background-size: 200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[data-status=&quot;failed&quot;] .game-failed, </span><br><span class="line">[data-status=&quot;success&quot;] .game-success,</span><br><span class="line">[data-status=&quot;all-success&quot;] .game-all-success &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg-end.png) no-repeat 380px 190px;</span><br><span class="line">  background-size: 250px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此，整个游戏就设计成一个名为GAME的对象进行管理。当页面渲染完之后，GAME对象就会进行初始化，设定最初的状态为start，即展示游戏首页，并初始化四个部分的按钮，设置监听事件。</p>
+<p>这就是项目原有的框架部分。后面为我根据框架跟游戏设计实现的部分。</p>
+<p>不同的按钮会根据游戏状态设置不同的触发内容，不过因为游戏最初，游戏失败后及游戏通关后重玩的触发内容都是从一个新的游戏开始玩起，所以内容都是初始化游戏数据<code>dataInit()</code>及开始游戏<code>play()</code>，只有游戏通关后继续不需要初始化游戏数据即可进入游戏。</p>
+<p>初始化游戏数据<code>dataInit()</code>主要是实现一些游戏的配置数据，比如游戏关卡数，游戏分数及怪兽和飞机的配置数据等。</p>
+<p>开始游戏<code>play()</code>操作比较多，所以把步骤都拆分成独立的函数方法：<code>setState()</code>用于设置游戏状态，<code>dataReset()</code>用于重置游戏关卡数据，包括难度，位置及键盘监听，<code>createObject()</code>用于创建初始化画布上的对象，比如小飞机，怪兽等，最后的<code>animate()</code>则设置动画效果，涉及渲染画布上所有对象每一帧的变化及位移，并判断游戏的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">play: function () &#123;</span><br><span class="line">    this.setStatus(&apos;playing&apos;);</span><br><span class="line">    // 重置每一关数据</span><br><span class="line">    this.dataReset();</span><br><span class="line">    // 创建画布上飞机，怪兽军团及分数的初始化对象</span><br><span class="line">    this.createObject();</span><br><span class="line">    // 开始动画</span><br><span class="line">    this.animate();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这里就大致的说明了一下这个小游戏项目框架的设计。下一篇会分析项目中对象的设计。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/" itemprop="url">《高性能JavaScript》读书笔记(四)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-26T22:15:32+08:00">
+                2018-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《高性能JavaScript》第四章主要涉及算法跟流程控制，包括循环，条件语句和递归的优化。下面就开始吧。</p>
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><h4 id="四种循环类型"><a href="#四种循环类型" class="headerlink" title="四种循环类型"></a>四种循环类型</h4><p>四种循环类型包括 for循环，while循环，do-while循环及for-in循环。</p>
+<p>这四种循环类型都有各自的特点，适用于不同的实现需求。比如while循环是前侧循环，适合需要在进入循环前开始判断的操作，而do-while循环则适合最少需要循环一次才开始判断的操作。for循环比较直观，当然也并不是最简单的，而for-in是针对对象的，可以枚举任何对象的属性名，但是是性能最差的。</p>
+<h4 id="循环优化"><a href="#循环优化" class="headerlink" title="循环优化"></a>循环优化</h4><p>循环的优化上，给出了这几点建议：</p>
+<h5 id="尽量不使用for-in循环"><a href="#尽量不使用for-in循环" class="headerlink" title="尽量不使用for-in循环"></a>尽量不使用for-in循环</h5><p>for-in循环的性能最差，因为其主要针对对象，虽然表面上很简单，但是在循环的时候却因每次迭代操作都会同时搜索实例或原型属性，所以会产品更多的开销，所以是最慢的。针对对象的遍历，书中提出一种方案：如果知道对象的所有属性，则可以用一个数组存储所有的属性名，然后遍历数组会更快：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var props = [&quot;prop1&quot;, &quot;prop2&quot;],</span><br><span class="line">		i = 0;</span><br><span class="line"></span><br><span class="line">while (i &lt; props.length) &#123;</span><br><span class="line">	process(object[props[i++]]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="减少迭代的工作量"><a href="#减少迭代的工作量" class="headerlink" title="减少迭代的工作量"></a>减少迭代的工作量</h5><p>一般的数组循环，其循环体中都会有以下的操作：</p>
+<ol>
+<li>在控制条件中查找一次属性 (<code>item.length</code>)；</li>
+<li>在控制条件中执行一次数值比较 (<code>i &lt; items.length</code>)；</li>
+<li>一次比较操作查看控制条件的计算结果是否为true (<code>i &lt; item.length == true</code>)；</li>
+<li>一次自增操作 (<code>i++</code>)；</li>
+<li>一次数组查找 (<code>items[i]</code>)；</li>
+<li>一次函数调用 (<code>process(items[i])</code>)。</li>
+</ol>
+<p>一个本来迭代次数有限的循环，是没办法考虑从迭代上做优化的，所以可以从每一次都会执行的循环体中着手优化，每优化一个操作，就可以得到客观的性能提升。书中给出的两条优化建议是：</p>
+<ol>
+<li>把查找属性的操作在初始化时就复制到一个局部变量中，即可减少第一个操作；</li>
+<li>如果，循环数组的顺序跟结果无关，则可以考虑倒序处理。因为倒序的时候，只需要判断控制条件是否为true(除非控制条件为0，则都是true)，不需要再做一次比较。</li>
+</ol>
+<h5 id="减少迭代次数"><a href="#减少迭代次数" class="headerlink" title="减少迭代次数"></a>减少迭代次数</h5><p>如果遇到一个迭代次数非常多，则可以考虑下如何减少迭代次数上下手。书中介绍一种限制迭代次数的模式，“达夫设备(Duff’s Device)”。这种模式可以在一次迭代中执行多次迭代的操作。下面是例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">var iterations = Math.floor(items.length / 8),</span><br><span class="line">		startAt = items.length % 8,</span><br><span class="line">		i = 0;</span><br><span class="line">		</span><br><span class="line">do &#123;</span><br><span class="line">	switch(startAt)&#123;</span><br><span class="line">		case 0: process(items[i++]);</span><br><span class="line">		case 7: process(items[i++]);</span><br><span class="line">		case 6: process(items[i++]);</span><br><span class="line">		case 5: process(items[i++]);</span><br><span class="line">		case 4: process(items[i++]);</span><br><span class="line">		case 3: process(items[i++]);</span><br><span class="line">		case 2: process(items[i++]);</span><br><span class="line">		case 1: process(items[i++]);</span><br><span class="line">	&#125;</span><br><span class="line">	startAt = 0;</span><br><span class="line">&#125; while (--iterations);</span><br></pre></td></tr></table></figure>
+<p>假设原来的迭代次数为n(8(x) &lt; n &lt;= 8(n+1))，则这种模式可以把迭代次数减少至(n+1)次。书中还提供了用while代替switch的方案，还可以在优化迭代的速度。</p>
+<h5 id="基于函数的迭代"><a href="#基于函数的迭代" class="headerlink" title="基于函数的迭代"></a>基于函数的迭代</h5><p>基于函数的迭代方法foreach()在使用上是非常方便的，但是因为每个循环中都必须调用一个外部方法，所以性能上还是比基于循环的迭代要慢一些。</p>
+<h3 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h3><h4 id="两种条件语句的选择"><a href="#两种条件语句的选择" class="headerlink" title="两种条件语句的选择"></a>两种条件语句的选择</h4><p>条件语句分if-else跟switch。当判断条件跟分支操作较少时，if-else语句更易读，而当判断条件跟分支操作较多时，switch语句则更易读。当判断条件跟分支操作较少时，if-else跟switch性能上没有什么区别，只有判断更加复杂的情况下才会让switch的性能突出。</p>
+<h4 id="if-else优化"><a href="#if-else优化" class="headerlink" title="if-else优化"></a>if-else优化</h4><p>如果中需要做大量的顺序或大小的判断，不管是if-else或者switch语句，最多都是要遍历完所有条件。书中提出可以考虑二分法的优化思路，根据判断条件的顺序或大小，优先跟居中的判断值做比较，从而把最大的判断次数减半。实现的例子如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">if (value &lt; 6) &#123;</span><br><span class="line">	if (value &lt; 3) &#123;</span><br><span class="line">		if (value == 0) &#123;</span><br><span class="line">			return result0;</span><br><span class="line">		&#125; else if (value == 1) &#123;</span><br><span class="line">			return result1;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			return result2;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		if (value == 3) &#123;</span><br><span class="line">			return result3;</span><br><span class="line">		&#125; else if (value == 4) &#123;</span><br><span class="line">			return result4;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			return result5;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">	if (value &lt; 8) &#123;</span><br><span class="line">		if (value == 6) &#123;</span><br><span class="line">			return result6;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			return result7;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		if (value == 8) &#123;</span><br><span class="line">			return result8;</span><br><span class="line">		&#125; else if (value == 9) &#123;</span><br><span class="line">			return result9;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			return result10;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查找表"><a href="#查找表" class="headerlink" title="查找表"></a>查找表</h4><p>如果是判断大量的离散值，判断的结果只需要一个值而不是一系列的操作，那还可以通过构建查找表进行优化。查找表的优势在于它是通过键值对直接找到处理值，不需要通过判断语句，即使离散值增加，也不会产生更多的性能开销。</p>
+<h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><p>递归可以把复杂的算法变得很简单，可以把很复杂的执行过程大大的简化。但是递归也有一些问题点。比如当执行的计算较长时，会使整个系统进入假死状态，而且会有浏览器调用栈的限制。而这些问题，都可能是在设计的初期并没有意识到的。</p>
+<p>一般递归有两种模式，一种的直接递归，函数调用函数自身，如比较经典的阶乘函数。另一种是“隐伏模式”，是两个函数互相调用，这种模式在出错调试时会非常棘手。</p>
+<p>一般递归函数出现调用栈溢出的原因在于不正确的终止条件，如果终止条件没有问题，则需要考虑为了浏览器安全。书中给出了两种方案：迭代跟Memoization。</p>
+<p>迭代虽然在速度上快不过递归，但是由于它相对对浏览器友好，所以一旦程序遇到调用栈溢出的问题，就需要考虑迭代的实现方案。</p>
+<p>Memoization是一种缓存阶段计算的方案。在方案中，会有一个数组专门存储阶段性的计算值，这些计算值本身可能在不被存储的时候回因程序需要而不断的被计算获得。当存在一个数组能存储下这些阶段性的计算值时，函数被调用的越多，其重复的计算工作会得到控制，整个函数的性能会逐渐稳定。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这章内容主要是在程序流程上的优化，减少代码的执行量跟解决代码的风险问题。现在比较多的项目都会需要考虑大规模的并发跟流量，所以程序上的小小优化，风险上的细心处理，都能对项目有很大的帮助。值得学习。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/25/High-Performance-JavaScript-Reading-Note-III/" itemprop="url">《高性能JavaScript》读书笔记(三)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T08:35:07+08:00">
+                2018-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。</p>
+<h3 id="DOM操作的优化问题"><a href="#DOM操作的优化问题" class="headerlink" title="DOM操作的优化问题"></a>DOM操作的优化问题</h3><p>DOM操作涉及以下三类问题：</p>
+<ol>
+<li>访问和修改DOM元素</li>
+<li>修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow)</li>
+<li>通过DOM事件处理与用户的交互</li>
+</ol>
+<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>DOM，文档对象模型，是独立于语言，用于操作XML跟HTML文档的程序接口。DOM是有规范的，但是实现是由各个浏览器方独自实现支持，因此，我们在开发页面时，需要对不同的浏览器做不同的兼容处理（比如IE，不过现在IE已经很少了）。</p>
+<p>DOM是程序接口，我们在开发的时候，会根据需求去实现页面与用户的互动。但因为DOM是独立的，每次需要获取节点都需要各种调用，因此这些调用的增多会影响页面的性能。</p>
+<h4 id="DOM访问与修改"><a href="#DOM访问与修改" class="headerlink" title="DOM访问与修改"></a>DOM访问与修改</h4><p>其实DOM的访问跟修改可以联系上一章提及的嵌套对象的内容。DOM中的每个节点都是一个对象，如果节点下存在子节点，则这个节点就是一个嵌套对象的例子。其一是DOM是程序接口，相对独立，调用接口都是存在一定的响应时间；其二是DOM中存在大量的嵌套对象，在搜索查询上也是需要一定的处理时间。因此，DOM的访问与修改会存在以下优化点：</p>
+<ol>
+<li>DOM的重复调用</li>
+<li>DOM集合元素的重复查询</li>
+<li>准确的获得DOM元素集合</li>
+</ol>
+<h4 id="DOM的重复调用"><a href="#DOM的重复调用" class="headerlink" title="DOM的重复调用"></a>DOM的重复调用</h4><p>简单的说，开发中经常会把后端穿来的数据修改渲染到页面上，书中提到最坏的情况是循环访问或修改元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function innerHTMLLoop () &#123;</span><br><span class="line">	for (var count = 0; count &lt; 15000; count++) &#123;</span><br><span class="line">		document.getElementById(&apos;here&apos;).innerHTML += &apos;a&apos;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码的问题在于每次循环中都会读取一次跟重写一次<code>innerHTML</code>，而且循环次数越多，读取跟重写都会不断增加。</p>
+<p>所以，优化的方案是，先把需要添加的节点保存在局部变量中，然后在一次性读取跟重写页面结构。<br>如果出现大量的重复节点，则可以考虑克隆已有的元素，即使用<code>element.cloneNode()</code>替代<code>document.createElement()</code>。</p>
+<h4 id="DOM元素集合的重复查询"><a href="#DOM元素集合的重复查询" class="headerlink" title="DOM元素集合的重复查询"></a>DOM元素集合的重复查询</h4><p>HTML集合是包含DOM节点引用的类数组对象，包括我们常用的<code>document.getElementByName()</code>，<code>document.images</code>等类似的方法所得到的元素集合。这些元素集合只是一个类似数组的列表，但同样提供了类似数组的<code>length</code>属性。</p>
+<p>首先，在利用<code>document.getElementByName()</code>这类查询方法的时候，因为每次查询都会调用document，所以查询的速度回比较慢。但当因为需要多次获取元素集合的属性时，则会形成一个非常大的性能消耗。</p>
+<p>另外，元素集合的<code>length</code>属性不同于数组的<code>length</code>属性，不仅当HTML文档发生更新的时候会自动更新，当调用它的时候也会重复查询，加上集合中的元素都是DOM对象，查询速度更慢，消耗更大。</p>
+<p>解决的方案，重点放在减少对<code>document</code>的调用跟文档查询。当遇到需要重复调动<code>document.getElementByName()</code>这类查询方法，可以根据不同的情况，进行不同的优化。比如当需要重复查询同一个DOM节点时，可以考虑用局部变量去复制；当代码中多次需要调动document的方法时，也可以先把document复制到局部变量中(这个做法也有风险，当HTML文档结构发生改变时，局部变量是不会改变的)；当需要多次调用<code>length</code>属性时，同样先用局部变量存储下来，再执行其他操作。</p>
+<h4 id="准确的获得DOM元素集合"><a href="#准确的获得DOM元素集合" class="headerlink" title="准确的获得DOM元素集合"></a>准确的获得DOM元素集合</h4><p>大多数情况下，我们都是需要获得一些准确的DOM元素集合进行操作，但是存在两类问题：有些方法得到的元素集合会比我们需要的要多(比如空的文本节点)，这个时候就会在处理集合是需要花时间去过滤筛选的；另外，获取DOM元素集合的调用太复杂。因此，有两类方法可以更准确的获取DOM元素集合：</p>
+<ol>
+<li>使用以下表格(书中给出的)左边的属性，替代右边的属性，可以更准确的获得DOM元素集合：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">属性名</th>
+<th style="text-align:left">被替代的属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">children</td>
+<td style="text-align:left">childNodes</td>
+</tr>
+<tr>
+<td style="text-align:left">ChildElementCount</td>
+<td style="text-align:left">childNodes.length</td>
+</tr>
+<tr>
+<td style="text-align:left">firstElementChild</td>
+<td style="text-align:left">firstChild</td>
+</tr>
+<tr>
+<td style="text-align:left">lastElementChild</td>
+<td style="text-align:left">lastChild</td>
+</tr>
+<tr>
+<td style="text-align:left">nextElementSibling</td>
+<td style="text-align:left">nextSibling</td>
+</tr>
+<tr>
+<td style="text-align:left">previousElementSibling</td>
+<td style="text-align:left">previousSibling</td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li>使用<code>querySeletorALL()</code>方法跟<code>querySeletor()</code>方法。这两个方法可以免掉多次使用<code>getElementById()</code>跟<code>getElementByClass()</code>这类方法，通过CSS选择器一步到位。</li>
+</ol>
+<h3 id="重排-reflow-与重绘-repaint"><a href="#重排-reflow-与重绘-repaint" class="headerlink" title="重排(reflow)与重绘(repaint)"></a>重排(reflow)与重绘(repaint)</h3><p>简单的说，HTML文档跟CSS文件在首次加载时，得到DOM树跟渲染树，然后才会开始绘制。当DOM出现变化时，浏览器就需要重新计算元素的几何属性，并重新构造渲染树，这个过程叫重排(reflow)。浏览器也会重新绘制受影响的部分，这个过程叫重绘(repaint)。但有些情况下只会发生重绘，不需要重排。每次重排跟重绘都会导致页面的反应迟钝，使客户体验变差。所以我们要了解什么情况会触发重排跟重绘。</p>
+<h4 id="触发重排的条件"><a href="#触发重排的条件" class="headerlink" title="触发重排的条件"></a>触发重排的条件</h4><p>这些情况下会发生重排：</p>
+<ol>
+<li>添加或删除可见的DOM元素</li>
+<li>元素位置改变</li>
+<li>元素尺寸改变(包括：外边距、内边距、边框厚度、宽度、高度等属性改变)</li>
+<li>内容改变，例如：文本改变或图片被另一个不同尺寸的图片替代</li>
+<li>页面渲染器初始化</li>
+<li>浏览器窗口尺寸改变</li>
+</ol>
+<p>也有当滚动条出现时触发整个页面的重排。</p>
+<h4 id="触发重绘的条件"><a href="#触发重绘的条件" class="headerlink" title="触发重绘的条件"></a>触发重绘的条件</h4><p>重绘只发生在当元素的可见的外观被改变，但并没有影响到布局的时候。比如背景颜色，字体颜色。</p>
+<h4 id="渲染树渲染队列与刷新"><a href="#渲染树渲染队列与刷新" class="headerlink" title="渲染树渲染队列与刷新"></a>渲染树渲染队列与刷新</h4><p>大多数浏览器是通过队列来修改并批量执行重排过程，这样可以优化并降低消耗，但同时也会让程序在不知不觉中就触发了重排。以下获取布局信息的方法会导致列队刷新：</p>
+<ol>
+<li>offsetTop, offsetLeft, offsetWidth, offsetHeight</li>
+<li>scrollTop, scrollLeft, scrollWidth, scrollHeight</li>
+<li>clientTop, clientLeft, clientWidth, clientHeight</li>
+<li>getComputedStyle() (currentStyle in IE)</li>
+</ol>
+<p>这些方法需要返回最新的布局信息，浏览器就会不得不执行渲染队列中待处理的变化并触发重排以返回正确的值。</p>
+<h4 id="最小化重绘与重排"><a href="#最小化重绘与重排" class="headerlink" title="最小化重绘与重排"></a>最小化重绘与重排</h4><p>以下的几种方式可以减少重绘与重排的次数：</p>
+<ol>
+<li>改变样式。改变样式时，如果要对元素进行多个样式的修改，可以用<code>element.style.cssText</code>来一次处理，代替掉对每个样式单独的修改；</li>
+<li>修改DOM。修改DOM时，有几个思路可以参考：可以把需要修改的DOM元素脱离文档流，再做修改，最后再放回文档中；可以把需要修改的DOM元素复制出来，修改完毕后直接替换到文档中；</li>
+<li>减少使用会触发渲染队列刷新的方法；</li>
+<li>让元素脱离动画流。当页面有带动画交互效果的元素时，最好在动画开始前把动画的元素做绝对定位，同时把其他元素先移到动画结束时的位置，再执行动画效果。这样可以减少动画过程中这个页面的大规模重排；</li>
+<li>针对IE，减少大规模使用:hover。</li>
+</ol>
+<h3 id="通过DOM事件处理与用户的交互"><a href="#通过DOM事件处理与用户的交互" class="headerlink" title="通过DOM事件处理与用户的交互"></a>通过DOM事件处理与用户的交互</h3><p>现在很多页面都是存在大量的交互，而这些交互如果都要单独绑定事件处理器，则会应该性能。因此，书中提出建议使用事件代理，只需在外层元素绑定一个处理器，来处理所有子元素上触发的事件。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本章主要是针对DOM做优化，更多的是讨论如何减少DOM的调用修改。每种操作都可以根据不同的需求进行不同的实现以达到优化的目的。</p>
+<p>文中用到的代码参考《高性能JavaScript》第三章。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/18/High-Performance-JavaScript-Reading-Note-II/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1026,7 +2138,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1037,7 +2149,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1048,7 +2160,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1121,6 +2233,17 @@
 
 
 
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
 
         
 

@@ -4,6 +4,168 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2018/12/19/Vuejs-Slots/</loc>
+    <lastmod>2018-12-19T11:21:56.870Z</lastmod>
+    <data>
+        <display>
+        <title>Vue.js插槽组件</title>
+        <pubTime>2018-12-19T00:18:17.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>Vue</tag>
+         
+        <tag>Slots</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="Vue" url="http://listentolife.github.io/categories/JavaScript/Vue/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/12/19/Vuejs-Note-I/</loc>
+    <lastmod>2018-12-19T00:17:12.135Z</lastmod>
+    <data>
+        <display>
+        <title>Vue.js散记</title>
+        <pubTime>2018-12-19T00:15:35.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>Vue</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="Vue" url="http://listentolife.github.io/categories/JavaScript/Vue/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/12/19/Algorithm-Analysis-Note-I/</loc>
+    <lastmod>2018-12-19T00:14:39.657Z</lastmod>
+    <data>
+        <display>
+        <title>算法分析笔记</title>
+        <pubTime>2018-12-19T00:05:36.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>Algorithm Analysis</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="Algorithm Analysis" url="http://listentolife.github.io/categories/JavaScript/Algorithm-Analysis/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/12/19/React-Learning-React-Redux/</loc>
+    <lastmod>2018-12-19T00:03:28.076Z</lastmod>
+    <data>
+        <display>
+        <title>react学习总结系列-redux&react-redux</title>
+        <pubTime>2018-12-18T23:57:58.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>React</tag>
+         
+        <tag>redux</tag>
+         
+        <tag>react-redux</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="React" url="http://listentolife.github.io/categories/JavaScript/React/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/12/19/React-Learning-Styled-Components/</loc>
+    <lastmod>2018-12-18T23:56:38.191Z</lastmod>
+    <data>
+        <display>
+        <title>react学习总结系列-styled-components</title>
+        <pubTime>2018-12-18T23:54:08.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>React</tag>
+         
+        <tag>style-components</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="React" url="http://listentolife.github.io/categories/JavaScript/React/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/11/24/React-Learning-II/</loc>
+    <lastmod>2018-11-24T13:40:07.497Z</lastmod>
+    <data>
+        <display>
+        <title>react学习总结系列-react(二)</title>
+        <pubTime>2018-11-24T13:29:27.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>React</tag>
+         
+        <tag>React组件通信</tag>
+         
+        <tag>React Lifecycle</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="React" url="http://listentolife.github.io/categories/JavaScript/React/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/09/12/React-Learning/</loc>
     <lastmod>2018-09-11T16:52:33.742Z</lastmod>
     <data>

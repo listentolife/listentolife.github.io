@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,React,React组件通信,React Lifecycle," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇主要写的是React中父子组件数据传递跟生命周期。 父子组件数据传递上一篇其实有说到，组件跟组件之前其实是相对独立的。虽然每个组件的数据是可以独立处理，但是组件与组件之间的数据还是存在联系的，而所有的组件之间的数据关系，都是可以归结为父组件跟子组件之间的数据传递关系。再拆分这种数据传递关系，就是要解决父组件数据传给子组件，子组件数据传给父组件两个问题。  父组件传入参数。在React中，父组件">
+<meta name="keywords" content="JavaScript,React,React组件通信,React Lifecycle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react学习总结系列-react(二)">
+<meta property="og:url" content="http://listentolife.github.io/2018/11/24/React-Learning-II/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="这篇主要写的是React中父子组件数据传递跟生命周期。 父子组件数据传递上一篇其实有说到，组件跟组件之前其实是相对独立的。虽然每个组件的数据是可以独立处理，但是组件与组件之间的数据还是存在联系的，而所有的组件之间的数据关系，都是可以归结为父组件跟子组件之间的数据传递关系。再拆分这种数据传递关系，就是要解决父组件数据传给子组件，子组件数据传给父组件两个问题。  父组件传入参数。在React中，父组件">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-24T13:40:07.497Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react学习总结系列-react(二)">
+<meta name="twitter:description" content="这篇主要写的是React中父子组件数据传递跟生命周期。 父子组件数据传递上一篇其实有说到，组件跟组件之前其实是相对独立的。虽然每个组件的数据是可以独立处理，但是组件与组件之间的数据还是存在联系的，而所有的组件之间的数据关系，都是可以归结为父组件跟子组件之间的数据传递关系。再拆分这种数据传递关系，就是要解决父组件数据传给子组件，子组件数据传给父组件两个问题。  父组件传入参数。在React中，父组件">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2018/11/24/React-Learning-II/"/>
+
+
+
+
+
+  <title>react学习总结系列-react(二) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/11/24/React-Learning-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">react学习总结系列-react(二)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-24T21:29:27+08:00">
+                2018-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/React/" itemprop="url" rel="index">
+                    <span itemprop="name">React</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇主要写的是React中父子组件数据传递跟生命周期。</p>
+<h3 id="父子组件数据传递"><a href="#父子组件数据传递" class="headerlink" title="父子组件数据传递"></a>父子组件数据传递</h3><p>上一篇其实有说到，组件跟组件之前其实是相对独立的。虽然每个组件的数据是可以独立处理，但是组件与组件之间的数据还是存在联系的，而所有的组件之间的数据关系，都是可以归结为父组件跟子组件之间的数据传递关系。再拆分这种数据传递关系，就是要解决<strong>父组件数据传给子组件</strong>，<strong>子组件数据传给父组件</strong>两个问题。</p>
+<ol>
+<li><strong>父组件传入参数</strong>。在React中，父组件给子组件传递数据其实挺简单的，就是在子组件标签中通过变量进行传入，子组件通过props获取传入的数据：</li>
+</ol>
+<p>代码1 父组件传参<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/* 自己写豆瓣的一段代码，</span><br><span class="line">  * 图书页面Book组件中把页面类型参数Contants.Book传入</span><br><span class="line">  * 搜索Search组件</span><br><span class="line">  * /</span><br><span class="line">class Book extends Component &#123;</span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;Fragment&gt;</span><br><span class="line">        &lt;Search</span><br><span class="line">          page=&#123;this.state.book&#125;</span><br><span class="line">          searchInfo=&#123;this.getSearchInfo&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;/Fragment&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* 搜索Search组件通过props.page接收父组件的参数，</span><br><span class="line">  * 判断input标签的属性placeholder的值</span><br><span class="line">  * 项目中还使用了styled-components插件，后面会另有介绍</span><br><span class="line">  * /</span><br><span class="line">class Search extends Component &#123;</span><br><span class="line">  // 根据父组件传入的props.page确定input标签的属性placeholder的值</span><br><span class="line">  showPlaceHolder () &#123;</span><br><span class="line">    const &#123; placeHolders, page &#125; = this.props</span><br><span class="line">    const placeHoldersJS = placeHolders.toJS()</span><br><span class="line">    return placeHoldersJS[page]</span><br><span class="line">  &#125;</span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;SearchWrapper&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">          &lt;SearchInput</span><br><span class="line">            value=&#123;this.props.keyword&#125;</span><br><span class="line">            placeholder=&#123;this.showPlaceHolder()&#125;</span><br><span class="line">          /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">      &lt;/SearchWrapper&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码有所省略，但基本上是对父子组件之前传递数据有基本的实现。注意，父组件的数据需要在子组件标签内用一个变量传入，这个变量将会放在子组件的props属性中。子组件调用这个变量时需要到props中调用。</p>
+<ol start="2">
+<li><strong>子组件传出参数</strong>。一般来说，React的数据流是单向流动，即父组件的数据可以流入子组件，但是子组件的数据是不能向父组件传递或修改父组件的数据。但是子组件是可以通过自己的事件处理函数，手动触发父组件传递进来的回调函数，在回调函数上把数据通过参数传递进去。这样就可以让子组件当数据有变化的时候，父组件也可以根据变化进行响应处理：</li>
+</ol>
+<p>代码2 子组件调用父组件回调函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">// 父组件Book组件向子组件Search先传入getSearchInfo()方法</span><br><span class="line">class Book extends Component &#123;</span><br><span class="line">  constructor (props) &#123;</span><br><span class="line">    super(props)</span><br><span class="line">    this.getSearchInfo = this.getSearchInfo.bind(this)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  getSearchInfo (newKeyword) &#123;</span><br><span class="line">    /* 省略代码 */</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    const &#123; pullDownStatus, pullUpStatus &#125; = this.props</span><br><span class="line">    return (</span><br><span class="line">      &lt;Fragment&gt;</span><br><span class="line">        &lt;Search</span><br><span class="line">          searchInfo=&#123;this.getSearchInfo&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;/Fragment&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 子组件在handleClick()方法中调用父组件传入的回调函数searchInfo(keyword)，并把值传入</span><br><span class="line">class Search extends Component &#123;</span><br><span class="line">  constructor (props) &#123;</span><br><span class="line">    super(props)</span><br><span class="line">    this.handleClick = this.handleClick.bind(this)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleClick () &#123;</span><br><span class="line">    const &#123; searchInfo, keyword&#125; = this.props</span><br><span class="line">    if (keyword !== &apos;&apos;) &#123;</span><br><span class="line">      searchInfo(keyword)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;SearchWrapper&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">          &lt;SearchInput /&gt;</span><br><span class="line">          &lt;SearchButton</span><br><span class="line">            onClick=&#123;this.handleClick&#125;</span><br><span class="line">          &gt;搜索&lt;/SearchButton&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">      &lt;/SearchWrapper&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里有个地方需要注意的。父组件方法<code>getSearchInfo()</code>虽然是对象中的方法，但是它也有自己的作用域，所以正常来说它的this指向它自己的作用域，this.props就不存在了。所以需要在<code>constructor()</code>中指定它的作用域为整个类，需要补上<code>this.getSearchInfo = this.getSearchInfo.bind(this)</code>。</p>
+<h3 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h3><p>我们来回头说一下组件的生命周期。组件的生命周期包括了初始化，第一次加载渲染，更新渲染跟卸载四个阶段。而React的生命周期函数主要分布在后面三个阶段。我们先每个阶段简单整理一下：</p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>这个阶段主要还是调用了ES6中类的<code>constructor()</code>。通过构造器完成对父类的继承，变量的初始化和函数指定作用域。这个阶段还没有调用生命周期函数。</p>
+<h4 id="第一次加载渲染"><a href="#第一次加载渲染" class="headerlink" title="第一次加载渲染"></a>第一次加载渲染</h4><p>第一次加载渲染的过程会调用三个生命周期函数：</p>
+<p>1.<code>componentWillMount()</code>，这个函数将会在组件第一次加载渲染之前被调用。可以做一些组件渲染到页面前的操作。只调用一次。</p>
+<p>2.<code>render()</code>，这个函数就是负责创建虚拟DOM，此时所有数据都至少已经初始化了。</p>
+<p>3.<code>componentDidMount()</code>，这个函数是在组件第一次加载渲染完成之后马上被调用的，也只调用一次。这个函数可以调用ajax请求，返回的数据会在后面阶段更新组件状态，并触发重新渲染</p>
+<h4 id="更新渲染"><a href="#更新渲染" class="headerlink" title="更新渲染"></a>更新渲染</h4><p>第一次加载渲染完成之后到组件被卸载之前，组件中的state状态跟props数据还是可以改变。所以会调用下面几个生命周期函数：</p>
+<p>1.<code>componentWillReceiveProps(nextProps)</code>，在组件第一次加载渲染之后，如果props数据将要发生改变，那改变之前会先调用这个函数。函数的传参为props改变之后的值。</p>
+<p>2.<code>shouldComponentUpdate(nextProps,nextState)</code>，在组件props或state将发生改变，进行更新渲染之前会调用这个函数。函数的传参为props或者state改变之后的值。函数最后返回值一定是布尔值，表示是否重新渲染组件(true为重新渲染，false为阻止渲染)。这里可以判断props或state的值是否达到需要重新渲染组件的要求。这个函数的判断有助于提高页面性能，因为当父组件重新渲染时也会导致其所有子组件重新渲染，所以在组件中做这个判断可以阻止不必要的重新渲染。</p>
+<p>3.<code>componentWillUpdate (nextProps,nextState)</code>，在组件调用<code>shouldComponentUpdate(nextProps,nextState)</code>并返回<code>true</code>之后，进行更新渲染之前会调用这个函数。这里同样可以拿到<code>nextProps</code>跟<code>nextState</code>进行操作。</p>
+<p>4.<code>render()</code>，这里的渲染就是根据新更新的<code>props</code>跟<code>state</code>的值进行重新创建虚拟DOM，然后在根据diff算法比对新旧DOM数，找到有差异的最小DOM节点，并重新渲染。</p>
+<p>5.<code>componentDidUpdate(prevProps,prevState)</code>，在组件重新渲染之后会调用这个函数。函数的传参为props或者state改变之前的值。</p>
+<h4 id="组件卸载"><a href="#组件卸载" class="headerlink" title="组件卸载"></a>组件卸载</h4><p>当组件将不再被渲染到页面上时，组件将会被卸载。卸载前只有一个函数会被触发调用：</p>
+<p><strong><code>componentWillUnmount ()</code></strong> ，这个函数因为是在组件被卸载前被调用，所以很适合以下一些操作：</p>
+<p>1.清除组件内的所有定时<code>setTimeout</code>，<code>setInterval</code>；</p>
+<p>2.移除组件内的所有监听事件 <code>removeEventListener</code>；</p>
+<p>3.处理未完成的ajax请求。一般ajax请求之后都会修改state，导致会调用组件的<code>setState()</code>，如果组件被卸载的时候ajax请求未完成，会导致请求完成后调用报错，所以可以在组件内设置状态值控制ajax请求完成后是否执行组件内<code>setState()</code>，然后在<code>componentWillUnmount ()</code>中修改状态值。</p>
+<h4 id="父子组件的生命周期"><a href="#父子组件的生命周期" class="headerlink" title="父子组件的生命周期"></a>父子组件的生命周期</h4><p>这里拓展一下，父子组件的生命周期被调用也是有顺序的。</p>
+<p>在组件初次渲染阶段，会从父组件开始，先调用父组件的<code>constructor()</code>构造函数、<code>componentWillMount()</code>，然后接着子组件开始调用这两个函数，直到最底层子组件调用这两个函数。接着调用对底层子组件的<code>componentDidMount()</code>，再一层层往上调用父组件的这个函数，直到最顶层父组件。</p>
+<p>在组件的卸载阶段，则会先从最顶层父组件开始调用<code>componentDidUnmount()</code>，直到最底层子组件。</p>
+<h4 id="父子组件之间的性能优化"><a href="#父子组件之间的性能优化" class="headerlink" title="父子组件之间的性能优化"></a>父子组件之间的性能优化</h4><p>其实在React中，父组件的数据变化，是会影响子组件进行重新渲染，倒是出现不必要的性能消耗。</p>
+<p>前面有说到，可以通过<code>shouldComponentUpdate(nextProps,nextState)</code>函数来判断是否需要重新渲染组件，但这样一来，每个组件都要手动判断重新渲染。每次只要出现父组件传来的数据，包括state状态的变化，都会调用这个函数，也会导致代码冗余。所以React还提供了一种处理方案。</p>
+<p>React V15中就引入了<code>React.PureComponent</code>。这个<code>PureComponent</code>跟<code>Component</code>用法上是一样的，只是组件继承了<code>PureComponent</code>类后，组件会自动实现<code>props</code>跟<code>state</code>的浅比较。当组件的<code>props</code>跟<code>state</code>的类型都比较简单的时候，就可以直接使用<code>PureComponent</code>。当如果<code>props</code>跟<code>state</code>是嵌套对象或数组时，浅比较将得不到预期的结果。</p>
+<p>关于 React的内容就先把这些基础的先介绍到这里，主要还是要看文档，这里的就算是一些个人整理。下一篇将会介绍style-components插件。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/React/" rel="tag"># React</a>
+          
+            <a href="/tags/React组件通信/" rel="tag"># React组件通信</a>
+          
+            <a href="/tags/React-Lifecycle/" rel="tag"># React Lifecycle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/12/React-Learning/" rel="next" title="react学习总结系列-开篇">
+                <i class="fa fa-chevron-left"></i> react学习总结系列-开篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/19/React-Learning-Styled-Components/" rel="prev" title="react学习总结系列-styled-components">
+                react学习总结系列-styled-components <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#父子组件数据传递"><span class="nav-number">1.</span> <span class="nav-text">父子组件数据传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生命周期"><span class="nav-number">2.</span> <span class="nav-text">生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">2.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第一次加载渲染"><span class="nav-number">2.2.</span> <span class="nav-text">第一次加载渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新渲染"><span class="nav-number">2.3.</span> <span class="nav-text">更新渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#组件卸载"><span class="nav-number">2.4.</span> <span class="nav-text">组件卸载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#父子组件的生命周期"><span class="nav-number">2.5.</span> <span class="nav-text">父子组件的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#父子组件之间的性能优化"><span class="nav-number">2.6.</span> <span class="nav-text">父子组件之间的性能优化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,Vue,Slots," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这里写一下关于Vue.js插槽的内容。之前在学习vue.js的时候就觉得这个插槽非常有意思，非常神奇，在官方文档跟一些教程的学习后，觉得有必要单独记录一下，所以这里准备了这么一篇。 插槽是什么官方文档是这么解释的：Vue 实现了一套内容分发的 API，这套 API 基于当前的 Web Components 规范草案，将 &amp;lt;slot&amp;gt; 元素作为承载分发内容的出口。 简单的说，插槽是vue">
+<meta name="keywords" content="JavaScript,Vue,Slots">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue.js插槽组件">
+<meta property="og:url" content="http://listentolife.github.io/2018/12/19/Vuejs-Slots/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="这里写一下关于Vue.js插槽的内容。之前在学习vue.js的时候就觉得这个插槽非常有意思，非常神奇，在官方文档跟一些教程的学习后，觉得有必要单独记录一下，所以这里准备了这么一篇。 插槽是什么官方文档是这么解释的：Vue 实现了一套内容分发的 API，这套 API 基于当前的 Web Components 规范草案，将 &amp;lt;slot&amp;gt; 元素作为承载分发内容的出口。 简单的说，插槽是vue">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-19T11:21:56.870Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue.js插槽组件">
+<meta name="twitter:description" content="这里写一下关于Vue.js插槽的内容。之前在学习vue.js的时候就觉得这个插槽非常有意思，非常神奇，在官方文档跟一些教程的学习后，觉得有必要单独记录一下，所以这里准备了这么一篇。 插槽是什么官方文档是这么解释的：Vue 实现了一套内容分发的 API，这套 API 基于当前的 Web Components 规范草案，将 &amp;lt;slot&amp;gt; 元素作为承载分发内容的出口。 简单的说，插槽是vue">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2018/12/19/Vuejs-Slots/"/>
+
+
+
+
+
+  <title>Vue.js插槽组件 | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/12/19/Vuejs-Slots/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue.js插槽组件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T08:18:17+08:00">
+                2018-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这里写一下关于Vue.js插槽的内容。之前在学习vue.js的时候就觉得这个插槽非常有意思，非常神奇，在官方文档跟一些教程的学习后，觉得有必要单独记录一下，所以这里准备了这么一篇。</p>
+<h3 id="插槽是什么"><a href="#插槽是什么" class="headerlink" title="插槽是什么"></a>插槽是什么</h3><p>官方文档是这么解释的：<em>Vue 实现了一套内容分发的 API，这套 API 基于当前的 Web Components 规范草案，将 <code>&lt;slot&gt;</code> 元素作为承载分发内容的出口。</em></p>
+<p>简单的说，插槽是vue.js的一套API，是用于实现内容分发的，使用<code>&lt;slot&gt;</code> 元素做接口。</p>
+<p>从我个人的使用理解来说，就是子组件上留了一些口，这些口就是插槽，这些口可以提供给父组件进行自定义的插入内容，包括字符串，html标签，甚至其他组件。</p>
+<h3 id="没有使用插槽的情况"><a href="#没有使用插槽的情况" class="headerlink" title="没有使用插槽的情况"></a>没有使用插槽的情况</h3><p>一般来说，在没有使用插槽的情况下，或者子组件没有留插槽的情况下，父组件上在组件标签之间码下的所有内容，都会被抛弃。这也是vue.js官方文档中明确提醒的。也就是说，没有插槽，父子组件之间只有通信的操作，父组件并不能控制在子组件内展示什么内容。</p>
+<h3 id="插槽的实现"><a href="#插槽的实现" class="headerlink" title="插槽的实现"></a>插槽的实现</h3><p>实现插槽不难，理解插槽就好办了。上面说了，我理解的插槽就是在子组件上留一些口，父组件引用子组件时就可以在这些口上插入内容了。因此，先要在子组件上开口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- child-component --&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h2&gt;child component&lt;/h2&gt;</span><br><span class="line">  &lt;p&gt;slot标签就是子组件留的口，下面的内容就是父组件通过插槽传给子组件的&lt;/p&gt;</span><br><span class="line">  &lt;slot&gt;&lt;slot&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- parent-component --&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h1&gt;parent component&lt;/h1&gt;</span><br><span class="line">  &lt;child-component&gt;</span><br><span class="line">    这部分就是传入子组件slot标签的内容</span><br><span class="line">	&lt;p&gt;如果没有指定，所有父组件传入的内容都会通过这个插槽进入子组件&lt;/p&gt;</span><br><span class="line">	&lt;p&gt;甚至下面的组件也可以被传入&lt;/p&gt;</span><br><span class="line">	&lt;icon-arrow-right&gt;&lt;/icon--arrow-right&gt;</span><br><span class="line">  &lt;/child-component&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>这样就可以实现简单的插槽功能了。但是插槽不只是这些。插槽还分具名插槽，默认插槽。</p>
+<h3 id="具名插槽-amp-默认插槽"><a href="#具名插槽-amp-默认插槽" class="headerlink" title="具名插槽&amp;默认插槽"></a>具名插槽&amp;默认插槽</h3><p>有时候子组件不止设置一个插槽，还会设置多个插槽。而在父组件上，只能在子组件标签之后传入插槽内容。所以需要一个区分的标识。就像子组件上有多个插槽，父组件要往这些插槽上分别放内容，怎么知道哪些内容放到哪个插槽呢？这就用到<code>&lt;slot&gt;</code>元素上的属性<code>name</code>了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- child-component --&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h2&gt;child component&lt;/h2&gt;</span><br><span class="line">  &lt;header&gt;</span><br><span class="line">    &lt;slot name=&quot;header&quot;&gt;&lt;slot&gt;</span><br><span class="line">  &lt;/header&gt;</span><br><span class="line">  &lt;main&gt;</span><br><span class="line">    &lt;slot&gt;&lt;slot&gt;</span><br><span class="line">  &lt;/main&gt;</span><br><span class="line">  &lt;footer&gt;</span><br><span class="line">    &lt;slot name=&quot;footer&quot;&gt;&lt;slot&gt;</span><br><span class="line">  &lt;/footer&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- parent-component --&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &lt;h1&gt;parent component&lt;/h1&gt;</span><br><span class="line">  &lt;child-component&gt;</span><br><span class="line">  </span><br><span class="line">  &lt;template slot=&quot;header&quot;&gt;</span><br><span class="line">	具名插槽</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">  </span><br><span class="line">  &lt;p&gt;父组件的内容传入子组件插槽时，可以使用template标签，并使用slot标识对应插槽的位置。这样就可以正确的分发到组件的插槽中。&lt;/p&gt;</span><br><span class="line">  &lt;p&gt;如果插槽未命名，那么父组件传入的为指定分发位置的内容都会统一放在未命名插槽中，这个插槽就是默认插槽。&lt;/p&gt;</span><br><span class="line">	</span><br><span class="line">  &lt;p slot=&quot;footer&quot;&gt;最后，slot也可以用到普通的元素中&lt;/p&gt;</span><br><span class="line">	</span><br><span class="line">  &lt;/child-component&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的例子中就实现了默认插槽，父组件所有未指定插槽的内容都会分发到默认插槽中。</p>
+<h3 id="默认内容-amp-编译作用域"><a href="#默认内容-amp-编译作用域" class="headerlink" title="默认内容&amp;编译作用域"></a>默认内容&amp;编译作用域</h3><p>不过有时候父组件不一定会用上子组件的插槽。这种情况下子组件就可以指定默认的内容。如果父组件有传入内容，指定默认的内容就会被替换掉.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;main&gt;</span><br><span class="line">    &lt;slot&gt;</span><br><span class="line">	  &lt;p&gt;如果父组件没有给这个插槽传入内容，则在页面上能看到这段子组件默认的内容。&lt;/p&gt;</span><br><span class="line">	&lt;slot&gt;</span><br><span class="line">  &lt;/main&gt;</span><br></pre></td></tr></table></figure>
+<p>如果想在插槽中使用数据，需要注意作用域的问题：插槽中的内容所在的作用域是父组件的作用域，只能访问父组件作用域内的数据，不能访问子组件作用域内的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;template slot=&quot;header&quot;&gt;</span><br><span class="line">  &#123;&#123; article.title &#125;&#125;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="作用域插槽"><a href="#作用域插槽" class="headerlink" title="作用域插槽"></a>作用域插槽</h3><p>虽然插槽所使用的数据只能是父组件的作用域，但是还是有办法使用子组件的数据的，就是作用域插槽。</p>
+<p>作用域插槽就是把子组件需要在插槽内使用的数据作为插槽的prop传入，然后父组件在插槽内的元素或组件中使用<code>slot-scope</code>获取数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 引用官方文档的例子 --&gt;</span><br><span class="line">&lt;!-- 子组件todo-list --&gt;</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">  &lt;li</span><br><span class="line">    v-for=&quot;todo in todos&quot;</span><br><span class="line">    v-bind:key=&quot;todo.id&quot;</span><br><span class="line">  &gt;</span><br><span class="line">    &lt;!-- 我们为每个 todo 准备了一个插槽，--&gt;</span><br><span class="line">    &lt;!-- 将 `todo` 对象作为一个插槽的 prop 传入。--&gt;</span><br><span class="line">    &lt;slot v-bind:todo=&quot;todo&quot;&gt;</span><br><span class="line">      &lt;!-- 回退的内容 --&gt;</span><br><span class="line">      &#123;&#123; todo.text &#125;&#125;</span><br><span class="line">    &lt;/slot&gt;</span><br><span class="line">  &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 父组件中引用子组件部分 --&gt;</span><br><span class="line">&lt;todo-list v-bind:todos=&quot;todos&quot;&gt;</span><br><span class="line">  &lt;!-- 将 `slotProps` 定义为插槽作用域的名字 --&gt;</span><br><span class="line">  &lt;template slot-scope=&quot;slotProps&quot;&gt;</span><br><span class="line">    &lt;!-- 为待办项自定义一个模板，--&gt;</span><br><span class="line">    &lt;!-- 通过 `slotProps` 定制每个待办项。--&gt;</span><br><span class="line">    &lt;span v-if=&quot;slotProps.todo.isComplete&quot;&gt;✓&lt;/span&gt;</span><br><span class="line">    &#123;&#123; slotProps.todo.text &#125;&#125;</span><br><span class="line">  &lt;/template&gt;</span><br><span class="line">&lt;/todo-list&gt;</span><br></pre></td></tr></table></figure>
+<p>这里确认一点：<code>slot-scope</code>不仅可以在<code>&lt;template&gt;</code>元素上使用，还可以在插槽内的任何元素或组件上使用。另外，官方文档还说明了，基于ES2015解构语法，上面父组件中<code>&lt;template slot-scope=&quot;slotProps&quot;&gt;</code>可以写成<code>&lt;template slot-scope=&quot;{ todo }&quot;&gt;</code>。</p>
+<p>以上就是关于vue.js插槽的内容。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/Vue/" rel="tag"># Vue</a>
+          
+            <a href="/tags/Slots/" rel="tag"># Slots</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/19/Vuejs-Note-I/" rel="next" title="Vue.js散记">
+                <i class="fa fa-chevron-left"></i> Vue.js散记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#插槽是什么"><span class="nav-number">1.</span> <span class="nav-text">插槽是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#没有使用插槽的情况"><span class="nav-number">2.</span> <span class="nav-text">没有使用插槽的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插槽的实现"><span class="nav-number">3.</span> <span class="nav-text">插槽的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具名插槽-amp-默认插槽"><span class="nav-number">4.</span> <span class="nav-text">具名插槽&amp;默认插槽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#默认内容-amp-编译作用域"><span class="nav-number">5.</span> <span class="nav-text">默认内容&amp;编译作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#作用域插槽"><span class="nav-number">6.</span> <span class="nav-text">作用域插槽</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
