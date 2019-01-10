@@ -245,6 +245,192 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/10/Vuejs-VueRouter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/10/Vuejs-VueRouter/" itemprop="url">Vue Router学习(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-10T21:39:30+08:00">
+                2019-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近在尝试用Vue.js来重构我之前用react写的豆瓣项目了，感觉vue-router这块的内容还是挺多的，在项目的重构中也看了官方文档跟上网其他人的博客，也决定自己总结一下相关的一些内容，把自己在项目中遇到的点做一些整理。这个估计一次性也是说不完的，所以也分几篇来整理了。</p>
+<p>以下使用的一些示例代码是来源于我的豆瓣项目：<a href="https://github.com/listentolife/Vue-doubanPocket" target="_blank" rel="noopener">https://github.com/listentolife/Vue-doubanPocket</a></p>
+<p>这里先整理动态路由跟嵌套路由。</p>
+<h3 id="基础路由"><a href="#基础路由" class="headerlink" title="基础路由"></a>基础路由</h3><p>首先，vue-router是vue.js的官方路由管理器，功能在官方文档中有列表介绍，我会根据开发中对vue-router使用的程度一点点整理。</p>
+<p>最基础的路由使用，官方给出了完整的操作，包括JavaScript的五步操作：引入调用vue-router，定义组件，定义路由，创建配置router实例，创建和挂载根实例。</p>
+<h4 id="JavaScript操作"><a href="#JavaScript操作" class="headerlink" title="JavaScript操作"></a>JavaScript操作</h4><p>实际操作中，我在项目的src目录下会创建一个router目录，在这里完成上面JavaScript的前四步操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">// router/index.js</span><br><span class="line">import Vue from &apos;vue&apos;</span><br><span class="line">import Router from &apos;vue-router&apos;</span><br><span class="line">import Book from &apos;components/book/book&apos;</span><br><span class="line">import Movie from &apos;components/movie/movie&apos;</span><br><span class="line"></span><br><span class="line">// 注册Router</span><br><span class="line">Vue.use(Router)</span><br><span class="line"></span><br><span class="line">export default new Router(&#123;</span><br><span class="line">  mode: &apos;history&apos;,</span><br><span class="line">  base: process.env.BASE_URL,</span><br><span class="line">  routes: [</span><br><span class="line">    &#123;</span><br><span class="line">      path: &apos;/&apos;,</span><br><span class="line">      redirect: &apos;/book&apos;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      path: &apos;/book&apos;,</span><br><span class="line">      name: &apos;book&apos;,</span><br><span class="line">      component: Book</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      path: &apos;/movie&apos;,</span><br><span class="line">      name: &apos;movie&apos;,</span><br><span class="line">      component: Movie</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>然后在根实例上挂载：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// main.js</span><br><span class="line">import Vue from &apos;vue&apos;</span><br><span class="line">import App from &apos;./App.vue&apos;</span><br><span class="line">import router from &apos;./router&apos;</span><br><span class="line"></span><br><span class="line">new Vue(&#123;</span><br><span class="line">  router,</span><br><span class="line">  render: h =&gt; h(App)</span><br><span class="line">&#125;).$mount(&apos;#app&apos;)</span><br></pre></td></tr></table></figure>
+<h4 id="router组件操作"><a href="#router组件操作" class="headerlink" title="router组件操作"></a>router组件操作</h4><p>然后就可以使用<code>&lt;router-link&gt;</code>导航组件跟<code>&lt;router-view&gt;</code>组件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// components/tag.vue</span><br><span class="line">/* 在router-link导航，</span><br><span class="line"> * tag指定组件会被渲染成什么标签，默认为a标签</span><br><span class="line"> * to传入的是指定的链接，也可以是一个对象，这个后面再细说</span><br><span class="line"> */</span><br><span class="line">&lt;router-link class=&quot;tab-item&quot; tag=&quot;div&quot; to=&quot;/book&quot;&gt;</span><br><span class="line">      &lt;span class=&quot;tab-link&quot;&gt;图书&lt;/span&gt;</span><br><span class="line">    &lt;/router-link&gt;</span><br><span class="line">    &lt;router-link class=&quot;tab-item&quot; tag=&quot;div&quot; to=&quot;/movie&quot;&gt;</span><br><span class="line">      &lt;span class=&quot;tab-link&quot;&gt;电影&lt;/span&gt;</span><br><span class="line">    &lt;/router-link&gt;</span><br><span class="line">	</span><br><span class="line">// 路由匹配到的组件会渲染在这里</span><br><span class="line">&lt;router-view&gt;&lt;/router-view&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="this-router和this-route"><a href="#this-router和this-route" class="headerlink" title="this.$router和this.$route"></a><code>this.$router</code>和<code>this.$route</code></h4><p>这样就可以完成最简单的路由。<em>“我们可以在任何组件内通过<code>this.$router</code>访问路由器，也可以通过<code>this.$route</code>访问当前路由”</em>。</p>
+<p>上面这段引号的话是需要注意的。通过<code>this.$router</code>是访问<strong>路由器</strong>，通过<code>this.$route</code>是访问<strong>当前路由</strong>。</p>
+<p>一开始我也不是很明白，就在项目中写了一段console.log，尝试打印一下这两个：</p>
+<p><img src="../images/router&amp;route.png" alt="this.$router &amp; this.route"></p>
+<p>这样看就比较明白了：<code>this.$router</code>指向的是router目录中创建的路由实例，<code>this.$route</code>指向的是当前渲染的路由对象。</p>
+<p>通过<code>this.$route</code>跟<code>this.$router</code>，我们有一些常用的方法可以调用，这里就属于编程式导航中会提及的内容，等后面再整理了。</p>
+<h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>上面的例子是比较简单的路由实现，但实际上很多时候是没办法把路由路径写死的，比较用户页面，比如我的项目中每个图书页面都是一样的，但是图书是各不相同的。这个时候就需要用到动态路由来实现。</p>
+<p>实现动态路由，需要以下几步（基于上面的例子）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// router/index.js</span><br><span class="line">// 先在路由器上配置路由</span><br><span class="line">  &#123;</span><br><span class="line">    path: &apos;/musicDetail/:id&apos;,</span><br><span class="line">    name: &apos;music-item&apos;,</span><br><span class="line">    component: MusicItem</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><code>/musicDetail/:id</code>这个路径包含了一个路径参数<code>id</code>，前面使用<code>:</code>标记。这个路径参数会被设置到<code>this.$route.params</code>中，可以被组件使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// music.vue</span><br><span class="line">// 使用动态路由，就需要用对象来传值给to</span><br><span class="line">// 路由渲染后，地址上也是显示/musicDetail/(music.title)</span><br><span class="line">&lt;router-link</span><br><span class="line">  class=&quot;music-list&quot;</span><br><span class="line">  tag=&quot;li&quot;</span><br><span class="line">  :to=&quot;&#123;name:&apos;music-item&apos;,params:&#123;id:music.title,music:music&#125;&#125;&quot;</span><br><span class="line">  v-for=&quot;music in musics&quot;</span><br><span class="line">  :key=&quot;music.title&quot;</span><br><span class="line">&gt;...&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 路由匹配到的组件会渲染在这里</span><br><span class="line">&lt;router-view&gt;&lt;/router-view&gt;</span><br></pre></td></tr></table></figure>
+<p>在组件内，就可以利用<code>this.$route.params</code>可以获得父组件传入的值。由于在路由配置时路径参数只有<code>id</code>，所以只有<code>id</code>会显示在地址上，其他值不会显示在地址上，可以传入很多数据。</p>
+<p>有几个地方需要留意的：</p>
+<ol>
+<li>一个路由可以设置多段路径参数，但是一定要一一匹配上;</li>
+<li>使用动态路由，匹配同一动态路径的路由之间导航，组件实例会被复用，组件的声明钩子将不会再被调用。可以使用<code>watch</code>或导航守卫响应路由变化；</li>
+<li>多个路由同时匹配同一路径时，最先定义的优先级越高。</li>
+</ol>
+<h3 id="嵌套路由"><a href="#嵌套路由" class="headerlink" title="嵌套路由"></a>嵌套路由</h3><p>嵌套路由就是在路由内再嵌套路由组件，通过路由做跳转，跳转前后父路由组件不受影响。比如根路径‘/’下路由导航到‘/book’，渲染book组件，在book组件内有子路由‘/book/detail/:id’，路由跳转时，book组件内<code>&lt;router-view&gt;</code>之外不受影响。</p>
+<p>子路由配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// router/index.js</span><br><span class="line">// 在&apos;/book&apos;路由下配置子路由</span><br><span class="line">  &#123;</span><br><span class="line">    path: &apos;/book&apos;,</span><br><span class="line">    name: &apos;book&apos;,</span><br><span class="line">    component: Book,</span><br><span class="line">    children: [&#123;</span><br><span class="line">      // 当/book/:id匹配成功，就会在book组件内的&lt;router-view&gt;中渲染bookItem组件</span><br><span class="line">      path: &apos;:id&apos;,</span><br><span class="line">      name: &apos;book-item&apos;,</span><br><span class="line">      component: BookItem</span><br><span class="line">    &#125;]</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure></p>
+<p>子路由导航与出口：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// book.vue</span><br><span class="line">// 写法跟动态路由中的差不多</span><br><span class="line">&lt;router-link</span><br><span class="line">  class=&quot;book-list&quot;</span><br><span class="line">  tag=&quot;li&quot;</span><br><span class="line">  :to=&quot;&#123;name:&apos;book-item&apos;,params:&#123;id:book.title,book:book&#125;&#125;&quot;</span><br><span class="line">  v-for=&quot;book in books&quot;</span><br><span class="line">  :key=&quot;book.title&quot;</span><br><span class="line">&gt;...&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 路由匹配到的组件会渲染在这里</span><br><span class="line">// 注意，这个&lt;router-view&gt;是写在book组件中的</span><br><span class="line">&lt;router-view&gt;&lt;/router-view&gt;</span><br></pre></td></tr></table></figure></p>
+<p>嵌套路由也有需要注意的：上面子路由配置中，path的值是 <strong>‘:id’</strong> ，不是 <strong>‘/:id’</strong> 。如果路径前有<code>/</code>斜杠，则嵌套路径指向根路径上的。</p>
+<p>以上就是Vue Router关于动态路由跟嵌套路由的内容整理。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/12/19/Vuejs-Slots/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1805,180 +1991,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/05/Canvas-Game-V/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/05/Canvas-Game-V/" itemprop="url">Canvas 射击小游戏详解系列(五)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-05T00:32:48+08:00">
-                2018-09-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTML5/" itemprop="url" rel="index">
-                    <span itemprop="name">HTML5</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTML5/Canvas/" itemprop="url" rel="index">
-                    <span itemprop="name">Canvas</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇开始介绍Canvas的内容。Canvas是属于HTML5的内容。下面就来介绍一下Canvas。</p>
-<h3 id="Canvas元素及画布"><a href="#Canvas元素及画布" class="headerlink" title="Canvas元素及画布"></a>Canvas元素及画布</h3><p>Canvas元素其实写法跟其他的HTML元素写法一样，比如下面的项目中的例子：</p>
-<p>代码1 项目中Canvas元素<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div id=&quot;game&quot; data-status=&quot;start&quot;&gt;  </span><br><span class="line">    &lt;-- 其他代码 !-&gt;</span><br><span class="line">    &lt;canvas id=&quot;canvas&quot; width=&quot;700&quot; height=&quot;600&quot;&gt;</span><br><span class="line">        &lt;!-- 动画画板 --&gt;</span><br><span class="line">    &lt;/canvas&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;-- 其他代码 !-&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
-<p>代码1中，Canvas元素在页面上创建了一个宽700，长600的画布，这个就是Canvas实现图形的基础。</p>
-<p>然后需要在JavaScript代码中写下这么两行代码：</p>
-<p>代码2 获取Canvas对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var canvas = document.getElementById(&apos;canvas&apos;);</span><br><span class="line">var context = canvas.getContext(&apos;2d&apos;);</span><br></pre></td></tr></table></figure></p>
-<p>这段代码先是获取了canvas元素，然后在调用canvas元素的getContext方法访问获取2d渲染上下文。得到的context才能进行绘画的操作。</p>
-<p>下面是一些关于Canvas的绘制的介绍，因为是基础内容的介绍，所以就主要以代码形式说明。</p>
-<h3 id="Canvas绘制"><a href="#Canvas绘制" class="headerlink" title="Canvas绘制"></a>Canvas绘制</h3><p>Canvas绘制分下面几种： 线跟圆弧，几何图形，文本，图片。</p>
-<h4 id="绘制原理"><a href="#绘制原理" class="headerlink" title="绘制原理"></a>绘制原理</h4><p>Canvas绘制的原理是把画布坐标化，以左上角为原点，上边为x坐标正方向，左边为y坐标正方向。所有的绘制方法都是context下的方法。</p>
-<h4 id="线跟圆弧"><a href="#线跟圆弧" class="headerlink" title="线跟圆弧"></a>线跟圆弧</h4><p>代码1 线跟圆弧的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/* 线的绘制 */</span><br><span class="line">// 设置路径</span><br><span class="line">context.beginPath();</span><br><span class="line">// 设置路径起始点</span><br><span class="line">context.moveTo(320,470);</span><br><span class="line">// 设置路径终点</span><br><span class="line">context.lineTo(320,480);</span><br><span class="line">// 绘制路径</span><br><span class="line">context.stroke();</span><br><span class="line"></span><br><span class="line">/* 圆弧的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">// 圆弧的绘制使用context.arc()方法</span><br><span class="line">// context.arc(x, y, radius, startAngle, endAngle, anticlockwise)</span><br><span class="line">// x,y为圆心坐标</span><br><span class="line">// redius为圆的半径</span><br><span class="line">// startAngle，endAngle分别为开始角度跟结束角度（圆的水平右侧为0°）</span><br><span class="line">// anticlockwise为顺/逆时针设置，默认值为false顺时针</span><br><span class="line">context.arc(250, 250, 300, 0, Math.PI, false);</span><br><span class="line">// 绘制路径</span><br><span class="line">context.stroke();</span><br><span class="line">// 使用fill()方法将会把圆弧两端直接闭合填充</span><br><span class="line">// context.fill();</span><br></pre></td></tr></table></figure></p>
-<h4 id="几何图形"><a href="#几何图形" class="headerlink" title="几何图形"></a>几何图形</h4><p>代码2 集合多边形跟圆形的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/* 矩形的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">context.moveTo(320, 470);</span><br><span class="line">context.lineTo(350, 470);</span><br><span class="line">context.lineTo(350, 500);</span><br><span class="line">context.lineTo(320, 500);</span><br><span class="line">// 设置闭合路径</span><br><span class="line">context.closePath();</span><br><span class="line">context.stroke();</span><br><span class="line">// 填充路径用fill()方法</span><br><span class="line">// context.fill();</span><br><span class="line">// 也可以直接使用矩形的绘制方法context.rect(x, y, width, height);</span><br><span class="line">// context.rect(320, 500, 30, 30);</span><br><span class="line"></span><br><span class="line">/* 圆形的绘制 */</span><br><span class="line">context.beginPath();</span><br><span class="line">//context.arc(250, 250, 300, 0, 2 * Math.PI, false);</span><br><span class="line">// 使用fill()方法将填充整个圆形</span><br><span class="line">// context.fill();</span><br></pre></td></tr></table></figure></p>
-<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><p>代码3 文本的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 文本的绘制 */</span><br><span class="line">// 先设置字体样式</span><br><span class="line">context.font = &apos;25px arial&apos;;</span><br><span class="line">// context.strokeText()方法将文本描边绘制</span><br><span class="line">// 三个参数分别为被绘制的字符串，坐标(x,y)</span><br><span class="line">context.strokeText(&quot;描边文本&quot;, 100, 100);</span><br><span class="line">// context.fillText()方法将文本填充绘制</span><br><span class="line">context.strokeText(&quot;描边文本&quot;, 100, 100);</span><br></pre></td></tr></table></figure></p>
-<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><p>代码4 图片的绘制<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/* 图片的绘制 */</span><br><span class="line">// 设置图片对象</span><br><span class="line">var image = new Image();</span><br><span class="line">// 设置图片地址</span><br><span class="line">image.src = &apos;plane.png&apos;;</span><br><span class="line">// 设置图片加载完成后的回调函数</span><br><span class="line">image.onload = function () &#123;</span><br><span class="line">    // 绘制图片context.drawImage(img, x, y, width, height)</span><br><span class="line">	context.drawImage(image, 50, 50, 60, 100)</span><br><span class="line">	// 裁剪图片也是用context.drawImage(image, source_x, source_y, source_width, source_height, x, y, width, heigh);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="样式设置"><a href="#样式设置" class="headerlink" title="样式设置"></a>样式设置</h4><p>代码5 绘制样式设置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/* 描边颜色设置 */</span><br><span class="line">context.fillStyle = #999;</span><br><span class="line"></span><br><span class="line">/* 填充颜色设置 */</span><br><span class="line">context.strokeStyle = #333;</span><br><span class="line"></span><br><span class="line">/* 线宽设置 */</span><br><span class="line">context.lineWidth = (Number);</span><br><span class="line"></span><br><span class="line">/* 设置字体样式 */</span><br><span class="line">context.font = &apos;25px arial&apos;;</span><br></pre></td></tr></table></figure></p>
-<h4 id="Canvas擦除"><a href="#Canvas擦除" class="headerlink" title="Canvas擦除"></a>Canvas擦除</h4><p>代码6 绘制擦除<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/* 擦除 */</span><br><span class="line">// 擦除可以使用context.clearRect(x, y, width, height)方法</span><br><span class="line">// 下面直接擦除整个画布</span><br><span class="line">context.clearRect(0, 0, canvas.width, canvas.height);</span><br></pre></td></tr></table></figure></p>
-<p>下一篇将会介绍Canvas动画跟项目中的关于Canvas跟动画的设计。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2024,7 +2041,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2046,7 +2063,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2097,7 +2114,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

@@ -4,6 +4,37 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2019/01/10/Vuejs-VueRouter/</loc>
+    <lastmod>2019-01-10T13:47:58.355Z</lastmod>
+    <data>
+        <display>
+        <title>Vue Router学习(一)</title>
+        <pubTime>2019-01-10T13:39:30.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>Vue</tag>
+         
+        <tag>Vue Router</tag>
+         
+        <tag>动态路由</tag>
+         
+        <tag>嵌套路由</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="Vue" url="http://listentolife.github.io/categories/JavaScript/Vue/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/12/19/Vuejs-Slots/</loc>
     <lastmod>2018-12-19T11:21:56.870Z</lastmod>
     <data>
