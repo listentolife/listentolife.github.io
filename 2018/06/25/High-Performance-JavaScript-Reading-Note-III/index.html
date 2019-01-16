@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Listentolife">
 <meta property="og:description" content="《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。 DOM操作的优化问题DOM操作涉及以下三类问题：  访问和修改DOM元素 修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow) 通过DOM事件处理与用户的交互  DOMDOM，文档对象模型，是独立于语言，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-02T15:41:21.696Z">
+<meta property="og:updated_time" content="2019-01-16T14:29:59.321Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《高性能JavaScript》读书笔记(三)">
 <meta name="twitter:description" content="《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。 DOM操作的优化问题DOM操作涉及以下三类问题：  访问和修改DOM元素 修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow) 通过DOM事件处理与用户的交互  DOMDOM，文档对象模型，是独立于语言，">
@@ -361,7 +361,7 @@
 <li>准确的获得DOM元素集合</li>
 </ol>
 <h4 id="DOM的重复调用"><a href="#DOM的重复调用" class="headerlink" title="DOM的重复调用"></a>DOM的重复调用</h4><p>简单的说，开发中经常会把后端穿来的数据修改渲染到页面上，书中提到最坏的情况是循环访问或修改元素：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function innerHTMLLoop () &#123;</span><br><span class="line">	for (var count = 0; count &lt; 15000; count++) &#123;</span><br><span class="line">		document.getElementById(&apos;here&apos;).innerHTML += &apos;a&apos;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function innerHTMLLoop () &#123;</span><br><span class="line">  for (var count = 0; count &lt; 15000; count++) &#123;</span><br><span class="line">    document.getElementById(&apos;here&apos;).innerHTML += &apos;a&apos;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码的问题在于每次循环中都会读取一次跟重写一次<code>innerHTML</code>，而且循环次数越多，读取跟重写都会不断增加。</p>
 <p>所以，优化的方案是，先把需要添加的节点保存在局部变量中，然后在一次性读取跟重写页面结构。<br>如果出现大量的重复节点，则可以考虑克隆已有的元素，即使用<code>element.cloneNode()</code>替代<code>document.createElement()</code>。</p>
 <h4 id="DOM元素集合的重复查询"><a href="#DOM元素集合的重复查询" class="headerlink" title="DOM元素集合的重复查询"></a>DOM元素集合的重复查询</h4><p>HTML集合是包含DOM节点引用的类数组对象，包括我们常用的<code>document.getElementByName()</code>，<code>document.images</code>等类似的方法所得到的元素集合。这些元素集合只是一个类似数组的列表，但同样提供了类似数组的<code>length</code>属性。</p>
@@ -565,7 +565,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -587,7 +587,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

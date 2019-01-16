@@ -89,9 +89,9 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://listentolife.github.io/2018/06/18/images/high-performance-JavaScript-2-1.png">
 <meta property="og:image" content="http://listentolife.github.io/2018/06/18/images/high-performance-JavaScript-2-2.png">
-<meta property="og:image" content="http://listentolife.github.io/2018/06/18/images/high-performance-JavaScript-2-3.png">
-<meta property="og:image" content="http://listentolife.github.io/2018/06/18/images/high-performance-JavaScript-2-4.png">
-<meta property="og:updated_time" content="2018-09-02T15:41:19.984Z">
+<meta property="og:image" content="https://listentolife.cc/images/high-performance-JavaScript-2-3.png">
+<meta property="og:image" content="https://listentolife.cc/images/high-performance-JavaScript-2-4.png">
+<meta property="og:updated_time" content="2019-01-16T14:38:45.570Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《高性能JavaScript》读书笔记(二)">
 <meta name="twitter:description" content="《高性能JavaScript》第二章数据存取，涉及很多优化点，需要花点时间吸收。下面就开始吧。 数据存储不同方式之间的性能比较第二章一开始就提到了数据存储的问题。js的数据存储分四类：字面量，本地变量，数组元素及对象成员。字面量跟本地变量在存取数据的性能消耗差不多，而数组元素跟对象成员消耗要大一些，但是也跟浏览器的优化有关。所以建议是尽量使用字面量和局部变量。 作用域链实际开发中，我们会根据项目需">
@@ -373,14 +373,14 @@
 <h4 id="属性及方法"><a href="#属性及方法" class="headerlink" title="属性及方法"></a>属性及方法</h4><p>JavaScript对象包括了属性跟方法，区分的点在于对象的成员引用的是一个函数还是非函数类型。</p>
 <h4 id="原型及原型链"><a href="#原型及原型链" class="headerlink" title="原型及原型链"></a>原型及原型链</h4><p>JavaScript中的对象是基于原型的。原型是所有对象的基础，它已经定义并实现了一个对象所必需包含的成员列表，而且原型对象是为所有对象实例所共享。</p>
 <p>下图1.3及代码是书中举的一个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var book = &#123;</span><br><span class="line">	title: &quot;High Performance JavaScript&quot;,</span><br><span class="line">	publisher: &quot;Yahoo! Press&quot;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">alter(book.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
-<p>图3 书中实例book与原型的关系<br><img src="../images/high-performance-JavaScript-2-3.png" alt="图3 书中实例book与原型的关系"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var book = &#123;</span><br><span class="line">  title: &quot;High Performance JavaScript&quot;,</span><br><span class="line">  publisher: &quot;Yahoo! Press&quot;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">alter(book.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
+<p>图3 书中实例book与原型的关系<br><img src="https://listentolife.cc/images/high-performance-JavaScript-2-3.png" alt="图3 书中实例book与原型的关系"></p>
 <p>图中可以看到，实例book虽然创建的时候只声明了两个实例成员，但是并没有定义<code>toString()</code>，然而<code>toString()</code>方法还是被正确执行了，是因为虽然实例book没有定义，但是book的原型对象已经定义了<code>toString()</code>方法。</p>
 <p>当<code>book.toString()</code>被调用时，先会从实例成员开始搜索，如果实例成员中没有搜索到，则从原型成员搜索，如果能搜索到，则能成功执行，否则才会报错。</p>
 <p>JavaScript有两个方案可以检测对象的成员，其中<code>in</code>操作符可以检测对象是否包含某个成员，不管这个成员是属于实例成员还是原型成员；而如果需要检测对象是否包含某个实例成员，则需要用<code>hasOwnProperty()</code>方法。</p>
 <p>JavaScript有原型对象，开发者也可以根据项目的需求通过构造函数来创建另一种类型的原型。下图1.4及代码是书中举的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function Book(title, publisher)&#123;</span><br><span class="line">	this.title = title;</span><br><span class="line">	this.publisher = publisher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Book.prototype.sayTitle = function()&#123;</span><br><span class="line">	alert(this.title);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var book1 = new Book(&quot;High Performance JavaScript&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line">var book2 = new Book(&quot;JavaScipt: The Good Parts&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line"></span><br><span class="line">alert(book1 instanceof Book);   // true</span><br><span class="line">alert(book1 instanceof Object); // true</span><br><span class="line"></span><br><span class="line">book1.sayTitle(); 		 //&quot;High Performance JavaScript&quot;</span><br><span class="line">alert(book1.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
-<p>图4 书中列举的原型链<br><img src="../images/high-performance-JavaScript-2-4.png" alt="图4 书中列举的原型链"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function Book(title, publisher)&#123;</span><br><span class="line">  this.title = title;</span><br><span class="line">  this.publisher = publisher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Book.prototype.sayTitle = function()&#123;</span><br><span class="line">  alert(this.title);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var book1 = new Book(&quot;High Performance JavaScript&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line">var book2 = new Book(&quot;JavaScipt: The Good Parts&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line"></span><br><span class="line">alert(book1 instanceof Book);   // true</span><br><span class="line">alert(book1 instanceof Object); // true</span><br><span class="line"></span><br><span class="line">book1.sayTitle(); 		 //&quot;High Performance JavaScript&quot;</span><br><span class="line">alert(book1.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
+<p>图4 书中列举的原型链<br><img src="https://listentolife.cc/images/high-performance-JavaScript-2-4.png" alt="图4 书中列举的原型链"></p>
 <p>代码中，先是定义了一个 构造函数<code>Book</code>，然后在通过<code>Book</code>来创建实例<code>book1</code>跟<code>book2</code>。其中，<code>book1</code>跟<code>book2</code>的成员<code>title</code>跟<code>publisher</code>都是各自的成员，拥有不同的值，而两个实例的原型<code>__proto__</code>都是指向<code>Book.prototype</code>，而<code>Book.prototype</code>的<code>__proto__</code>又指向原型对象object。整个就是原型链。两个实例共享着一个原型链。</p>
 <p>从对原型链的认识，我们可以看到，当执行实例对象的成员时，明显的，成员的位置越深，搜索并访问的时间越长。</p>
 <h4 id="嵌套成员"><a href="#嵌套成员" class="headerlink" title="嵌套成员"></a>嵌套成员</h4><p>简单的说，对象的成员本身可能就是一个对象，所以会包含有自己的成员，也就是嵌套成员。这种结构会导致访问嵌套成员是，需要从最底层对象的成员开始搜索，而且成员的嵌套得越深，搜索读取的速度就越慢。</p>
@@ -514,7 +514,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -536,7 +536,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

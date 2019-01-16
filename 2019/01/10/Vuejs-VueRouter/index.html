@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="Listentolife">
 <meta property="og:description" content="最近在尝试用Vue.js来重构我之前用react写的豆瓣项目了，感觉vue-router这块的内容还是挺多的，在项目的重构中也看了官方文档跟上网其他人的博客，也决定自己总结一下相关的一些内容，把自己在项目中遇到的点做一些整理。这个估计一次性也是说不完的，所以也分几篇来整理了。 以下使用的一些示例代码是来源于我的豆瓣项目：https://github.com/listentolife/Vue-dou">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://listentolife.github.io/2019/01/10/images/router&route.png">
-<meta property="og:updated_time" content="2019-01-10T13:47:58.355Z">
+<meta property="og:image" content="https://listentolife.cc/images/router&route.PNG">
+<meta property="og:updated_time" content="2019-01-16T14:24:09.945Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vue Router学习(一)">
 <meta name="twitter:description" content="最近在尝试用Vue.js来重构我之前用react写的豆瓣项目了，感觉vue-router这块的内容还是挺多的，在项目的重构中也看了官方文档跟上网其他人的博客，也决定自己总结一下相关的一些内容，把自己在项目中遇到的点做一些整理。这个估计一次性也是说不完的，所以也分几篇来整理了。 以下使用的一些示例代码是来源于我的豆瓣项目：https://github.com/listentolife/Vue-dou">
-<meta name="twitter:image" content="http://listentolife.github.io/2019/01/10/images/router&route.png">
+<meta name="twitter:image" content="https://listentolife.cc/images/router&route.PNG">
 
 
 
@@ -361,7 +361,7 @@
 <h4 id="this-router和this-route"><a href="#this-router和this-route" class="headerlink" title="this.$router和this.$route"></a><code>this.$router</code>和<code>this.$route</code></h4><p>这样就可以完成最简单的路由。<em>“我们可以在任何组件内通过<code>this.$router</code>访问路由器，也可以通过<code>this.$route</code>访问当前路由”</em>。</p>
 <p>上面这段引号的话是需要注意的。通过<code>this.$router</code>是访问<strong>路由器</strong>，通过<code>this.$route</code>是访问<strong>当前路由</strong>。</p>
 <p>一开始我也不是很明白，就在项目中写了一段console.log，尝试打印一下这两个：</p>
-<p><img src="../images/router&amp;route.png" alt="this.$router &amp; this.route"></p>
+<p><img src="https://listentolife.cc/images/router&amp;route.PNG" alt="this.$router &amp; this.route"></p>
 <p>这样看就比较明白了：<code>this.$router</code>指向的是router目录中创建的路由实例，<code>this.$route</code>指向的是当前渲染的路由对象。</p>
 <p>通过<code>this.$route</code>跟<code>this.$router</code>，我们有一些常用的方法可以调用，这里就属于编程式导航中会提及的内容，等后面再整理了。</p>
 <h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>上面的例子是比较简单的路由实现，但实际上很多时候是没办法把路由路径写死的，比较用户页面，比如我的项目中每个图书页面都是一样的，但是图书是各不相同的。这个时候就需要用到动态路由来实现。</p>
@@ -428,6 +428,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Vuejs-VueRouterII/" rel="prev" title="Vue Router学习(二)">
+                Vue Router学习(二) <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -504,7 +508,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -526,7 +530,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

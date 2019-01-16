@@ -245,6 +245,306 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/10/High-Performance-JavaScript-Reading-Note-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/10/High-Performance-JavaScript-Reading-Note-I/" itemprop="url">《高性能JavaScript》读书笔记(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T22:10:21+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《高性能JavaScript》这本书很多人推荐，我对这本书的印象也是值得学习前端的童鞋的细读吸收。作为学习者，同样也是要认真的学习这本书中为我们总结的一些开发中的经验，能提高我们开发代码的效率。</p>
+<p>第一章主要针对JavaScript的加载跟执行的优化。总结一下就是推迟加载JavaScript代码，减少JavaScript文件加载数量及异步加载JavaScript代码。</p>
+<h3 id="优化加载JavaScript代码的原因"><a href="#优化加载JavaScript代码的原因" class="headerlink" title="优化加载JavaScript代码的原因"></a>优化加载JavaScript代码的原因</h3><p>一般我们在入门前端初期，都会学到，<code>&lt;head&gt;</code>标签中可以放<code>&lt;script&gt;</code>标签，用来引入js文件或js代码。然后大部分人都会习惯性的把js代码从<code>&lt;head&gt;</code>标签引入。</p>
+<p>操作上是正确的，确实可以完成js代码的引入，但是由于js代码具有阻塞的特性，会影响页面的解析与加载时间。一般页面的加载，首先会HTML代码的<code>&lt;head&gt;</code>标签开始。当代码执行到<code>&lt;head&gt;</code>标签的<code>&lt;script&gt;</code>标签时，由于浏览器无法判断<code>&lt;script&gt;</code>标签中的代码是否会影响DOM节点，所以会暂停页面的加载，而优先执行<code>&lt;script&gt;</code>标签中的代码。</p>
+<p>如果<code>&lt;script&gt;</code>标签的代码是直接出现在标签中，则直接执行；而如果是通过引入的方式，则还需要下载之后再执行。一旦下载的文件较大，加上加载的时间，那将让网页的客户体验很糟糕。</p>
+<p>于是，就有了优化加载JavaScript代码的必要。从上面我们可以看到，一般可以优化的方案，就是把下载JavaScript文件的时间推迟，或者把执行JavaScript代码的时间推迟。下面我们就来总结一下优化的方案</p>
+<h3 id="加载JavaScript代码优化的方案"><a href="#加载JavaScript代码优化的方案" class="headerlink" title="加载JavaScript代码优化的方案"></a>加载JavaScript代码优化的方案</h3><h4 id="阻塞问题的优化"><a href="#阻塞问题的优化" class="headerlink" title="阻塞问题的优化"></a>阻塞问题的优化</h4><p>之所以会阻塞，就是因为JavaScript代码早于html的DOM代码执行了，再进一步说，因为JavaScript代码在<code>&lt;head&gt;</code>标签中，比<code>&lt;body&gt;</code>标签更早被获取，所以才会有阻塞的问题。因此，可以考虑让JavaScript代码被滞后获取。</p>
+<p>最简单的想法就是把 <strong><code>&lt;script&gt;</code>标签放到<code>&lt;body&gt;</code>标签底部</strong> ，这样可以减少对页面渲染的阻塞。这个也是目前开发中比较常见的一种优化方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">		&lt;title&gt;Example&lt;/title&gt;</span><br><span class="line">		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; herf=&quot;style.css&quot;&gt;</span><br><span class="line">	&lt;/head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;p&gt;Hello World&lt;/p&gt;</span><br><span class="line">		</span><br><span class="line">		&lt;script type=&quot;text/javascript&quot; src=&quot;file1.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">	&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>同样也要一种类似的方案，就是通过给 <strong><code>&lt;body&gt;</code>标签创建<code>&lt;script&gt;</code>标签，再引入js文件</strong> 的方案。这个方案看起来比上面的方案复杂了，但是在需要引入多个js文件的情况下，还是比较好的方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var script = document.createElement(&quot;srcipt&quot;);</span><br><span class="line">script.type = &quot;text/javascript&quot;;</span><br><span class="line">script.src = &quot;file1.js&quot;;</span><br><span class="line">document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);</span><br></pre></td></tr></table></figure>
+<p>另一种方案则是采用了 <strong>XMLHTTPRequest脚本注入</strong> ，先创建一个XHR对象，然后用这个对象下载js文件，然后再通过创建<code>&lt;script&gt;</code>元素把js代码引入到页面中。</p>
+<p>这种方案的优点就是可以下载JavaScript代码但不会立即执行，而且所有主流浏览器都能正常工作。但是也会有一个问题，就是因为涉及异步请求文件，所以需要遵循同域。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var xhr = new XMLHttpRequest();</span><br><span class="line">xhr.open(&quot;get&quot;, &quot;file1.js&quot;, &quot;true);</span><br><span class="line">xhr.noreadystatechange = function () &#123;</span><br><span class="line">	if (xhr.readyState == 4) &#123;</span><br><span class="line">		if (xhr.status &gt;= 200 &amp; xhr.status &lt; 300 || xhr.status == 304) &#123;</span><br><span class="line">			var script = document.createElement(&quot;script&quot;);</span><br><span class="line">			script.type = &quot;text/javascript&quot;;</span><br><span class="line">			script.src = xhr.responseText;</span><br><span class="line">			document.body.appendChild(script);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure>
+<p>在《高性能JavaScript》的后面《推荐的无阻塞模式》一节中也是对这个方案做了封装，使这个方案适合添加大良的JavaScript代码。</p>
+<h4 id="加载JavaScript的优化"><a href="#加载JavaScript的优化" class="headerlink" title="加载JavaScript的优化"></a>加载JavaScript的优化</h4><p>一般一个项目加载JavaScript文件都会有好几个文件（特别是强调模块化工程化的前端开发），如果遇到一个HTML页面需要加载多个js文件，则每个js文件都会需要单独的下载跟执行，会影响页面的总体性能。因此，书中提及了雅虎提供的合并处理器，可以用一个URL包含多个文件，从而使URL上的文件可以同时加载。<br>不过，从现在前端开发的做法上来看，虽然开发上强调模块化，但是实际已经把开发跟上线分离，实际上线的项目中，已经通过打包工具减少了文件（一般可以看到打包的js文件就剩一个bound.js了），所以书中的这个方案可以说已经通过工程化得到更好更广泛的解决了。</p>
+<h4 id="执行JavaScript的优化"><a href="#执行JavaScript的优化" class="headerlink" title="执行JavaScript的优化"></a>执行JavaScript的优化</h4><p>书中也提及如何延迟js代码的执行。HTML 4为<code>&lt;script&gt;</code>标签定义了一个扩展属性：defer，这个属性主要是表明当前元素的脚本不影响DOM，所以浏览器会在页面加载完成后在执行<code>&lt;script&gt;</code>标签中的脚本。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>书中还提及几个库，都是针对无阻塞脚本加载开发的，这里就没在深入了解了。</p>
+<p>总结一下，优化JavaScript代码的加载跟执行对页面的客户体验会有很大的提升。从当前前端开发来看，更多的方案是把多个js文件打包成少量的js文件，然后把<code>&lt;script&gt;</code>标签放到<code>&lt;body&gt;</code>标签底部。书中也提及了一些其他的方案，这些方案也可以在一些小项目中使用，一样能提升页面性能。</p>
+<p>上面使用的代码示例都是书中的代码示例。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/24/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/24/hello-world/" itemprop="url">Hello World</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T08:22:48+08:00">
+                2018-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/23/scope/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -537,7 +837,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -559,7 +859,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,Vue,Vue Router,编程式导航,路由传值," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇整理一下vue-router的两个部分：编程式导航及路由传值。 编程式导航编程式导航其实是跟声明式导航相对的： 1234567// 声明式路由导航&amp;lt;router-link to=&amp;apos;/books&amp;apos;&amp;gt;To Books List&amp;lt;/router-link&amp;gt;// 编程式路由导航router.push(&amp;#123;  path: &amp;apos;/books&amp;ap">
+<meta name="keywords" content="JavaScript,Vue,Vue Router,编程式导航,路由传值">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue Router学习(二)">
+<meta property="og:url" content="http://listentolife.github.io/2019/01/16/Vuejs-VueRouterII/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="这篇整理一下vue-router的两个部分：编程式导航及路由传值。 编程式导航编程式导航其实是跟声明式导航相对的： 1234567// 声明式路由导航&amp;lt;router-link to=&amp;apos;/books&amp;apos;&amp;gt;To Books List&amp;lt;/router-link&amp;gt;// 编程式路由导航router.push(&amp;#123;  path: &amp;apos;/books&amp;ap">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-16T14:14:52.028Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue Router学习(二)">
+<meta name="twitter:description" content="这篇整理一下vue-router的两个部分：编程式导航及路由传值。 编程式导航编程式导航其实是跟声明式导航相对的： 1234567// 声明式路由导航&amp;lt;router-link to=&amp;apos;/books&amp;apos;&amp;gt;To Books List&amp;lt;/router-link&amp;gt;// 编程式路由导航router.push(&amp;#123;  path: &amp;apos;/books&amp;ap">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2019/01/16/Vuejs-VueRouterII/"/>
+
+
+
+
+
+  <title>Vue Router学习(二) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/16/Vuejs-VueRouterII/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue Router学习(二)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T22:13:14+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇整理一下vue-router的两个部分：编程式导航及路由传值。</p>
+<h3 id="编程式导航"><a href="#编程式导航" class="headerlink" title="编程式导航"></a>编程式导航</h3><p>编程式导航其实是跟声明式导航相对的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 声明式路由导航</span><br><span class="line">&lt;router-link to=&apos;/books&apos;&gt;To Books List&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 编程式路由导航</span><br><span class="line">router.push(&#123;</span><br><span class="line">  path: &apos;/books&apos;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>两种方式都可以实现路由导航，使用<code>&lt;router-link&gt;</code>相当于调用了<code>router.push</code>。不过编程式导航，还有<code>router.replace()</code>，<code>router.go()</code>，<code>router.back()</code>及<code>router.forward()</code>方法可以调用。</p>
+<h4 id="router-push-amp-router-replace"><a href="#router-push-amp-router-replace" class="headerlink" title="router.push()&amp;router.replace()"></a><code>router.push()</code>&amp;<code>router.replace()</code></h4><p><code>router.push()</code>和<code>router.replace()</code>传参都是一样，分别是必须传值的<code>location</code>和可选的<code>onComplete</code>，<code>onAbort</code>回调。</p>
+<p><code>location</code>传入的参数可以是字符串，直接指向路由地址，也可以是描述地址的对象，还可以是路由对象及带查询参数的对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/* 官方文档的代码*/</span><br><span class="line">// 字符串</span><br><span class="line">router.push(&apos;home&apos;)</span><br><span class="line"></span><br><span class="line">// 对象</span><br><span class="line">router.push(&#123; path: &apos;home&apos; &#125;)</span><br><span class="line"></span><br><span class="line">// 命名的路由</span><br><span class="line">router.push(&#123; name: &apos;user&apos;, params: &#123; userId: 123 &#125;&#125;)</span><br><span class="line"></span><br><span class="line">// 带查询参数，变成 /register?plan=private</span><br><span class="line">router.push(&#123; path: &apos;register&apos;, query: &#123; plan: &apos;private&apos; &#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>下面是实际项目中对编程式导航的实现及router.push()的运用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/* 项目中的实现 */</span><br><span class="line">&lt;!-- 监听点击事件，再使用编程式导航到新路由 --&gt;</span><br><span class="line">&lt;li</span><br><span class="line">  v-for=&quot;(movie,index) in movies&quot;</span><br><span class="line">  :key=&quot;index&quot;</span><br><span class="line">  class=&quot;movie-list&quot;</span><br><span class="line">  @click=&quot;selectMovie(movie)&quot;</span><br><span class="line">  &gt;...&lt;/li&gt;</span><br><span class="line"></span><br><span class="line">// 这里使用的this.$router等同于router对象</span><br><span class="line">// 上一篇中说到在各个组件中都可以调用到this.$router</span><br><span class="line">selectMovie (movie) &#123;</span><br><span class="line">  this.$router.push(&#123;</span><br><span class="line">    name: &apos;movie-item&apos;,</span><br><span class="line">    params: &#123;</span><br><span class="line">      id: movie.title,</span><br><span class="line">      movie: movie</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>router.push()</code>实际上是在history栈添加一个新的记录，也就是用户点击浏览器后退时，是可以返回到上一个路由的。</p>
+<p>官方文档中提醒了一句：<strong>如果提供了<code>path</code>，<code>params</code>会被忽略。</strong>如果要传入无法通过路径传入的值，或者传入值较多，建议使用parmas。</p>
+<p>可选的<code>onComplete</code>，<code>onAbort</code>回调主要用在导航完成之后及导航终止的时候进行调用。目前我还没有看到网上有什么人有讲到这部分，所以了解就好，以后再深入。</p>
+<p><code>router.replace()</code>跟<code>router.push()</code>有一个很大的区别，在于它不是在history栈添加一个新的记录，而是替换当前的记录，也就是无法返回上一个路由记录。其他使用方面都是一样的。</p>
+<h4 id="router-go-，router-back-及router-forward"><a href="#router-go-，router-back-及router-forward" class="headerlink" title="router.go()，router.back()及router.forward()"></a><code>router.go()</code>，<code>router.back()</code>及<code>router.forward()</code></h4><p><code>router.go()</code>的参数是一个整数，表示在浏览器记录中向前或向后几步。如果是向前一步，就是<code>router.go(1)</code>，即<code>router.back()</code>；如果是向后一步，就是<code>router.go(-1)</code>，即<code>router.forward()</code>。</p>
+<h3 id="路由传值"><a href="#路由传值" class="headerlink" title="路由传值"></a>路由传值</h3><p>其实前面的篇幅中，多少已经涉及到路由传值了。路由传值主要是在<code>&lt;router-link&gt;</code>的<code>to</code>属性中跟<code>router.push()</code>中使用，传值也分<code>params</code>跟<code>query</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 使用动态路由时，在to属性中使用params对象传值</span><br><span class="line">&lt;router-link</span><br><span class="line">  class=&quot;music-list&quot;</span><br><span class="line">  tag=&quot;li&quot;</span><br><span class="line">  :to=&quot;&#123;name:&apos;music-item&apos;,params:&#123;id:music.title,music:music&#125;&#125;&quot;</span><br><span class="line">  v-for=&quot;music in musics&quot;</span><br><span class="line">  :key=&quot;music.title&quot;</span><br><span class="line">&gt;...&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 使用编程式导航时，直接在location参数中写入params传值</span><br><span class="line">// query的写法一样</span><br><span class="line">selectMovie (movie) &#123;</span><br><span class="line">  this.$router.push(&#123;</span><br><span class="line">    name: &apos;movie-item&apos;,</span><br><span class="line">    params: &#123;</span><br><span class="line">      id: movie.title,</span><br><span class="line">      movie: movie</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面有提到，如果提供了<code>path</code>，<code>params</code>会被忽略，所以一般使用params时，就需要传入name指明路由名，如果使用query时，就可以直接传入路由路径。</p>
+<p>传值在组件内可以通过<code>this.$route.params</code>及<code>this.$route.query</code>获得。</p>
+<p>使用<code>path</code>，<code>params</code>时有一点需要注意，使用<code>path</code>传值，刷新页面参数会丢失；使用<code>params</code>查询参数，刷新页面参数就不会丢失。</p>
+<p>vue-router的这两篇内容算入门内容，简单做整理，加深理解。vue-router的其他内容也会在深入学习使用之后再整理出来。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/Vue/" rel="tag"># Vue</a>
+          
+            <a href="/tags/Vue-Router/" rel="tag"># Vue Router</a>
+          
+            <a href="/tags/编程式导航/" rel="tag"># 编程式导航</a>
+          
+            <a href="/tags/路由传值/" rel="tag"># 路由传值</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/10/Vuejs-VueRouter/" rel="next" title="Vue Router学习(一)">
+                <i class="fa fa-chevron-left"></i> Vue Router学习(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Vuejs-keepAlive/" rel="prev" title="Vue.js keep-alive组件">
+                Vue.js keep-alive组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#编程式导航"><span class="nav-number">1.</span> <span class="nav-text">编程式导航</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#router-push-amp-router-replace"><span class="nav-number">1.1.</span> <span class="nav-text">router.push()&amp;router.replace()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#router-go-，router-back-及router-forward"><span class="nav-number">1.2.</span> <span class="nav-text">router.go()，router.back()及router.forward()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由传值"><span class="nav-number">2.</span> <span class="nav-text">路由传值</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -245,6 +245,342 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/16/Vuejs-keepAlive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/16/Vuejs-keepAlive/" itemprop="url">Vue.js keep-alive组件</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T22:15:21+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>有时候会觉得学习vue像在寻宝一样。因为vue中有很多很有用的组件，像之前写的关于插槽组件的那篇一样，我也是认为插槽组件很有用，可以更好的实现组件复用。这篇主要整理keep-alive组件的内容。</p>
+<p>keep-alive组件是Vue的内置组件，能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。</p>
+<p>keep-alive组件可以使用到动态组件<code>&lt;component&gt;</code>，也可以使用到路由组件<code>&lt;router-view&gt;</code>上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 使用到动态组件上</span><br><span class="line">&lt;keep-alive&gt;</span><br><span class="line">  &lt;compunent :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">// 使用到路由组件上</span><br><span class="line">&lt;keep-alive&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
+<p>keep-alive组件内可以由多个子组件，但是要求只能同时渲染一个子组件，也就是多子组件时，可以使用<code>v-if</code>，<code>v-else</code>，但不支持<code>v-for</code>。</p>
+<p>它有三个props：<code>include</code>，<code>exclude</code>，<code>max</code>。</p>
+<h3 id="include"><a href="#include" class="headerlink" title="include"></a><code>include</code></h3><p><code>include</code>支持组件名匹配字符串或正则表达式的组件被缓存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive include=&quot;book&quot;&gt;</span><br><span class="line">  &lt;!-- 将缓存name为book的组件，name为movie的组件将不会被缓存 --&gt;</span><br><span class="line">  &lt;component&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;keep-alive include=&quot;a,b&quot;&gt;</span><br><span class="line">  &lt;!-- 将缓存name为a或者b的组件，结合动态组件使用 --&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 使用正则表达式，需使用v-bind --&gt;</span><br><span class="line">&lt;keep-alive :include=&quot;/a|b/&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 动态匹配判断是否缓存 --&gt;</span><br><span class="line">&lt;keep-alive :include=&quot;[&apos;books&apos;, &apos;movies&apos;] &quot;&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="exclude"><a href="#exclude" class="headerlink" title="exclude"></a><code>exclude</code></h3><p><code>exclude</code>跟<code>include</code>刚好相反，组件名不匹配字符串或正则表达式的组件才会被缓存。用法跟<code>include</code>一样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive exclude=&quot;book&quot;&gt;</span><br><span class="line">  &lt;!-- 除name为book的组件之外其他组件都会被缓存，如name为movie的组件 --&gt;</span><br><span class="line">  &lt;component&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;keep-alive exclude=&quot;a,b&quot;&gt;</span><br><span class="line">  &lt;!-- 将不缓存name为a或者b的组件 --&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 使用正则表达式，需使用v-bind --&gt;</span><br><span class="line">&lt;keep-alive :exclude=&quot;/a|b/&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 动态匹配判断是否缓存 --&gt;</span><br><span class="line">&lt;keep-alive :exclude=&quot;[&apos;books&apos;, &apos;movies&apos;] &quot;&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="max"><a href="#max" class="headerlink" title="max"></a><code>max</code></h3><p><code>max</code>表示最多可以缓存多少个组件实例。一旦这个数字达到了，在新实例被创建之前，已缓存组件中最久没有被访问的实例会被销毁掉。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 最多只能缓存10个组件实例，而且是最新被访问的组件实例才会被缓存 --&gt;</span><br><span class="line">&lt;keep-alive :max=&quot;10&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/16/Vuejs-VueRouterII/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/16/Vuejs-VueRouterII/" itemprop="url">Vue Router学习(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T22:13:14+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇整理一下vue-router的两个部分：编程式导航及路由传值。</p>
+<h3 id="编程式导航"><a href="#编程式导航" class="headerlink" title="编程式导航"></a>编程式导航</h3><p>编程式导航其实是跟声明式导航相对的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 声明式路由导航</span><br><span class="line">&lt;router-link to=&apos;/books&apos;&gt;To Books List&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 编程式路由导航</span><br><span class="line">router.push(&#123;</span><br><span class="line">  path: &apos;/books&apos;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>两种方式都可以实现路由导航，使用<code>&lt;router-link&gt;</code>相当于调用了<code>router.push</code>。不过编程式导航，还有<code>router.replace()</code>，<code>router.go()</code>，<code>router.back()</code>及<code>router.forward()</code>方法可以调用。</p>
+<h4 id="router-push-amp-router-replace"><a href="#router-push-amp-router-replace" class="headerlink" title="router.push()&amp;router.replace()"></a><code>router.push()</code>&amp;<code>router.replace()</code></h4><p><code>router.push()</code>和<code>router.replace()</code>传参都是一样，分别是必须传值的<code>location</code>和可选的<code>onComplete</code>，<code>onAbort</code>回调。</p>
+<p><code>location</code>传入的参数可以是字符串，直接指向路由地址，也可以是描述地址的对象，还可以是路由对象及带查询参数的对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/* 官方文档的代码*/</span><br><span class="line">// 字符串</span><br><span class="line">router.push(&apos;home&apos;)</span><br><span class="line"></span><br><span class="line">// 对象</span><br><span class="line">router.push(&#123; path: &apos;home&apos; &#125;)</span><br><span class="line"></span><br><span class="line">// 命名的路由</span><br><span class="line">router.push(&#123; name: &apos;user&apos;, params: &#123; userId: 123 &#125;&#125;)</span><br><span class="line"></span><br><span class="line">// 带查询参数，变成 /register?plan=private</span><br><span class="line">router.push(&#123; path: &apos;register&apos;, query: &#123; plan: &apos;private&apos; &#125;&#125;)</span><br></pre></td></tr></table></figure>
+<p>下面是实际项目中对编程式导航的实现及router.push()的运用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/* 项目中的实现 */</span><br><span class="line">&lt;!-- 监听点击事件，再使用编程式导航到新路由 --&gt;</span><br><span class="line">&lt;li</span><br><span class="line">  v-for=&quot;(movie,index) in movies&quot;</span><br><span class="line">  :key=&quot;index&quot;</span><br><span class="line">  class=&quot;movie-list&quot;</span><br><span class="line">  @click=&quot;selectMovie(movie)&quot;</span><br><span class="line">  &gt;...&lt;/li&gt;</span><br><span class="line"></span><br><span class="line">// 这里使用的this.$router等同于router对象</span><br><span class="line">// 上一篇中说到在各个组件中都可以调用到this.$router</span><br><span class="line">selectMovie (movie) &#123;</span><br><span class="line">  this.$router.push(&#123;</span><br><span class="line">    name: &apos;movie-item&apos;,</span><br><span class="line">    params: &#123;</span><br><span class="line">      id: movie.title,</span><br><span class="line">      movie: movie</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>router.push()</code>实际上是在history栈添加一个新的记录，也就是用户点击浏览器后退时，是可以返回到上一个路由的。</p>
+<p>官方文档中提醒了一句：<strong>如果提供了<code>path</code>，<code>params</code>会被忽略。</strong>如果要传入无法通过路径传入的值，或者传入值较多，建议使用parmas。</p>
+<p>可选的<code>onComplete</code>，<code>onAbort</code>回调主要用在导航完成之后及导航终止的时候进行调用。目前我还没有看到网上有什么人有讲到这部分，所以了解就好，以后再深入。</p>
+<p><code>router.replace()</code>跟<code>router.push()</code>有一个很大的区别，在于它不是在history栈添加一个新的记录，而是替换当前的记录，也就是无法返回上一个路由记录。其他使用方面都是一样的。</p>
+<h4 id="router-go-，router-back-及router-forward"><a href="#router-go-，router-back-及router-forward" class="headerlink" title="router.go()，router.back()及router.forward()"></a><code>router.go()</code>，<code>router.back()</code>及<code>router.forward()</code></h4><p><code>router.go()</code>的参数是一个整数，表示在浏览器记录中向前或向后几步。如果是向前一步，就是<code>router.go(1)</code>，即<code>router.back()</code>；如果是向后一步，就是<code>router.go(-1)</code>，即<code>router.forward()</code>。</p>
+<h3 id="路由传值"><a href="#路由传值" class="headerlink" title="路由传值"></a>路由传值</h3><p>其实前面的篇幅中，多少已经涉及到路由传值了。路由传值主要是在<code>&lt;router-link&gt;</code>的<code>to</code>属性中跟<code>router.push()</code>中使用，传值也分<code>params</code>跟<code>query</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 使用动态路由时，在to属性中使用params对象传值</span><br><span class="line">&lt;router-link</span><br><span class="line">  class=&quot;music-list&quot;</span><br><span class="line">  tag=&quot;li&quot;</span><br><span class="line">  :to=&quot;&#123;name:&apos;music-item&apos;,params:&#123;id:music.title,music:music&#125;&#125;&quot;</span><br><span class="line">  v-for=&quot;music in musics&quot;</span><br><span class="line">  :key=&quot;music.title&quot;</span><br><span class="line">&gt;...&lt;/router-link&gt;</span><br><span class="line"></span><br><span class="line">// 使用编程式导航时，直接在location参数中写入params传值</span><br><span class="line">// query的写法一样</span><br><span class="line">selectMovie (movie) &#123;</span><br><span class="line">  this.$router.push(&#123;</span><br><span class="line">    name: &apos;movie-item&apos;,</span><br><span class="line">    params: &#123;</span><br><span class="line">      id: movie.title,</span><br><span class="line">      movie: movie</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面有提到，如果提供了<code>path</code>，<code>params</code>会被忽略，所以一般使用params时，就需要传入name指明路由名，如果使用query时，就可以直接传入路由路径。</p>
+<p>传值在组件内可以通过<code>this.$route.params</code>及<code>this.$route.query</code>获得。</p>
+<p>使用<code>path</code>，<code>params</code>时有一点需要注意，使用<code>path</code>传值，刷新页面参数会丢失；使用<code>params</code>查询参数，刷新页面参数就不会丢失。</p>
+<p>vue-router的这两篇内容算入门内容，简单做整理，加深理解。vue-router的其他内容也会在深入学习使用之后再整理出来。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/10/Vuejs-VueRouter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -363,7 +699,7 @@
 <h4 id="this-router和this-route"><a href="#this-router和this-route" class="headerlink" title="this.$router和this.$route"></a><code>this.$router</code>和<code>this.$route</code></h4><p>这样就可以完成最简单的路由。<em>“我们可以在任何组件内通过<code>this.$router</code>访问路由器，也可以通过<code>this.$route</code>访问当前路由”</em>。</p>
 <p>上面这段引号的话是需要注意的。通过<code>this.$router</code>是访问<strong>路由器</strong>，通过<code>this.$route</code>是访问<strong>当前路由</strong>。</p>
 <p>一开始我也不是很明白，就在项目中写了一段console.log，尝试打印一下这两个：</p>
-<p><img src="../images/router&amp;route.png" alt="this.$router &amp; this.route"></p>
+<p><img src="https://listentolife.cc/images/router&amp;route.PNG" alt="this.$router &amp; this.route"></p>
 <p>这样看就比较明白了：<code>this.$router</code>指向的是router目录中创建的路由实例，<code>this.$route</code>指向的是当前渲染的路由对象。</p>
 <p>通过<code>this.$route</code>跟<code>this.$router</code>，我们有一些常用的方法可以调用，这里就属于编程式导航中会提及的内容，等后面再整理了。</p>
 <h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>上面的例子是比较简单的路由实现，但实际上很多时候是没办法把路由路径写死的，比较用户页面，比如我的项目中每个图书页面都是一样的，但是图书是各不相同的。这个时候就需要用到动态路由来实现。</p>
@@ -1640,357 +1976,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/12/React-Learning-I/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/12/React-Learning-I/" itemprop="url">react学习总结系列-react(一)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-12T00:17:14+08:00">
-                2018-09-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/React/" itemprop="url" rel="index">
-                    <span itemprop="name">React</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这里开始总结一下React。最好了解跟学习react的方法当然是去看react的官方文档，所以这里主要写的是各个知识点需要注意的点。</p>
-<h3 id="JSX语法"><a href="#JSX语法" class="headerlink" title="JSX语法"></a>JSX语法</h3><p>JSX语法就是在JS中直接写类似HTML标签，但实际上写的不是HTML代码，这中写法其实是<code>React.creatElement(component, props, ...children)</code>的语法糖。这种语法糖的书写相较于后者的书写更为方便易懂。</p>
-<p>代码1 react文档中的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// JSX语法</span><br><span class="line">&lt;MyButton color=&quot;blue&quot; shadowSize=&#123;2&#125;&gt;</span><br><span class="line">  Click Me</span><br><span class="line">&lt;/MyButton&gt;</span><br><span class="line"></span><br><span class="line">// 编译为:</span><br><span class="line">React.createElement(</span><br><span class="line">  MyButton,</span><br><span class="line">  &#123;color: &apos;blue&apos;, shadowSize: 2&#125;,</span><br><span class="line">  &apos;Click Me&apos;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
-<p>react文档有非常详细的介绍，这里主要提一些需要留意的点：</p>
-<p>1.<strong>字母大小写</strong>。标签名(组件名)都是驼峰命名法(大驼峰命名法)，后面也会说到的style-component插件也是用这样的写法。</p>
-<p>2.<strong>className</strong>。因为JSX语法其实是JS封装的，所以class还是js的关键词。所以在标签中如果要使用class类的话，需要写成className而不是class。写成class也不会影响代码的运行，但是会报一个提示。其他的html标签中使用的属性在JSX中都是小驼峰命名法的写法。</p>
-<p>3.<strong>标签之间的值</strong>。如果标签之间没有值，则可以直接一个标签闭合。在html中，有一些标签是单一标签，不用写/闭合也是可以的，但是在JSX中所有标签都需要用<code>/</code>来闭合，所以像input，img都需要写成<code>&lt;input /&gt;</code>、<code>&lt;img /&gt;</code>的闭合形式。如果是标签之间有值，那么支持像html一样直接把字符串写在标签之间，也可以直接写变量，如果遇到数组，可以用map函数枚举数组所有项，但是需要注意的是，标签之间不支持多个语句，最多只支持一个语句。上面用到的map也是一个语句下完成的。不支持if-else判断语句，但是支持三元判断。</p>
-<p>4.<strong>获取dom</strong>。react中支持用<code>ref</code>来获取dom对象，但实际上是react封装的一个React对象。如果要获取原生dom对象，可以使用<code>innerRef</code>。(PS: 这一部分其实涉及起来可以有很多内容，不过先知道这些就好，而且一般也建议少用<code>ref</code>)</p>
-<p>代码2 获取div的React对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// v16之前写法</span><br><span class="line">class MyComponent extends React.Component &#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;div ref=&#123;(myRef) =&gt; &#123;this.myRef = myRef&#125;&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// v16的写法</span><br><span class="line">class MyComponent extends React.Component &#123;</span><br><span class="line">  constructor(props) &#123;</span><br><span class="line">    super(props);</span><br><span class="line">    this.myRef = React.createRef();</span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;div ref=&#123;this.myRef&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>5.标签中支持写入带html代码的字符串，但是如果直接填入这样的字符串并不会被渲染成相应的内容，因为react也有这方面的安全防御。如果一定要填入这样的字符串，则需要通过<code>dangerouslySetInnerHTML</code>这个属性来传入。`dangerouslySetInnerHTML={{__html: }}`</p>
-<p>代码3 在<code>Content</code>组件中传入带HTML代码的字符串<code>this.props.content</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;Content dangerouslySetInnerHTML=&#123;&#123;__html: this.props.content&#125;&#125; /&gt;</span><br></pre></td></tr></table></figure></p>
-<p>6.<strong>JSX语法可以在函数中使用</strong>。一般指函数最后返回的值是直接放在标签中的。其实这些JSX语句在函数中还是以字符串的形式专递的，直到进入<code>render()</code>的return中才会被编译。</p>
-<p>7.<strong>属性</strong>。标签中的属性都是小驼峰命名法。属性支持的值可以是各种类型的（包括Function），也可以是一个执行语句，但是一样不支持多语句，判断语句中只支持三元判断。</p>
-<h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>组件是react中一个很重要的概念。首先，从一个用户来说，整个页面可以分为多个信息块，不同的信息块可以获得不同的信息，而从开发者来说，整个页面可以分为多个开发模块，每个模块都是相对独立，互不干扰，而且有些模块可能在整个网站多个页面都会出现。组件其实就是这些开发模块，它拥有属于自己的数据(信息)，根据自己的样式被渲染到页面上。</p>
-<p>react中组件的写法很简单，上一篇已经提到了JSX语法，针对的就是react的组件。组件中可以直接书写字符串，非引用类型变量，执行一条语句等，也可以什么都不写，自我闭合。</p>
-<p>组件中还可以嵌套子组件，但是前提是子组件必须已经定义或者引入。下面来说一些关于组件开发中的一些需要注意的点：</p>
-<p>1.<strong>组件的返回值只能有一个根元素</strong>。组件的返回值如果不只有一个根元素，则编译的时候回出现报错，无法渲染到页面。一般在实现一个组件时，会在最外层用一个html标签包住内容。</p>
-<p>2.<strong><code>Fragment</code>组件</strong>。有时候因为一些样式的原因，组件最外层的标签会影响页面显示的效果。这个时候可以考虑使用react提供的方案，<code>Fragment</code>。先把<code>Fragment</code>从react中引入，然后把组件最外层的标签替换成<code>&lt;Fragment&gt;</code>。在编译之后，DOM中将不会出现Fragment组件，组件内部直接渲染出来。这样既减少不必要的<code>div</code>标签，还可以保证一些样式的效果。</p>
-<p>3.<strong>React DOM更新</strong>。大家都知道，React是通过虚拟DOM来提高页面性能的。React对DOM的操作其实都是对虚拟DOM的操作。当虚拟DOM的修改完成之后，React在把虚拟DOM跟DOM做比对，把需要更新的部分进行更新。注意，这里是只更新需要更新的部分，其他没变动的部分不会更新。</p>
-<p>4.<strong><code>props</code>跟<code>state</code></strong> 。<code>props</code>跟<code>state</code>其实区别还挺明显的，不过这个还是用得越多也清楚这个区别。<code>props</code>可以理解为传入的参数的集合，因为这个集合内的变量都是传入进来的，所以是不可以修改的。<code>state</code>可以 理解问组件自身的属性值集合，这些属性都是会根据不同状态页面的表现而改变，所以是可以修改的，但是需要调用<code>setState()</code>进行修改，不能随意修改。所有的<code>props</code>在组件外传入，包括父组件，url等等，而<code>state</code>是需要在组件的<code>constructor()</code>中先声明后才可以赋值使用。</p>
-<p>5.<strong><code>super(props);</code></strong> 。在写<code>constructor()</code>，必须要先写一个语句<code>super(props);</code>。我看网上的解释是因为我们写的组件都是继承父类<code>React.component</code>，而我们在组件中写的<code>constructor()</code>会覆盖掉父类的<code>constructor()</code>，导致你父类构造函数没执行，所以手动执行下。</p>
-<p>其他的注意点想到或遇到后更新上来，现在就先写这么多。下一篇会介绍React的父子组件数据传递跟生命周期。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/07/Canvas-Game-VI/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/07/Canvas-Game-VI/" itemprop="url">Canvas 射击小游戏详解系列(六)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-07T23:10:00+08:00">
-                2018-09-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTML5/" itemprop="url" rel="index">
-                    <span itemprop="name">HTML5</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/HTML5/Canvas/" itemprop="url" rel="index">
-                    <span itemprop="name">Canvas</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇将介绍页面动画跟项目设计实现。先会对动画做介绍，然后再总结项目中实现动画的设计。</p>
-<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>这里说的页面动画指的是js动画，使用<code>requestAnimationFrame()</code>实现。</p>
-<p>实现动画效果的原理是把动画拆成一帧帧的画面，当达到每秒至少24帧时，可以给人造成流畅的视觉变化效果。也就算在实现动画效果时，要经历更新画面，清除画面，绘制画面三个部分。</p>
-<p>代码1 每个循环的代码逻辑<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var animate = function () &#123;</span><br><span class="line">  /* </span><br><span class="line">   * 1.更新下一帧画面，比如移动</span><br><span class="line">   * 2.清除当前页面画面</span><br><span class="line">   * 3.绘制下一帧画面</span><br><span class="line">   */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>第一步是更新下一帧的画面，处理完一些画面元素的数据调整跟状态调整；第二步是清除当前页面画布，腾出画布空间；第三步绘制下一帧画面，刷新画布内容。</p>
-<p>完成三步循环之后，还需要通过<code>requestAnimationFrame()</code>进入下一个循环周期。</p>
-<p>另外，既然有动画就需要用暂停或者结束的情况，需要做状态的判断。判断状态转变成暂停或者结束的条件一般有监听事件，碰撞检测，位置范围，超时等等。一般在第一步前判断是否需要更新，调用<code>requestAnimationFrame()</code>前判断是否需要进入下一个循环周期。</p>
-<p>最终，一个完整的动画设计就明了了。</p>
-<p>代码2 完整的动画代码逻辑<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var animate = function () &#123;</span><br><span class="line">  /* </span><br><span class="line">   * 判断条件，选择暂停动画或继续动画</span><br><span class="line">   * 1.更新下一帧画面，比如移动</span><br><span class="line">   * 2.清除当前页面画面</span><br><span class="line">   * 3.绘制下一帧画面</span><br><span class="line">   * 判断条件，选择调用requestAnimationFrame(animate)或结束动画</span><br><span class="line">   */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="项目设计"><a href="#项目设计" class="headerlink" title="项目设计"></a>项目设计</h3><p>项目中的动画主要是在GAME对象中。当玩家点击开始游戏后，会执行<code>play()</code>方法。这个方法会先设置游戏状态，然后重置关卡数据，创建跟初始化画布所有的元素，然后再调用<code>animate()</code>方法。</p>
-<h4 id="动画设计"><a href="#动画设计" class="headerlink" title="动画设计"></a>动画设计</h4><h5 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h5><p>进入<code>animate()</code>方法后，先做判断。先判断暂停状态变量是否为真，是则直接在画布上渲染暂停的图标。但是不是真的停下动画，只是让每一帧的渲染都是一样而已。直到暂停状态变量修改成假，就可以给移动量赋值。</p>
-<p>在项目中，判断前还需要对键盘对象做一次检测，确认玩家是否有出现键盘事件，再根据不同的键盘事件修改。</p>
-<h5 id="更新动画"><a href="#更新动画" class="headerlink" title="更新动画"></a>更新动画</h5><p>完成判断，继续动画时，根据前面得到的移动量，传入到飞机，怪兽类的实例对象中修改坐标位置。调用碰撞测试的方法<code>collision()</code>，判断碰撞是否发生。</p>
-<h5 id="清除画布"><a href="#清除画布" class="headerlink" title="清除画布"></a>清除画布</h5><p>参考上一篇，直接使用<code>context.clearRect(0, 0, canvas.width, canvas.height)</code>。</p>
-<h5 id="绘制画面"><a href="#绘制画面" class="headerlink" title="绘制画面"></a>绘制画面</h5><p>完成清除之后，调用<code>drawOject()</code>方法。这个方法内部会遍历所有画布的对象，调用对象的绘制方法。</p>
-<h5 id="调用requestAnimationFrame-animate"><a href="#调用requestAnimationFrame-animate" class="headerlink" title="调用requestAnimationFrame(animate)"></a>调用<code>requestAnimationFrame(animate)</code></h5><p>这里需要再加一个判断。因为在前面的更新动画中，只是判断了是否暂停，这里判断是否结束动画。前面绘制之后，可能结束的条件是怪兽已经被消灭完或怪兽已经到达底部，其他情况下继续动画，需要调用<code>requestAnimationFrame(animate)</code>。</p>
-<h4 id="碰撞设计"><a href="#碰撞设计" class="headerlink" title="碰撞设计"></a>碰撞设计</h4><p>碰撞设计主要是判断两个画布元素是否有重叠，其次是碰撞之后的状态跟动画效果的处理。这里主要讨论碰撞判断。</p>
-<p>碰撞的判断到底为画布元素的边界是否有交叉。比如矩形的碰撞判断，为两个矩形的左边界与右边界，上边界与下边界的交叉判断。比如圆形，则是判断两个圆形圆心的距离是否小于两个圆形的半径之和。</p>
-<p>如果是考虑矩形跟圆形，则需要判断矩形四个角跟圆形的位置关系及矩形中心到圆心的距离；</p>
-<p>如果是考虑矩形缺角或圆形缺弧，则需要判断矩形各个角跟圆心及弧角的位置关系及矩形中心到圆心的距离。</p>
-<p>如果是跟复杂的图形，则需要增加参考移动行为。比如项目中的怪兽跟子弹。不管怪兽的形状有多复杂，子弹的移动只有向上一个移动行为，所以主要的判断可以是子弹最上方的坐标是否进入怪兽边界内。</p>
-<p>越复杂的碰撞判断，越要参考除了图形之外，其他的因素，比如移动行为，形状变化等等。</p>
-<p>以上就是关于项目中动画部分的总结。</p>
-<h3 id="系列结语"><a href="#系列结语" class="headerlink" title="系列结语"></a>系列结语</h3><p>整个项目其实整体的重点是动画的流程，怎么实现完整的动画每一帧的代码逻辑。然后拆分成两个问题，怎么渲染游戏元素，怎么设计游戏对象。</p>
-<p>这个只是前端的一部分，还需要继续学习。加油！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2041,7 +2026,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2063,7 +2048,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
