@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="Listentolife">
 <meta property="og:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://listentolife.cc/images/pos.png">
-<meta property="og:updated_time" content="2019-02-09T11:54:38.229Z">
+<meta property="og:image" content="https://listentolife.cc/images/pos.PNG">
+<meta property="og:updated_time" content="2019-02-09T12:00:22.814Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript鼠标事件中event的各种x&#x2F;y属性梳理">
 <meta name="twitter:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
-<meta name="twitter:image" content="https://listentolife.cc/images/pos.png">
+<meta name="twitter:image" content="https://listentolife.cc/images/pos.PNG">
 
 
 
@@ -360,7 +360,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* &#123;</span><br><span class="line">  margin: 0px;</span><br><span class="line">  padding: 0px;</span><br><span class="line">  box-sizing: border-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>由于这几个实例属性中有一些是涉及页面可视，所以给<code>div#container</code>元素绝对定位，脱离文档流；为了页面可以上下左右滚动，所以<code>body</code>跟<code>canvas</code>元素的尺寸都很大。<br>而且为了减少盒模型的影响，所以设置了<code>box-sizing: border-box;</code></p>
 <p>js逻辑部分，给<code>div#container</code>添加鼠标点击事件，回调函数中返回event，把event中的这些关于x/y的实例属性通过new传入一个位置构造函数的实例中，通过实例来绘出点击点跟各个x/y属性的线。</p>
-<h3 id="x-y各属性的表现梳理"><a href="#x-y各属性的表现梳理" class="headerlink" title="x/y各属性的表现梳理"></a>x/y各属性的表现梳理</h3><p><img src="https://listentolife.cc/images/pos.png" alt="代码中各x/y属性的演示"></p>
+<h3 id="x-y各属性的表现梳理"><a href="#x-y各属性的表现梳理" class="headerlink" title="x/y各属性的表现梳理"></a>x/y各属性的表现梳理</h3><p><img src="https://listentolife.cc/images/pos.PNG" alt="代码中各x/y属性的演示"></p>
 <p>这张截图是在浏览器向左向下滚动后(浏览器的上边贴着绿色线，浏览器的左边贴着绿色线)，点击（点击点中心为黑点中心）触发事件得到的绘图。</p>
 <h4 id="clientX-clientY-amp-x-y"><a href="#clientX-clientY-amp-x-y" class="headerlink" title="clientX/clientY &amp; x/y"></a><code>clientX</code>/<code>clientY</code> &amp; <code>x</code>/<code>y</code></h4><p><code>clientX</code>/<code>clientY</code>在点击事件触发时是等于点击点到浏览器的上边跟左边，说明 <strong><code>clientX</code>/<code>clientY</code>的参考坐标轴是沿着浏览器的上边为x轴，浏览器的左边为y轴</strong> 。跟目标节点的<code>border</code>，<code>margin</code>跟<code>padding</code>没有关系。<br>相同的<code>x</code>/<code>y</code>在表现上也一样。不过最好使用的时候使用前者。</p>
 <h4 id="layerX-layerY"><a href="#layerX-layerY" class="headerlink" title="layerX/layerY"></a><code>layerX</code>/<code>layerY</code></h4><p><code>layerX</code>/<code>layerY</code>在点击事件触发之后显示出来是点击点到目标节点的边界，而且是在目标节点的边框上。目标节点的样式是有添加<code>border</code>跟<code>padding</code>样式的，而这个属性绘出的线跟目标节点的边框相交但不超出，说明 <strong><code>layerX</code>/<code>layerY</code>的参考坐标轴是沿着目标节点的上边界（有边框则是沿着上边框）为x轴，目标节点的左边界（有边框则是沿着左边框）为y轴</strong> 。跟目标节点的<code>margin</code>，页面的可视范围没有关系。</p>
