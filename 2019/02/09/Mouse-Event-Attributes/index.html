@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,鼠标事件," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
+<meta name="keywords" content="JavaScript,鼠标事件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript鼠标事件中event的各种x&#x2F;y属性梳理">
+<meta property="og:url" content="http://listentolife.github.io/2019/02/09/Mouse-Event-Attributes/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://listentolife.cc/images/pos.png">
+<meta property="og:updated_time" content="2019-02-09T11:54:38.229Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript鼠标事件中event的各种x&#x2F;y属性梳理">
+<meta name="twitter:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
+<meta name="twitter:image" content="https://listentolife.cc/images/pos.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2019/02/09/Mouse-Event-Attributes/"/>
+
+
+
+
+
+  <title>JavaScript鼠标事件中event的各种x/y属性梳理 | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/02/09/Mouse-Event-Attributes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaScript鼠标事件中event的各种x/y属性梳理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-09T19:48:05+08:00">
+                2019-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/杂谈/" itemprop="url" rel="index">
+                    <span itemprop="name">杂谈</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。</p>
+<p>这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">e.clientX/e.clientY</span><br><span class="line">e.screenX/e.screenY</span><br><span class="line">e.offsetX/offsetY</span><br><span class="line">e.pageX/e.pageY</span><br><span class="line">e.layerX/e.layerX</span><br><span class="line">e.x/e.y</span><br></pre></td></tr></table></figure>
+<h3 id="关于各种x-y属性的描述"><a href="#关于各种x-y属性的描述" class="headerlink" title="关于各种x/y属性的描述"></a>关于各种x/y属性的描述</h3><p>在网上找了一些资料，对于这些属性都有描述。<a href="http://www.w3school.com.cn" target="_blank" rel="noopener">http://www.w3school.com.cn</a> w3c给出了clientX/Y跟screenX/Y的描述，不过为了统一，我选择了阮一峰的一份JavaScript教程(<a href="https://wangdoc.com/javascript/events/mouse.html)中的描述：" target="_blank" rel="noopener">https://wangdoc.com/javascript/events/mouse.html)中的描述：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MouseEvent.clientX属性返回鼠标位置相对于浏览器窗口左上角的水平坐标（单位像素）</span><br><span class="line">MouseEvent.clientY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.screenX属性返回鼠标位置相对于屏幕左上角的水平坐标（单位像素），</span><br><span class="line">MouseEvent.screenY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.offsetX属性返回鼠标位置与目标节点左侧的padding边缘的水平距离（单位像素）</span><br><span class="line">MouseEvent.offsetY属性返回与目标节点上方的padding边缘的垂直距离。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.pageX属性返回鼠标位置与文档左侧边缘的距离（单位像素），</span><br><span class="line">MouseEvent.pageY属性返回与文档上侧边缘的距离（单位像素）。它们的返回值都包括文档不可见的部分。这两个属性都是只读。</span><br></pre></td></tr></table></figure>
+<p><code>layerX/e.layerX</code>跟<code>x/y</code>则没有找到比较权威的描述。</p>
+<p>这些描述看完还是有点稀里糊涂的，不过可以看出，这些属性的值都是相对的，是有参考坐标的，比如浏览器，屏幕，目标节点，文档等。所以我们就试试在代码中获得更深入的理解。</p>
+<h3 id="代码实现实例属性"><a href="#代码实现实例属性" class="headerlink" title="代码实现实例属性"></a>代码实现实例属性</h3><p>这里尝试做一个简单的演示项目，body中如下结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;canvas-wrapper&quot;&gt;</span><br><span class="line">  &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;canvas id=&quot;canvas&quot; height=&quot;2000&quot; width=&quot;2000&quot;&gt;&lt;/canvas&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p><code>div#container</code>元素是作为鼠标事件的目标节点，而<code>canvas</code>画布则是用于绘出点击事件的坐标跟垂直线。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* &#123;</span><br><span class="line">  margin: 0px;</span><br><span class="line">  padding: 0px;</span><br><span class="line">  box-sizing: border-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于这几个实例属性中有一些是涉及页面可视，所以给<code>div#container</code>元素绝对定位，脱离文档流；为了页面可以上下左右滚动，所以<code>body</code>跟<code>canvas</code>元素的尺寸都很大。<br>而且为了减少盒模型的影响，所以设置了<code>box-sizing: border-box;</code></p>
+<p>js逻辑部分，给<code>div#container</code>添加鼠标点击事件，回调函数中返回event，把event中的这些关于x/y的实例属性通过new传入一个位置构造函数的实例中，通过实例来绘出点击点跟各个x/y属性的线。</p>
+<h3 id="x-y各属性的表现梳理"><a href="#x-y各属性的表现梳理" class="headerlink" title="x/y各属性的表现梳理"></a>x/y各属性的表现梳理</h3><p><img src="https://listentolife.cc/images/pos.png" alt="代码中各x/y属性的演示"></p>
+<p>这张截图是在浏览器向左向下滚动后(浏览器的上边贴着绿色线，浏览器的左边贴着绿色线)，点击（点击点中心为黑点中心）触发事件得到的绘图。</p>
+<h4 id="clientX-clientY-amp-x-y"><a href="#clientX-clientY-amp-x-y" class="headerlink" title="clientX/clientY &amp; x/y"></a><code>clientX</code>/<code>clientY</code> &amp; <code>x</code>/<code>y</code></h4><p><code>clientX</code>/<code>clientY</code>在点击事件触发时是等于点击点到浏览器的上边跟左边，说明 <strong><code>clientX</code>/<code>clientY</code>的参考坐标轴是沿着浏览器的上边为x轴，浏览器的左边为y轴</strong> 。跟目标节点的<code>border</code>，<code>margin</code>跟<code>padding</code>没有关系。<br>相同的<code>x</code>/<code>y</code>在表现上也一样。不过最好使用的时候使用前者。</p>
+<h4 id="layerX-layerY"><a href="#layerX-layerY" class="headerlink" title="layerX/layerY"></a><code>layerX</code>/<code>layerY</code></h4><p><code>layerX</code>/<code>layerY</code>在点击事件触发之后显示出来是点击点到目标节点的边界，而且是在目标节点的边框上。目标节点的样式是有添加<code>border</code>跟<code>padding</code>样式的，而这个属性绘出的线跟目标节点的边框相交但不超出，说明 <strong><code>layerX</code>/<code>layerY</code>的参考坐标轴是沿着目标节点的上边界（有边框则是沿着上边框）为x轴，目标节点的左边界（有边框则是沿着左边框）为y轴</strong> 。跟目标节点的<code>margin</code>，页面的可视范围没有关系。</p>
+<h4 id="offsetX-offsetY"><a href="#offsetX-offsetY" class="headerlink" title="offsetX/offsetY"></a><code>offsetX</code>/<code>offsetY</code></h4><p><code>offsetX</code>/<code>offsetY</code>跟<code>layerX</code>/<code>layerY</code>很接近，但是它跟目标节点的边框没有相交，也就是当目标节点没有边框的情况下，<code>offsetX</code>/<code>offsetY</code>跟<code>layerX</code>/<code>layerY</code>的值是相等的。<strong><code>offsetX</code>/<code>offsetY</code>的参考坐标轴是沿着目标节点的上边界为x轴，目标节点的左边界为y轴</strong> 。跟目标节点的<code>margin</code>，页面的可视范围没有关系。</p>
+<h4 id="pageX-pageY"><a href="#pageX-pageY" class="headerlink" title="pageX/pageY"></a><code>pageX</code>/<code>pageY</code></h4><p><code>pageX</code>/<code>pageY</code>在点击事件触发之后显示出来是点击点到文档页面的边界，及时是页面发生了滚动，这个属性仍然显示的是点击点在文档页面的相对位置。所以 <strong><code>pageX</code>/<code>pageY</code>的参考坐标轴是沿着文档页面的上边界为x轴，文档页面的左边界为y轴</strong> 。跟目标节点，页面的可视范围没有关系。</p>
+<h4 id="screenX-screenY"><a href="#screenX-screenY" class="headerlink" title="screenX/screenY"></a><code>screenX</code>/<code>screenY</code></h4><p><code>screenX</code>/<code>screenY</code>代码中没有绘制，原因在于这个属性的坐标是整个屏幕，跟浏览器无关，所以无法绘制展示出来。</p>
+<p>上述就是鼠标事件event中关于x/y属性的梳理。文中的代码已上传github：<br><a href="https://github.com/listentolife/mouseEventPositionAttributes" target="_blank" rel="noopener">https://github.com/listentolife/mouseEventPositionAttributes</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/鼠标事件/" rel="tag"># 鼠标事件</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Vuejs-keepAlive/" rel="next" title="Vue.js keep-alive组件">
+                <i class="fa fa-chevron-left"></i> Vue.js keep-alive组件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于各种x-y属性的描述"><span class="nav-number">1.</span> <span class="nav-text">关于各种x/y属性的描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现实例属性"><span class="nav-number">2.</span> <span class="nav-text">代码实现实例属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x-y各属性的表现梳理"><span class="nav-number">3.</span> <span class="nav-text">x/y各属性的表现梳理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#clientX-clientY-amp-x-y"><span class="nav-number">3.1.</span> <span class="nav-text">clientX/clientY &amp; x/y</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#layerX-layerY"><span class="nav-number">3.2.</span> <span class="nav-text">layerX/layerY</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#offsetX-offsetY"><span class="nav-number">3.3.</span> <span class="nav-text">offsetX/offsetY</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pageX-pageY"><span class="nav-number">3.4.</span> <span class="nav-text">pageX/pageY</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#screenX-screenY"><span class="nav-number">3.5.</span> <span class="nav-text">screenX/screenY</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

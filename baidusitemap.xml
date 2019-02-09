@@ -4,6 +4,56 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2019/02/09/Mouse-Event-Attributes/</loc>
+    <lastmod>2019-02-09T11:54:38.229Z</lastmod>
+    <data>
+        <display>
+        <title>JavaScript鼠标事件中event的各种x/y属性梳理</title>
+        <pubTime>2019-02-09T11:48:05.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>鼠标事件</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="杂谈" url="http://listentolife.github.io/categories/JavaScript/%E6%9D%82%E8%B0%88/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2018/09/05/Canvas-Game-V/</loc>
+    <lastmod>2019-02-09T11:46:24.740Z</lastmod>
+    <data>
+        <display>
+        <title>Canvas 射击小游戏详解系列(五)</title>
+        <pubTime>2018-09-04T16:32:48.000Z</pubTime>
+        
+        <tag>Canvas</tag>
+         
+        <tag>HTML5</tag>
+         
+         
+           
+             
+              <breadCrumb title="HTML5" url="http://listentolife.github.io/categories/HTML5/"/>
+          
+             
+              <breadCrumb title="Canvas" url="http://listentolife.github.io/categories/HTML5/Canvas/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2018/06/18/High-Performance-JavaScript-Reading-Note-II/</loc>
     <lastmod>2019-01-16T14:38:45.570Z</lastmod>
     <data>
@@ -410,31 +460,6 @@
         <tag>HTML5</tag>
          
         <tag>Animate</tag>
-         
-         
-           
-             
-              <breadCrumb title="HTML5" url="http://listentolife.github.io/categories/HTML5/"/>
-          
-             
-              <breadCrumb title="Canvas" url="http://listentolife.github.io/categories/HTML5/Canvas/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://listentolife.github.io/2018/09/05/Canvas-Game-V/</loc>
-    <lastmod>2018-09-04T16:36:52.604Z</lastmod>
-    <data>
-        <display>
-        <title>Canvas 射击小游戏详解系列(五)</title>
-        <pubTime>2018-09-04T16:32:48.000Z</pubTime>
-        
-        <tag>Canvas</tag>
-         
-        <tag>HTML5</tag>
          
          
            
