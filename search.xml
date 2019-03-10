@@ -3,6 +3,27 @@
   
     
     <entry>
+      <title>新的开始</title>
+      <link href="/2019/03/10/NewJourney/"/>
+      <url>/2019/03/10/NewJourney/</url>
+      <content type="html"><![CDATA[<p>最近家里来了新的小成员，所有事情都围着他团团转。这几天终于能放松一点点，想着为了以后在工作上能效率高一些，折腾了一下给电脑加个ssd，重装了系统，结果忘记备份写好的好几篇博客稿子……</p><p>都怪自己没有及时的安排发布，还好所有资料也就丢失了这几篇稿子，后面还可以找时间再补回来。</p><p>把自己的事情做好才是最重要的，整理好，准备迎接各种新的开始。</p>]]></content>
+      
+      <categories>
+          
+          <category> 其他 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 生活 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>JavaScript鼠标事件中event的各种x/y属性梳理</title>
       <link href="/2019/02/09/Mouse-Event-Attributes/"/>
       <url>/2019/02/09/Mouse-Event-Attributes/</url>

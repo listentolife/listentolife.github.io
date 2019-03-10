@@ -245,6 +245,194 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/11/24/React-Learning-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/24/React-Learning-II/" itemprop="url">react学习总结系列-react(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-24T21:29:27+08:00">
+                2018-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/React/" itemprop="url" rel="index">
+                    <span itemprop="name">React</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇主要写的是React中父子组件数据传递跟生命周期。</p>
+<h3 id="父子组件数据传递"><a href="#父子组件数据传递" class="headerlink" title="父子组件数据传递"></a>父子组件数据传递</h3><p>上一篇其实有说到，组件跟组件之前其实是相对独立的。虽然每个组件的数据是可以独立处理，但是组件与组件之间的数据还是存在联系的，而所有的组件之间的数据关系，都是可以归结为父组件跟子组件之间的数据传递关系。再拆分这种数据传递关系，就是要解决<strong>父组件数据传给子组件</strong>，<strong>子组件数据传给父组件</strong>两个问题。</p>
+<ol>
+<li><strong>父组件传入参数</strong>。在React中，父组件给子组件传递数据其实挺简单的，就是在子组件标签中通过变量进行传入，子组件通过props获取传入的数据：</li>
+</ol>
+<p>代码1 父组件传参<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/* 自己写豆瓣的一段代码，</span><br><span class="line">  * 图书页面Book组件中把页面类型参数Contants.Book传入</span><br><span class="line">  * 搜索Search组件</span><br><span class="line">  * /</span><br><span class="line">class Book extends Component &#123;</span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;Fragment&gt;</span><br><span class="line">        &lt;Search</span><br><span class="line">          page=&#123;this.state.book&#125;</span><br><span class="line">          searchInfo=&#123;this.getSearchInfo&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;/Fragment&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* 搜索Search组件通过props.page接收父组件的参数，</span><br><span class="line">  * 判断input标签的属性placeholder的值</span><br><span class="line">  * 项目中还使用了styled-components插件，后面会另有介绍</span><br><span class="line">  * /</span><br><span class="line">class Search extends Component &#123;</span><br><span class="line">  // 根据父组件传入的props.page确定input标签的属性placeholder的值</span><br><span class="line">  showPlaceHolder () &#123;</span><br><span class="line">    const &#123; placeHolders, page &#125; = this.props</span><br><span class="line">    const placeHoldersJS = placeHolders.toJS()</span><br><span class="line">    return placeHoldersJS[page]</span><br><span class="line">  &#125;</span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;SearchWrapper&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">          &lt;SearchInput</span><br><span class="line">            value=&#123;this.props.keyword&#125;</span><br><span class="line">            placeholder=&#123;this.showPlaceHolder()&#125;</span><br><span class="line">          /&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">      &lt;/SearchWrapper&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的代码有所省略，但基本上是对父子组件之前传递数据有基本的实现。注意，父组件的数据需要在子组件标签内用一个变量传入，这个变量将会放在子组件的props属性中。子组件调用这个变量时需要到props中调用。</p>
+<ol start="2">
+<li><strong>子组件传出参数</strong>。一般来说，React的数据流是单向流动，即父组件的数据可以流入子组件，但是子组件的数据是不能向父组件传递或修改父组件的数据。但是子组件是可以通过自己的事件处理函数，手动触发父组件传递进来的回调函数，在回调函数上把数据通过参数传递进去。这样就可以让子组件当数据有变化的时候，父组件也可以根据变化进行响应处理：</li>
+</ol>
+<p>代码2 子组件调用父组件回调函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">// 父组件Book组件向子组件Search先传入getSearchInfo()方法</span><br><span class="line">class Book extends Component &#123;</span><br><span class="line">  constructor (props) &#123;</span><br><span class="line">    super(props)</span><br><span class="line">    this.getSearchInfo = this.getSearchInfo.bind(this)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  getSearchInfo (newKeyword) &#123;</span><br><span class="line">    /* 省略代码 */</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    const &#123; pullDownStatus, pullUpStatus &#125; = this.props</span><br><span class="line">    return (</span><br><span class="line">      &lt;Fragment&gt;</span><br><span class="line">        &lt;Search</span><br><span class="line">          searchInfo=&#123;this.getSearchInfo&#125;</span><br><span class="line">        /&gt;</span><br><span class="line">      &lt;/Fragment&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 子组件在handleClick()方法中调用父组件传入的回调函数searchInfo(keyword)，并把值传入</span><br><span class="line">class Search extends Component &#123;</span><br><span class="line">  constructor (props) &#123;</span><br><span class="line">    super(props)</span><br><span class="line">    this.handleClick = this.handleClick.bind(this)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleClick () &#123;</span><br><span class="line">    const &#123; searchInfo, keyword&#125; = this.props</span><br><span class="line">    if (keyword !== &apos;&apos;) &#123;</span><br><span class="line">      searchInfo(keyword)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render () &#123;</span><br><span class="line">    return (</span><br><span class="line">      &lt;SearchWrapper&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">          &lt;SearchInput /&gt;</span><br><span class="line">          &lt;SearchButton</span><br><span class="line">            onClick=&#123;this.handleClick&#125;</span><br><span class="line">          &gt;搜索&lt;/SearchButton&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">      &lt;/SearchWrapper&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里有个地方需要注意的。父组件方法<code>getSearchInfo()</code>虽然是对象中的方法，但是它也有自己的作用域，所以正常来说它的this指向它自己的作用域，this.props就不存在了。所以需要在<code>constructor()</code>中指定它的作用域为整个类，需要补上<code>this.getSearchInfo = this.getSearchInfo.bind(this)</code>。</p>
+<h3 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h3><p>我们来回头说一下组件的生命周期。组件的生命周期包括了初始化，第一次加载渲染，更新渲染跟卸载四个阶段。而React的生命周期函数主要分布在后面三个阶段。我们先每个阶段简单整理一下：</p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>这个阶段主要还是调用了ES6中类的<code>constructor()</code>。通过构造器完成对父类的继承，变量的初始化和函数指定作用域。这个阶段还没有调用生命周期函数。</p>
+<h4 id="第一次加载渲染"><a href="#第一次加载渲染" class="headerlink" title="第一次加载渲染"></a>第一次加载渲染</h4><p>第一次加载渲染的过程会调用三个生命周期函数：</p>
+<p>1.<code>componentWillMount()</code>，这个函数将会在组件第一次加载渲染之前被调用。可以做一些组件渲染到页面前的操作。只调用一次。</p>
+<p>2.<code>render()</code>，这个函数就是负责创建虚拟DOM，此时所有数据都至少已经初始化了。</p>
+<p>3.<code>componentDidMount()</code>，这个函数是在组件第一次加载渲染完成之后马上被调用的，也只调用一次。这个函数可以调用ajax请求，返回的数据会在后面阶段更新组件状态，并触发重新渲染</p>
+<h4 id="更新渲染"><a href="#更新渲染" class="headerlink" title="更新渲染"></a>更新渲染</h4><p>第一次加载渲染完成之后到组件被卸载之前，组件中的state状态跟props数据还是可以改变。所以会调用下面几个生命周期函数：</p>
+<p>1.<code>componentWillReceiveProps(nextProps)</code>，在组件第一次加载渲染之后，如果props数据将要发生改变，那改变之前会先调用这个函数。函数的传参为props改变之后的值。</p>
+<p>2.<code>shouldComponentUpdate(nextProps,nextState)</code>，在组件props或state将发生改变，进行更新渲染之前会调用这个函数。函数的传参为props或者state改变之后的值。函数最后返回值一定是布尔值，表示是否重新渲染组件(true为重新渲染，false为阻止渲染)。这里可以判断props或state的值是否达到需要重新渲染组件的要求。这个函数的判断有助于提高页面性能，因为当父组件重新渲染时也会导致其所有子组件重新渲染，所以在组件中做这个判断可以阻止不必要的重新渲染。</p>
+<p>3.<code>componentWillUpdate (nextProps,nextState)</code>，在组件调用<code>shouldComponentUpdate(nextProps,nextState)</code>并返回<code>true</code>之后，进行更新渲染之前会调用这个函数。这里同样可以拿到<code>nextProps</code>跟<code>nextState</code>进行操作。</p>
+<p>4.<code>render()</code>，这里的渲染就是根据新更新的<code>props</code>跟<code>state</code>的值进行重新创建虚拟DOM，然后在根据diff算法比对新旧DOM数，找到有差异的最小DOM节点，并重新渲染。</p>
+<p>5.<code>componentDidUpdate(prevProps,prevState)</code>，在组件重新渲染之后会调用这个函数。函数的传参为props或者state改变之前的值。</p>
+<h4 id="组件卸载"><a href="#组件卸载" class="headerlink" title="组件卸载"></a>组件卸载</h4><p>当组件将不再被渲染到页面上时，组件将会被卸载。卸载前只有一个函数会被触发调用：</p>
+<p><strong><code>componentWillUnmount ()</code></strong> ，这个函数因为是在组件被卸载前被调用，所以很适合以下一些操作：</p>
+<p>1.清除组件内的所有定时<code>setTimeout</code>，<code>setInterval</code>；</p>
+<p>2.移除组件内的所有监听事件 <code>removeEventListener</code>；</p>
+<p>3.处理未完成的ajax请求。一般ajax请求之后都会修改state，导致会调用组件的<code>setState()</code>，如果组件被卸载的时候ajax请求未完成，会导致请求完成后调用报错，所以可以在组件内设置状态值控制ajax请求完成后是否执行组件内<code>setState()</code>，然后在<code>componentWillUnmount ()</code>中修改状态值。</p>
+<h4 id="父子组件的生命周期"><a href="#父子组件的生命周期" class="headerlink" title="父子组件的生命周期"></a>父子组件的生命周期</h4><p>这里拓展一下，父子组件的生命周期被调用也是有顺序的。</p>
+<p>在组件初次渲染阶段，会从父组件开始，先调用父组件的<code>constructor()</code>构造函数、<code>componentWillMount()</code>，然后接着子组件开始调用这两个函数，直到最底层子组件调用这两个函数。接着调用对底层子组件的<code>componentDidMount()</code>，再一层层往上调用父组件的这个函数，直到最顶层父组件。</p>
+<p>在组件的卸载阶段，则会先从最顶层父组件开始调用<code>componentDidUnmount()</code>，直到最底层子组件。</p>
+<h4 id="父子组件之间的性能优化"><a href="#父子组件之间的性能优化" class="headerlink" title="父子组件之间的性能优化"></a>父子组件之间的性能优化</h4><p>其实在React中，父组件的数据变化，是会影响子组件进行重新渲染，倒是出现不必要的性能消耗。</p>
+<p>前面有说到，可以通过<code>shouldComponentUpdate(nextProps,nextState)</code>函数来判断是否需要重新渲染组件，但这样一来，每个组件都要手动判断重新渲染。每次只要出现父组件传来的数据，包括state状态的变化，都会调用这个函数，也会导致代码冗余。所以React还提供了一种处理方案。</p>
+<p>React V15中就引入了<code>React.PureComponent</code>。这个<code>PureComponent</code>跟<code>Component</code>用法上是一样的，只是组件继承了<code>PureComponent</code>类后，组件会自动实现<code>props</code>跟<code>state</code>的浅比较。当组件的<code>props</code>跟<code>state</code>的类型都比较简单的时候，就可以直接使用<code>PureComponent</code>。当如果<code>props</code>跟<code>state</code>是嵌套对象或数组时，浅比较将得不到预期的结果。</p>
+<p>关于 React的内容就先把这些基础的先介绍到这里，主要还是要看文档，这里的就算是一些个人整理。下一篇将会介绍style-components插件。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/12/React-Learning/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1774,253 +1962,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/25/High-Performance-JavaScript-Reading-Note-III/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/25/High-Performance-JavaScript-Reading-Note-III/" itemprop="url">《高性能JavaScript》读书笔记(三)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T08:35:07+08:00">
-                2018-06-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">读书笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>《高性能JavaScript》第三章主要讲的是DOM操作的优化。上两篇的读书笔记自己读过之后感觉更像是对内容的自我消化后的按原文复述，所以这篇调整一下内容的结构，只讲关键点。</p>
-<h3 id="DOM操作的优化问题"><a href="#DOM操作的优化问题" class="headerlink" title="DOM操作的优化问题"></a>DOM操作的优化问题</h3><p>DOM操作涉及以下三类问题：</p>
-<ol>
-<li>访问和修改DOM元素</li>
-<li>修改DOM元素的样式所导致的重绘(repaint)跟重排(reflow)</li>
-<li>通过DOM事件处理与用户的交互</li>
-</ol>
-<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>DOM，文档对象模型，是独立于语言，用于操作XML跟HTML文档的程序接口。DOM是有规范的，但是实现是由各个浏览器方独自实现支持，因此，我们在开发页面时，需要对不同的浏览器做不同的兼容处理（比如IE，不过现在IE已经很少了）。</p>
-<p>DOM是程序接口，我们在开发的时候，会根据需求去实现页面与用户的互动。但因为DOM是独立的，每次需要获取节点都需要各种调用，因此这些调用的增多会影响页面的性能。</p>
-<h4 id="DOM访问与修改"><a href="#DOM访问与修改" class="headerlink" title="DOM访问与修改"></a>DOM访问与修改</h4><p>其实DOM的访问跟修改可以联系上一章提及的嵌套对象的内容。DOM中的每个节点都是一个对象，如果节点下存在子节点，则这个节点就是一个嵌套对象的例子。其一是DOM是程序接口，相对独立，调用接口都是存在一定的响应时间；其二是DOM中存在大量的嵌套对象，在搜索查询上也是需要一定的处理时间。因此，DOM的访问与修改会存在以下优化点：</p>
-<ol>
-<li>DOM的重复调用</li>
-<li>DOM集合元素的重复查询</li>
-<li>准确的获得DOM元素集合</li>
-</ol>
-<h4 id="DOM的重复调用"><a href="#DOM的重复调用" class="headerlink" title="DOM的重复调用"></a>DOM的重复调用</h4><p>简单的说，开发中经常会把后端穿来的数据修改渲染到页面上，书中提到最坏的情况是循环访问或修改元素：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function innerHTMLLoop () &#123;</span><br><span class="line">  for (var count = 0; count &lt; 15000; count++) &#123;</span><br><span class="line">    document.getElementById(&apos;here&apos;).innerHTML += &apos;a&apos;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码的问题在于每次循环中都会读取一次跟重写一次<code>innerHTML</code>，而且循环次数越多，读取跟重写都会不断增加。</p>
-<p>所以，优化的方案是，先把需要添加的节点保存在局部变量中，然后在一次性读取跟重写页面结构。<br>如果出现大量的重复节点，则可以考虑克隆已有的元素，即使用<code>element.cloneNode()</code>替代<code>document.createElement()</code>。</p>
-<h4 id="DOM元素集合的重复查询"><a href="#DOM元素集合的重复查询" class="headerlink" title="DOM元素集合的重复查询"></a>DOM元素集合的重复查询</h4><p>HTML集合是包含DOM节点引用的类数组对象，包括我们常用的<code>document.getElementByName()</code>，<code>document.images</code>等类似的方法所得到的元素集合。这些元素集合只是一个类似数组的列表，但同样提供了类似数组的<code>length</code>属性。</p>
-<p>首先，在利用<code>document.getElementByName()</code>这类查询方法的时候，因为每次查询都会调用document，所以查询的速度回比较慢。但当因为需要多次获取元素集合的属性时，则会形成一个非常大的性能消耗。</p>
-<p>另外，元素集合的<code>length</code>属性不同于数组的<code>length</code>属性，不仅当HTML文档发生更新的时候会自动更新，当调用它的时候也会重复查询，加上集合中的元素都是DOM对象，查询速度更慢，消耗更大。</p>
-<p>解决的方案，重点放在减少对<code>document</code>的调用跟文档查询。当遇到需要重复调动<code>document.getElementByName()</code>这类查询方法，可以根据不同的情况，进行不同的优化。比如当需要重复查询同一个DOM节点时，可以考虑用局部变量去复制；当代码中多次需要调动document的方法时，也可以先把document复制到局部变量中(这个做法也有风险，当HTML文档结构发生改变时，局部变量是不会改变的)；当需要多次调用<code>length</code>属性时，同样先用局部变量存储下来，再执行其他操作。</p>
-<h4 id="准确的获得DOM元素集合"><a href="#准确的获得DOM元素集合" class="headerlink" title="准确的获得DOM元素集合"></a>准确的获得DOM元素集合</h4><p>大多数情况下，我们都是需要获得一些准确的DOM元素集合进行操作，但是存在两类问题：有些方法得到的元素集合会比我们需要的要多(比如空的文本节点)，这个时候就会在处理集合是需要花时间去过滤筛选的；另外，获取DOM元素集合的调用太复杂。因此，有两类方法可以更准确的获取DOM元素集合：</p>
-<ol>
-<li>使用以下表格(书中给出的)左边的属性，替代右边的属性，可以更准确的获得DOM元素集合：</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">属性名</th>
-<th style="text-align:left">被替代的属性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">children</td>
-<td style="text-align:left">childNodes</td>
-</tr>
-<tr>
-<td style="text-align:left">ChildElementCount</td>
-<td style="text-align:left">childNodes.length</td>
-</tr>
-<tr>
-<td style="text-align:left">firstElementChild</td>
-<td style="text-align:left">firstChild</td>
-</tr>
-<tr>
-<td style="text-align:left">lastElementChild</td>
-<td style="text-align:left">lastChild</td>
-</tr>
-<tr>
-<td style="text-align:left">nextElementSibling</td>
-<td style="text-align:left">nextSibling</td>
-</tr>
-<tr>
-<td style="text-align:left">previousElementSibling</td>
-<td style="text-align:left">previousSibling</td>
-</tr>
-</tbody>
-</table>
-<ol start="2">
-<li>使用<code>querySeletorALL()</code>方法跟<code>querySeletor()</code>方法。这两个方法可以免掉多次使用<code>getElementById()</code>跟<code>getElementByClass()</code>这类方法，通过CSS选择器一步到位。</li>
-</ol>
-<h3 id="重排-reflow-与重绘-repaint"><a href="#重排-reflow-与重绘-repaint" class="headerlink" title="重排(reflow)与重绘(repaint)"></a>重排(reflow)与重绘(repaint)</h3><p>简单的说，HTML文档跟CSS文件在首次加载时，得到DOM树跟渲染树，然后才会开始绘制。当DOM出现变化时，浏览器就需要重新计算元素的几何属性，并重新构造渲染树，这个过程叫重排(reflow)。浏览器也会重新绘制受影响的部分，这个过程叫重绘(repaint)。但有些情况下只会发生重绘，不需要重排。每次重排跟重绘都会导致页面的反应迟钝，使客户体验变差。所以我们要了解什么情况会触发重排跟重绘。</p>
-<h4 id="触发重排的条件"><a href="#触发重排的条件" class="headerlink" title="触发重排的条件"></a>触发重排的条件</h4><p>这些情况下会发生重排：</p>
-<ol>
-<li>添加或删除可见的DOM元素</li>
-<li>元素位置改变</li>
-<li>元素尺寸改变(包括：外边距、内边距、边框厚度、宽度、高度等属性改变)</li>
-<li>内容改变，例如：文本改变或图片被另一个不同尺寸的图片替代</li>
-<li>页面渲染器初始化</li>
-<li>浏览器窗口尺寸改变</li>
-</ol>
-<p>也有当滚动条出现时触发整个页面的重排。</p>
-<h4 id="触发重绘的条件"><a href="#触发重绘的条件" class="headerlink" title="触发重绘的条件"></a>触发重绘的条件</h4><p>重绘只发生在当元素的可见的外观被改变，但并没有影响到布局的时候。比如背景颜色，字体颜色。</p>
-<h4 id="渲染树渲染队列与刷新"><a href="#渲染树渲染队列与刷新" class="headerlink" title="渲染树渲染队列与刷新"></a>渲染树渲染队列与刷新</h4><p>大多数浏览器是通过队列来修改并批量执行重排过程，这样可以优化并降低消耗，但同时也会让程序在不知不觉中就触发了重排。以下获取布局信息的方法会导致列队刷新：</p>
-<ol>
-<li>offsetTop, offsetLeft, offsetWidth, offsetHeight</li>
-<li>scrollTop, scrollLeft, scrollWidth, scrollHeight</li>
-<li>clientTop, clientLeft, clientWidth, clientHeight</li>
-<li>getComputedStyle() (currentStyle in IE)</li>
-</ol>
-<p>这些方法需要返回最新的布局信息，浏览器就会不得不执行渲染队列中待处理的变化并触发重排以返回正确的值。</p>
-<h4 id="最小化重绘与重排"><a href="#最小化重绘与重排" class="headerlink" title="最小化重绘与重排"></a>最小化重绘与重排</h4><p>以下的几种方式可以减少重绘与重排的次数：</p>
-<ol>
-<li>改变样式。改变样式时，如果要对元素进行多个样式的修改，可以用<code>element.style.cssText</code>来一次处理，代替掉对每个样式单独的修改；</li>
-<li>修改DOM。修改DOM时，有几个思路可以参考：可以把需要修改的DOM元素脱离文档流，再做修改，最后再放回文档中；可以把需要修改的DOM元素复制出来，修改完毕后直接替换到文档中；</li>
-<li>减少使用会触发渲染队列刷新的方法；</li>
-<li>让元素脱离动画流。当页面有带动画交互效果的元素时，最好在动画开始前把动画的元素做绝对定位，同时把其他元素先移到动画结束时的位置，再执行动画效果。这样可以减少动画过程中这个页面的大规模重排；</li>
-<li>针对IE，减少大规模使用:hover。</li>
-</ol>
-<h3 id="通过DOM事件处理与用户的交互"><a href="#通过DOM事件处理与用户的交互" class="headerlink" title="通过DOM事件处理与用户的交互"></a>通过DOM事件处理与用户的交互</h3><p>现在很多页面都是存在大量的交互，而这些交互如果都要单独绑定事件处理器，则会应该性能。因此，书中提出建议使用事件代理，只需在外层元素绑定一个处理器，来处理所有子元素上触发的事件。</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本章主要是针对DOM做优化，更多的是讨论如何减少DOM的调用修改。每种操作都可以根据不同的需求进行不同的实现以达到优化的目的。</p>
-<p>文中用到的代码参考《高性能JavaScript》第三章。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2071,7 +2012,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2082,7 +2023,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2093,7 +2034,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
