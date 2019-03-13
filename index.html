@@ -245,6 +245,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/03/13/work-summary1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/13/work-summary1/" itemprop="url">工作总结(1)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-13T23:14:46+08:00">
+                2019-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天来做点学习总结，这些学习总结都是从工作中整理来的，自然做了总结，就比较容易积累经验，提高以后的工作效率了。好吧，开始吧。</p>
+<h3 id="Vuejs中图片的引入问题"><a href="#Vuejs中图片的引入问题" class="headerlink" title="Vuejs中图片的引入问题"></a>Vuejs中图片的引入问题</h3><p>这里指的图片引入问题是这样的： 一般开发使用比较多vue-cli脚手架，然后我在开发过程中遇到的是在项目其他位置存放的图片，虽然引入的路径是正确的，但是无法显示到页面上。我在网上搜索了不少这样的问题，有些是在打包后发现的。</p>
+<p>目前有几个方案是可行的：</p>
+<ol>
+<li><p>把图片全部放到vue-cli脚手架生成的assets文件夹中，这个文件夹本身也放着vue-cli自带的图片。这个文件夹中的图片可以直接通过路径引入，而且能够正常的显示到页面上；</p>
+</li>
+<li><p>不改变图片的位置，直接通过<code>import imageXX from &#39;path&#39;</code>的方法引入到文件中。这种方式可以通过变量来引用图片的路径，也是可以正常的显示到页面上。但是在css样式中就实现不了，可能要在模板上直接通过<code>:style=&quot;background-image:...&quot;</code>来实现，比较麻烦；</p>
+</li>
+<li><p>同上方案，但是是通过<code>require(&#39;path&#39;)</code>的方法引入到文件中。问题一样，就是对于css的样式实现来说比较困难；</p>
+</li>
+<li><p>网上还有一种方案是在<code>build/utils.js</code>中找到<code>ExtractTextPlugin</code>位置在对象中加入这句<code>publicPath: &#39;../../&#39;</code>。这个方案没有试过，因为在vue-cli3中，文件结构有变化了，我猜测这个可能要写到<code>vue.config.js</code>中。以后有机会再测试。</p>
+</li>
+</ol>
+<h3 id="关于手机号码的正则表达式"><a href="#关于手机号码的正则表达式" class="headerlink" title="关于手机号码的正则表达式"></a>关于手机号码的正则表达式</h3><p>这个简单带过，这个正则表达式就是<code>/^1(3|4|5|7|8)\d{9}$/</code>.</p>
+<h3 id="关于CSS背景图片的设置"><a href="#关于CSS背景图片的设置" class="headerlink" title="关于CSS背景图片的设置"></a>关于CSS背景图片的设置</h3><p>这里要提的是，CSS背景图片是可以同时设置多张的，而且每张背景图片的样式都可以设置，但是我在开发中发现设置了repeat的背景图片会覆盖掉排在后面的图片，所以最好是把这张图片的顺序放在最后，参考如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">background-image: url(&quot;bg_top.jpg&quot;), url(&quot;bg_bottom.png&quot;), url(&quot;bg_middle.jpg&quot;);</span><br><span class="line">background-repeat: no-repeat, no-repeat, repeat;</span><br><span class="line">background-position: top, bottom, center;</span><br></pre></td></tr></table></figure>
+<h3 id="关于rem布局"><a href="#关于rem布局" class="headerlink" title="关于rem布局"></a>关于rem布局</h3><p>rem布局其实还是挺不错的，可以动态的屏幕宽度来设置html的font-size，并且调整所所有元素的样式。可以参考网上关于网易rem布局的原理。</p>
+<h3 id="关于axios跟promise"><a href="#关于axios跟promise" class="headerlink" title="关于axios跟promise"></a>关于axios跟promise</h3><p>这里留一个promise配合axios开发的参考代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// api</span><br><span class="line">export const submitApi = function (url, params, xxx) &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    axios.post(url, params, &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        XXX: xxx</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;).then(res =&gt; &#123;</span><br><span class="line">      resolve(res);</span><br><span class="line">    &#125;).catch(error =&gt; &#123;</span><br><span class="line">      reject(error);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用</span><br><span class="line">submitApi(url, params, xxx).then(res =&gt; &#123;</span><br><span class="line">  if (res.status === 200) &#123;</span><br><span class="line">    console.log(res.data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).catch(error =&gt; &#123;</span><br><span class="line">  console.log(&apos;something wrong!&apos;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>先这些吧。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/03/10/NewJourney/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1776,178 +1959,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/12/19/React-Learning-Styled-Components/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/19/React-Learning-Styled-Components/" itemprop="url">react学习总结系列-styled-components</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T07:54:08+08:00">
-                2018-12-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/React/" itemprop="url" rel="index">
-                    <span itemprop="name">React</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这一篇主要整理关于React的CSS插件styled-components。这个插件是我一开始学习React跟做项目的时候推荐并使用的。用了之后觉得这个插件确实很适合React的项目，有无缝对接的效果。</p>
-<p>这里也是留一下styled-components官网文档地址：</p>
-<p><a href="https://www.styled-components.com/docs" target="_blank" rel="noopener">https://www.styled-components.com/docs</a></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单说一下安装。</p>
-<p>代码1 NPM&amp;CDN安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/* NPM install */</span><br><span class="line">npm  install --save styled-components</span><br><span class="line"></span><br><span class="line">/* CDM install */</span><br><span class="line">; &lt;script src=&quot; https://unpkg.com/styled-components/dist/styled-components.min.js&quot; /&gt;</span><br></pre></td></tr></table></figure></p>
-<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><p>styled-components使用也比较简单。最简单的写法就是声明styled变量，然后把css样式以模板字符串形式写入，最后把这个变量以React组件的形式写到<code>render()</code>中就可以了。</p>
-<p>代码2 styled-components简单例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: palevioletred;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const Wrapper = styled.section`</span><br><span class="line">  padding: 4em;</span><br><span class="line">  background: papayawhip;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;Wrapper&gt;</span><br><span class="line">    &lt;Title&gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/Wrapper&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<p>上面是官网用例。可以看到，其实是把css样式表嵌入到JavaScript中，然后通过styled-components转成组件，然后再在其他组件中使用。所以使用起来非常简单。</p>
-<h3 id="传递参数"><a href="#传递参数" class="headerlink" title="传递参数"></a>传递参数</h3><p>因为style-components把css样式表转成一个个的组件，所以也可以实现一些样式的传参。</p>
-<p>代码2 传递参数，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: \function(e)&#123;return e.inputColor||&quot;palevioletred&quot;&#125;;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title inputColor=&quot;rebeccapurple&quot; &gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<p>代码2中，在变量<code>Input</code>的样式表中，color后面是跟着一个<code>\</code>，接着一个匿名函数。这个匿名函数有一个传参<code>e</code>，函数中会返回<code>e.inputColor</code>或默认值<code>&quot;palevioletred&quot;</code>。在<code>render()</code>函数中，第二个<code>Input</code>组件标签中声明了一个inputColor的属性值，而第一个没有。在最终的显示上，第一个组件字体样式是紫罗兰红(palevioletred)，第二个组件字体样式是丽贝卡紫(rebeccapurple)。也就是说，变量<code>Input</code>的样式表中的匿名函数，传入的参数<code>e</code>应该指向当前组件对象</p>
-<p>传递参数的类型还可以是真假值。组件的属性上，可以直接声明一个属性并不传值，匿名函数中可将直接判断是否存在这个属性，以确定返回的样式值。</p>
-<p>代码3 传递属性，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: $&#123;props =&gt; props.primary ? &quot;palevioletred&quot; : &quot;white&quot;&#125;;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title primary &gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<h3 id="组件继承"><a href="#组件继承" class="headerlink" title="组件继承"></a>组件继承</h3><p>一个项目中或多或少会出现一些组件上设计样式的类似，比如不同级标题可能HTML样式，尺寸是一样的，但是颜色会不同。如果都是写成独立的组件样式表，则会出现代码冗余，不好维护。这种情况下就可以考虑使用组件继承。</p>
-<p>代码4 组件继承，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: palevioletred;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const SecondTitle = styled(Title)`</span><br><span class="line">	font-size: 1em;</span><br><span class="line">	font-weight: bold;</span><br><span class="line">` </span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title&gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">	&lt;SecondTitle&gt;</span><br><span class="line">	  This is the second title!</span><br><span class="line">	&lt;/SecondTitle&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<p>如果<code>Title</code>中没有样式的话，那它就是直接继承<code>react.component</code>的组件，仍然可以被继承。</p>
-<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>styled-components对动画也有很好的支持。内置了<code>keyframes</code>来实现CSS3中的<code>@keyframes</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const rotate360 = keyframes`</span><br><span class="line">  from &#123;</span><br><span class="line">    transform: rotate(0deg);</span><br><span class="line">  &#125;</span><br><span class="line">  to &#123;</span><br><span class="line">    transform: rotate(360deg);</span><br><span class="line">  &#125;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const Rotate = styled.div`</span><br><span class="line">  display: inline-block;</span><br><span class="line">  animation: $&#123;rotate360&#125; 2s linear infinite;</span><br><span class="line">  padding: 2rem 1rem;</span><br><span class="line">  font-size: 1.2rem;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;Rotate&gt;&amp;lt; 💅 &amp;gt;&lt;/Rotate&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<p>除了上面介绍的方面之外，styled-component插件还有一些更复杂的用法，但是目前大部分的样式实现只要上面这些内容掌握了，在项目中也能解决大部分的问题了。剩下的以后有涉及到会再介绍。</p>
-<p>下一篇将会介绍redux及react-redux插件。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1998,7 +2009,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2009,7 +2020,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2020,7 +2031,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -245,6 +245,178 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/12/19/React-Learning-Styled-Components/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/19/React-Learning-Styled-Components/" itemprop="url">react学习总结系列-styled-components</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T07:54:08+08:00">
+                2018-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/React/" itemprop="url" rel="index">
+                    <span itemprop="name">React</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这一篇主要整理关于React的CSS插件styled-components。这个插件是我一开始学习React跟做项目的时候推荐并使用的。用了之后觉得这个插件确实很适合React的项目，有无缝对接的效果。</p>
+<p>这里也是留一下styled-components官网文档地址：</p>
+<p><a href="https://www.styled-components.com/docs" target="_blank" rel="noopener">https://www.styled-components.com/docs</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单说一下安装。</p>
+<p>代码1 NPM&amp;CDN安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/* NPM install */</span><br><span class="line">npm  install --save styled-components</span><br><span class="line"></span><br><span class="line">/* CDM install */</span><br><span class="line">; &lt;script src=&quot; https://unpkg.com/styled-components/dist/styled-components.min.js&quot; /&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><p>styled-components使用也比较简单。最简单的写法就是声明styled变量，然后把css样式以模板字符串形式写入，最后把这个变量以React组件的形式写到<code>render()</code>中就可以了。</p>
+<p>代码2 styled-components简单例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: palevioletred;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const Wrapper = styled.section`</span><br><span class="line">  padding: 4em;</span><br><span class="line">  background: papayawhip;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;Wrapper&gt;</span><br><span class="line">    &lt;Title&gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/Wrapper&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>上面是官网用例。可以看到，其实是把css样式表嵌入到JavaScript中，然后通过styled-components转成组件，然后再在其他组件中使用。所以使用起来非常简单。</p>
+<h3 id="传递参数"><a href="#传递参数" class="headerlink" title="传递参数"></a>传递参数</h3><p>因为style-components把css样式表转成一个个的组件，所以也可以实现一些样式的传参。</p>
+<p>代码2 传递参数，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: \function(e)&#123;return e.inputColor||&quot;palevioletred&quot;&#125;;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title inputColor=&quot;rebeccapurple&quot; &gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>代码2中，在变量<code>Input</code>的样式表中，color后面是跟着一个<code>\</code>，接着一个匿名函数。这个匿名函数有一个传参<code>e</code>，函数中会返回<code>e.inputColor</code>或默认值<code>&quot;palevioletred&quot;</code>。在<code>render()</code>函数中，第二个<code>Input</code>组件标签中声明了一个inputColor的属性值，而第一个没有。在最终的显示上，第一个组件字体样式是紫罗兰红(palevioletred)，第二个组件字体样式是丽贝卡紫(rebeccapurple)。也就是说，变量<code>Input</code>的样式表中的匿名函数，传入的参数<code>e</code>应该指向当前组件对象</p>
+<p>传递参数的类型还可以是真假值。组件的属性上，可以直接声明一个属性并不传值，匿名函数中可将直接判断是否存在这个属性，以确定返回的样式值。</p>
+<p>代码3 传递属性，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: $&#123;props =&gt; props.primary ? &quot;palevioletred&quot; : &quot;white&quot;&#125;;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title primary &gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h3 id="组件继承"><a href="#组件继承" class="headerlink" title="组件继承"></a>组件继承</h3><p>一个项目中或多或少会出现一些组件上设计样式的类似，比如不同级标题可能HTML样式，尺寸是一样的，但是颜色会不同。如果都是写成独立的组件样式表，则会出现代码冗余，不好维护。这种情况下就可以考虑使用组件继承。</p>
+<p>代码4 组件继承，对代码1的修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const Title = styled.h1`</span><br><span class="line">  font-size: 1.5em;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: palevioletred;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const SecondTitle = styled(Title)`</span><br><span class="line">	font-size: 1em;</span><br><span class="line">	font-weight: bold;</span><br><span class="line">` </span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;Title&gt;</span><br><span class="line">      Hello World, this is my first styled component!</span><br><span class="line">    &lt;/Title&gt;</span><br><span class="line">	&lt;SecondTitle&gt;</span><br><span class="line">	  This is the second title!</span><br><span class="line">	&lt;/SecondTitle&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>如果<code>Title</code>中没有样式的话，那它就是直接继承<code>react.component</code>的组件，仍然可以被继承。</p>
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>styled-components对动画也有很好的支持。内置了<code>keyframes</code>来实现CSS3中的<code>@keyframes</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const rotate360 = keyframes`</span><br><span class="line">  from &#123;</span><br><span class="line">    transform: rotate(0deg);</span><br><span class="line">  &#125;</span><br><span class="line">  to &#123;</span><br><span class="line">    transform: rotate(360deg);</span><br><span class="line">  &#125;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">const Rotate = styled.div`</span><br><span class="line">  display: inline-block;</span><br><span class="line">  animation: $&#123;rotate360&#125; 2s linear infinite;</span><br><span class="line">  padding: 2rem 1rem;</span><br><span class="line">  font-size: 1.2rem;</span><br><span class="line">`;</span><br><span class="line"></span><br><span class="line">render(</span><br><span class="line">  &lt;Rotate&gt;&amp;lt; 💅 &amp;gt;&lt;/Rotate&gt;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>除了上面介绍的方面之外，styled-component插件还有一些更复杂的用法，但是目前大部分的样式实现只要上面这些内容掌握了，在项目中也能解决大部分的问题了。剩下的以后有涉及到会再介绍。</p>
+<p>下一篇将会介绍redux及react-redux插件。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/11/24/React-Learning-II/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1776,192 +1948,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/" itemprop="url">《高性能JavaScript》读书笔记(四)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-26T22:15:32+08:00">
-                2018-06-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">读书笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>《高性能JavaScript》第四章主要涉及算法跟流程控制，包括循环，条件语句和递归的优化。下面就开始吧。</p>
-<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><h4 id="四种循环类型"><a href="#四种循环类型" class="headerlink" title="四种循环类型"></a>四种循环类型</h4><p>四种循环类型包括 for循环，while循环，do-while循环及for-in循环。</p>
-<p>这四种循环类型都有各自的特点，适用于不同的实现需求。比如while循环是前侧循环，适合需要在进入循环前开始判断的操作，而do-while循环则适合最少需要循环一次才开始判断的操作。for循环比较直观，当然也并不是最简单的，而for-in是针对对象的，可以枚举任何对象的属性名，但是是性能最差的。</p>
-<h4 id="循环优化"><a href="#循环优化" class="headerlink" title="循环优化"></a>循环优化</h4><p>循环的优化上，给出了这几点建议：</p>
-<h5 id="尽量不使用for-in循环"><a href="#尽量不使用for-in循环" class="headerlink" title="尽量不使用for-in循环"></a>尽量不使用for-in循环</h5><p>for-in循环的性能最差，因为其主要针对对象，虽然表面上很简单，但是在循环的时候却因每次迭代操作都会同时搜索实例或原型属性，所以会产品更多的开销，所以是最慢的。针对对象的遍历，书中提出一种方案：如果知道对象的所有属性，则可以用一个数组存储所有的属性名，然后遍历数组会更快：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var props = [&quot;prop1&quot;, &quot;prop2&quot;],</span><br><span class="line">    i = 0;</span><br><span class="line"></span><br><span class="line">while (i &lt; props.length) &#123;</span><br><span class="line">  process(object[props[i++]]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="减少迭代的工作量"><a href="#减少迭代的工作量" class="headerlink" title="减少迭代的工作量"></a>减少迭代的工作量</h5><p>一般的数组循环，其循环体中都会有以下的操作：</p>
-<ol>
-<li>在控制条件中查找一次属性 (<code>item.length</code>)；</li>
-<li>在控制条件中执行一次数值比较 (<code>i &lt; items.length</code>)；</li>
-<li>一次比较操作查看控制条件的计算结果是否为true (<code>i &lt; item.length == true</code>)；</li>
-<li>一次自增操作 (<code>i++</code>)；</li>
-<li>一次数组查找 (<code>items[i]</code>)；</li>
-<li>一次函数调用 (<code>process(items[i])</code>)。</li>
-</ol>
-<p>一个本来迭代次数有限的循环，是没办法考虑从迭代上做优化的，所以可以从每一次都会执行的循环体中着手优化，每优化一个操作，就可以得到客观的性能提升。书中给出的两条优化建议是：</p>
-<ol>
-<li>把查找属性的操作在初始化时就复制到一个局部变量中，即可减少第一个操作；</li>
-<li>如果，循环数组的顺序跟结果无关，则可以考虑倒序处理。因为倒序的时候，只需要判断控制条件是否为true(除非控制条件为0，则都是true)，不需要再做一次比较。</li>
-</ol>
-<h5 id="减少迭代次数"><a href="#减少迭代次数" class="headerlink" title="减少迭代次数"></a>减少迭代次数</h5><p>如果遇到一个迭代次数非常多，则可以考虑下如何减少迭代次数上下手。书中介绍一种限制迭代次数的模式，“达夫设备(Duff’s Device)”。这种模式可以在一次迭代中执行多次迭代的操作。下面是例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">var iterations = Math.floor(items.length / 8),</span><br><span class="line">    startAt = items.length % 8,</span><br><span class="line">    i = 0;</span><br><span class="line">		</span><br><span class="line">do &#123;</span><br><span class="line">  switch(startAt)&#123;</span><br><span class="line">    case 0: process(items[i++]);</span><br><span class="line">    case 7: process(items[i++]);</span><br><span class="line">    case 6: process(items[i++]);</span><br><span class="line">    case 5: process(items[i++]);</span><br><span class="line">    case 4: process(items[i++]);</span><br><span class="line">    case 3: process(items[i++]);</span><br><span class="line">    case 2: process(items[i++]);</span><br><span class="line">    case 1: process(items[i++]);</span><br><span class="line">  &#125;</span><br><span class="line">  startAt = 0;</span><br><span class="line">&#125; while (--iterations);</span><br></pre></td></tr></table></figure>
-<p>假设原来的迭代次数为n(8(x) &lt; n &lt;= 8(n+1))，则这种模式可以把迭代次数减少至(n+1)次。书中还提供了用while代替switch的方案，还可以在优化迭代的速度。</p>
-<h5 id="基于函数的迭代"><a href="#基于函数的迭代" class="headerlink" title="基于函数的迭代"></a>基于函数的迭代</h5><p>基于函数的迭代方法foreach()在使用上是非常方便的，但是因为每个循环中都必须调用一个外部方法，所以性能上还是比基于循环的迭代要慢一些。</p>
-<h3 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h3><h4 id="两种条件语句的选择"><a href="#两种条件语句的选择" class="headerlink" title="两种条件语句的选择"></a>两种条件语句的选择</h4><p>条件语句分if-else跟switch。当判断条件跟分支操作较少时，if-else语句更易读，而当判断条件跟分支操作较多时，switch语句则更易读。当判断条件跟分支操作较少时，if-else跟switch性能上没有什么区别，只有判断更加复杂的情况下才会让switch的性能突出。</p>
-<h4 id="if-else优化"><a href="#if-else优化" class="headerlink" title="if-else优化"></a>if-else优化</h4><p>如果中需要做大量的顺序或大小的判断，不管是if-else或者switch语句，最多都是要遍历完所有条件。书中提出可以考虑二分法的优化思路，根据判断条件的顺序或大小，优先跟居中的判断值做比较，从而把最大的判断次数减半。实现的例子如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">if (value &lt; 6) &#123;</span><br><span class="line"> if (value &lt; 3) &#123;</span><br><span class="line">    if (value == 0) &#123;</span><br><span class="line">      return result0;</span><br><span class="line">    &#125; else if (value == 1) &#123;</span><br><span class="line">      return result1;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      return result2;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    if (value == 3) &#123;</span><br><span class="line">      return result3;</span><br><span class="line">    &#125; else if (value == 4) &#123;</span><br><span class="line">      return result4;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      return result5;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">  if (value &lt; 8) &#123;</span><br><span class="line">    if (value == 6) &#123;</span><br><span class="line">      return result6;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      return result7;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    if (value == 8) &#123;</span><br><span class="line">      return result8;</span><br><span class="line">    &#125; else if (value == 9) &#123;</span><br><span class="line">      return result9;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      return result10;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="查找表"><a href="#查找表" class="headerlink" title="查找表"></a>查找表</h4><p>如果是判断大量的离散值，判断的结果只需要一个值而不是一系列的操作，那还可以通过构建查找表进行优化。查找表的优势在于它是通过键值对直接找到处理值，不需要通过判断语句，即使离散值增加，也不会产生更多的性能开销。</p>
-<h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><p>递归可以把复杂的算法变得很简单，可以把很复杂的执行过程大大的简化。但是递归也有一些问题点。比如当执行的计算较长时，会使整个系统进入假死状态，而且会有浏览器调用栈的限制。而这些问题，都可能是在设计的初期并没有意识到的。</p>
-<p>一般递归有两种模式，一种的直接递归，函数调用函数自身，如比较经典的阶乘函数。另一种是“隐伏模式”，是两个函数互相调用，这种模式在出错调试时会非常棘手。</p>
-<p>一般递归函数出现调用栈溢出的原因在于不正确的终止条件，如果终止条件没有问题，则需要考虑为了浏览器安全。书中给出了两种方案：迭代跟Memoization。</p>
-<p>迭代虽然在速度上快不过递归，但是由于它相对对浏览器友好，所以一旦程序遇到调用栈溢出的问题，就需要考虑迭代的实现方案。</p>
-<p>Memoization是一种缓存阶段计算的方案。在方案中，会有一个数组专门存储阶段性的计算值，这些计算值本身可能在不被存储的时候回因程序需要而不断的被计算获得。当存在一个数组能存储下这些阶段性的计算值时，函数被调用的越多，其重复的计算工作会得到控制，整个函数的性能会逐渐稳定。</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这章内容主要是在程序流程上的优化，减少代码的执行量跟解决代码的风险问题。现在比较多的项目都会需要考虑大规模的并发跟流量，所以程序上的小小优化，风险上的细心处理，都能对项目有很大的帮助。值得学习。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2012,7 +1998,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2023,7 +2009,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2034,7 +2020,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
