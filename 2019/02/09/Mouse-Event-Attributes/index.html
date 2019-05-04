@@ -88,7 +88,7 @@
 <meta property="og:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://listentolife.cc/images/pos.PNG">
-<meta property="og:updated_time" content="2019-02-09T12:00:22.814Z">
+<meta property="og:updated_time" content="2019-05-04T14:35:25.685Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript鼠标事件中event的各种x&#x2F;y属性梳理">
 <meta name="twitter:description" content="最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。 这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些： 123456e.clientX/e.clientYe.screenX/e.screenYe.offsetX/offsetYe.pageX/e.pageYe.layerX/e.layerXe.x/e">
@@ -350,7 +350,7 @@
         <p>最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。</p>
 <p>这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">e.clientX/e.clientY</span><br><span class="line">e.screenX/e.screenY</span><br><span class="line">e.offsetX/offsetY</span><br><span class="line">e.pageX/e.pageY</span><br><span class="line">e.layerX/e.layerX</span><br><span class="line">e.x/e.y</span><br></pre></td></tr></table></figure>
-<h3 id="关于各种x-y属性的描述"><a href="#关于各种x-y属性的描述" class="headerlink" title="关于各种x/y属性的描述"></a>关于各种x/y属性的描述</h3><p>在网上找了一些资料，对于这些属性都有描述。<a href="http://www.w3school.com.cn" target="_blank" rel="noopener">http://www.w3school.com.cn</a> w3c给出了clientX/Y跟screenX/Y的描述，不过为了统一，我选择了阮一峰的一份JavaScript教程(<a href="https://wangdoc.com/javascript/events/mouse.html)中的描述：" target="_blank" rel="noopener">https://wangdoc.com/javascript/events/mouse.html)中的描述：</a></p>
+<h3 id="关于各种x-y属性的描述"><a href="#关于各种x-y属性的描述" class="headerlink" title="关于各种x/y属性的描述"></a>关于各种x/y属性的描述</h3><p>在网上找了一些资料，对于这些属性都有描述。<a href="http://www.w3school.com.cn" target="_blank" rel="noopener">http://www.w3school.com.cn</a> w3c给出了clientX/Y跟screenX/Y的描述，不过为了统一，我选择了阮一峰的一份JavaScript教程(<a href="https://wangdoc.com/javascript/events/mouse.html" target="_blank" rel="noopener">https://wangdoc.com/javascript/events/mouse.html</a>) 中的描述：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MouseEvent.clientX属性返回鼠标位置相对于浏览器窗口左上角的水平坐标（单位像素）</span><br><span class="line">MouseEvent.clientY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.screenX属性返回鼠标位置相对于屏幕左上角的水平坐标（单位像素），</span><br><span class="line">MouseEvent.screenY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.offsetX属性返回鼠标位置与目标节点左侧的padding边缘的水平距离（单位像素）</span><br><span class="line">MouseEvent.offsetY属性返回与目标节点上方的padding边缘的垂直距离。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.pageX属性返回鼠标位置与文档左侧边缘的距离（单位像素），</span><br><span class="line">MouseEvent.pageY属性返回与文档上侧边缘的距离（单位像素）。它们的返回值都包括文档不可见的部分。这两个属性都是只读。</span><br></pre></td></tr></table></figure>
 <p><code>layerX/e.layerX</code>跟<code>x/y</code>则没有找到比较权威的描述。</p>
 <p>这些描述看完还是有点稀里糊涂的，不过可以看出，这些属性的值都是相对的，是有参考坐标的，比如浏览器，屏幕，目标节点，文档等。所以我们就试试在代码中获得更深入的理解。</p>
@@ -489,7 +489,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -500,7 +500,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -511,7 +511,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

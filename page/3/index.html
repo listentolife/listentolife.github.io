@@ -245,6 +245,346 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/09/02/Canvas-Game-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/09/02/Canvas-Game-II/" itemprop="url">Canvas 射击小游戏详解系列(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T23:16:53+08:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>接下来会介绍关于游戏项目中关于对象的设计，但在这之前想先对JavaScript对象做一些总结，然后再介绍项目的对象设计。这里会分三篇介绍。</p>
+<h3 id="JavaScript创建对象的三种模式"><a href="#JavaScript创建对象的三种模式" class="headerlink" title="JavaScript创建对象的三种模式"></a>JavaScript创建对象的三种模式</h3><p>js创建对象的三种模式有工厂模式，构造函数模式及原型模式。</p>
+<p>其实正常来说，创建一个对象是可以直接声明一个Object类型，但是如果需要创建多个对象的时候，这个方法显然不利于开发。而且很多时候需要创建的对象都有一些相似点，比如同一类型，同样的属性跟方法。如果能有一种方式可以用相同的代码处理创建对象的话，就可以提高代码的性能了。上面提及的三种模式就是解决方案。</p>
+<h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><p>工厂模式就是通过传参给一个函数方法，在函数中进行对象的创建，赋值，然后返回。</p>
+<p>代码1 项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function createPlane (option, context) &#123;</span><br><span class="line">  var plane = new Object();</span><br><span class="line">  plane.opts = option;</span><br><span class="line">  plane.context = context;</span><br><span class="line">  plane.drawing = function () &#123;</span><br><span class="line">    // 画布上渲染图片</span><br><span class="line">  &#125;</span><br><span class="line">  plane.move = function () &#123;</span><br><span class="line">    // 飞机每帧移动</span><br><span class="line">  &#125;</span><br><span class="line">  // 其他方法省略</span><br><span class="line">  return plane;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var plane1 = createPlane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>这种方式创建对象比较简单，只需要知道创建对象的函数跟传入需要的参数即可。其不足在于两点：工厂模式是通过函数方法来创建对象，而不是通过new方法来创建，这样的创建方式不够直观，还是会有一些冗余的代码；工厂模式所返回的对象，在后面的程序中，无法识别对象类型，只能识别是Object类型。</p>
+<p>所以就有了构造函数模式。</p>
+<h3 id="构造函数模式"><a href="#构造函数模式" class="headerlink" title="构造函数模式"></a>构造函数模式</h3><p>这种模式是先声明一个构造函数，然后通过new来创建对象。</p>
+<p>代码2  项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">  this.drawing = function () &#123;</span><br><span class="line">    // 画布上渲染图片</span><br><span class="line">  &#125;</span><br><span class="line">  this.move = function () &#123;</span><br><span class="line">    // 飞机每帧移动</span><br><span class="line">  &#125;</span><br><span class="line">  // 其他方法省略</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var plane2 = new Plane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>代码2跟代码1的对比中可以发现，工厂模式是在函数内部通过new一个对象再返回，但是构造函数模式中，new是在构造函数外面，而且函数内部是通过this来进行赋值的。</p>
+<p>在构造函数模式中，程序是先执行了new关键词，即创建了一个对象。然后把构造函数的作用域赋值给了这个对象，也就是构造函数的this指针指向这个对象。然后执行函数，这期间会把属性跟方法全部赋值给这个对象。最后再把对象返回出来。</p>
+<p>构造函数的优点也比较明显，它避免了工厂模式的两个不足。通过构造函数创建的对象，其实就是这个构造函数的一个实例。我们就可以通过<code>instanceof</code>方法判断一个对象的构造函数。</p>
+<p>代码3 instanceof判断对象是否是某个构造函数的实例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">console.log(plane2 instanceof Plane); // true</span><br></pre></td></tr></table></figure></p>
+<p>不过，构造函数模式也有它的一些不足。构造函数所创建出来的每个实例对象都会包含一些属性跟方法，而方法其实在所有实例对象中的功能都是一样的。而这些方法实际上也是Function的实例对象，这样就出现了不必要的冗余，这些方法应该实现复用。</p>
+<p>下面的原型模式就能解决这个不足。</p>
+<h3 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h3><p>原型模式就是利用到JavaScript中对象的原型prototype来实现的。</p>
+<p>每个构造函数上都会有一个属性prototype。prototype就是原型，也是一个对象，而且这个对象prototype是所有通过同一构造函数创建(new)的实例对象所共享的(实际上在浏览器console窗口打印每个实例对象，显示的是属性<code>__proto__</code>指向prototype，实际开发中只要用prototype就好)。prototype下的constructor指向实例对象的构造函数。</p>
+<p>代码4 判断实例的prototype<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object.prototype.isPrototypeOf(object1) // 判断object1挂载的prototype是不是Object的</span><br></pre></td></tr></table></figure></p>
+<p>原型模式根据JavaScript的原型原理，在构造函数的基础上，把方法放到了prototype对象下。创建对象的方法跟构造函数模式一样，内部创建对象的流程也差不多，也是先执行new关键词，创建一个对象，然后把函数的this指向这个对象，在执行属性赋值跟方法声明时，把方法都放在this.prototype原型对象中。</p>
+<p>代码5 项目中飞机对象根据工厂模式的实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function Plane (option, context) &#123;</span><br><span class="line">  this.opts = option;</span><br><span class="line">  this.context = context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.drawing = function () &#123;</span><br><span class="line">  // 画布上渲染图片</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Plane.prototype.move = function () &#123;</span><br><span class="line">  // 飞机每帧移动</span><br><span class="line">&#125;</span><br><span class="line">// 其他方法省略</span><br><span class="line"></span><br><span class="line">var plane3 = new Plane(opts, context);</span><br></pre></td></tr></table></figure></p>
+<p>这样的创建对象模式，可以使构造函数创建的实例对象，共享原型中的方法。但是也会有问题存在，这个问题是共享本身的问题。当所有的实例对象共享原型时，就可能出现数据污染的情况。</p>
+<p>数据污染的原因在于JavaScript的数据存储方式。JavaScript的数据分为值类型跟引用类型，值类型就是一个变量储存一个值，而引用类型就是一个变量指向内存的一个地址，这个地址储存一个值。值类型变量的赋值是深赋值，赋值完成后两个变量的操作互不影响，但是引用类型的变量之间的赋值其实是复制了指针，这就导致一个变量对指针指向的值进行修改时，另一个变量的值也会跟着改变，就会出现数据污染。</p>
+<p>所以，在使用原型模式时，一般把函数方法放在原型prototype中。</p>
+<p>下一篇介绍继承。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/08/16/Canvas-Game-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/16/Canvas-Game-I/" itemprop="url">Canvas 射击小游戏详解系列(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T23:30:14+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/对象设计/" itemprop="url" rel="index">
+                    <span itemprop="name">对象设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>前面根据腾讯的一个项目，自己做了一个Canvas设计小游戏，这个小游戏为玩家操作小飞机射击怪兽。小飞机可以左右移动，然后可以射出子弹。怪兽有若干个，从屏幕上方左右移动，当移动到侧边界会下移一行。如果怪兽存活并移动到与飞机一行，则游戏失败，如果飞机能在此之前射击到所有怪兽，则游戏通关。游戏总共设计6关，每一关难度不一样。</p>
+<p>整个项目最初只有一个html文件，一个配置文件及一个app入口文件，入口文件的框架已经建好，主要的功能逻辑代码及对象文件都是自己设计实现的。整个项目的关键点是JavaScript中的面向对象设计跟Canvas。页面的渲染都是通过Canvas进行渲染，然后把整个游戏设计成一个对象，里面的角色及零件也都是设计成一个个的对象。下面就给整个项目做一个详细的分析。</p>
+<h2 id="项目整体分析"><a href="#项目整体分析" class="headerlink" title="项目整体分析"></a>项目整体分析</h2><p>虽然项目的框架并不是自己设计的，但是毕竟整个设计还是非常好的，值得我们去分析，所以我就先把整个游戏的框架跟自己的设计做一下分析。</p>
+<p>游戏页面分为四个部分，根据游戏的状态进行切换展示：游戏首页，游戏成功页面，游戏失败页面及游戏通关页面，通过状态start, failed, success及all-success来控制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data-status=&quot;start&quot;] .game-intro &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg.png) no-repeat 430px 180px;</span><br><span class="line">  background-size: 200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[data-status=&quot;failed&quot;] .game-failed, </span><br><span class="line">[data-status=&quot;success&quot;] .game-success,</span><br><span class="line">[data-status=&quot;all-success&quot;] .game-all-success &#123;</span><br><span class="line">  display: block;</span><br><span class="line">  padding-top: 180px;</span><br><span class="line">  background: url(./img/bg-end.png) no-repeat 380px 190px;</span><br><span class="line">  background-size: 250px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此，整个游戏就设计成一个名为GAME的对象进行管理。当页面渲染完之后，GAME对象就会进行初始化，设定最初的状态为start，即展示游戏首页，并初始化四个部分的按钮，设置监听事件。</p>
+<p>这就是项目原有的框架部分。后面为我根据框架跟游戏设计实现的部分。</p>
+<p>不同的按钮会根据游戏状态设置不同的触发内容，不过因为游戏最初，游戏失败后及游戏通关后重玩的触发内容都是从一个新的游戏开始玩起，所以内容都是初始化游戏数据<code>dataInit()</code>及开始游戏<code>play()</code>，只有游戏通关后继续不需要初始化游戏数据即可进入游戏。</p>
+<p>初始化游戏数据<code>dataInit()</code>主要是实现一些游戏的配置数据，比如游戏关卡数，游戏分数及怪兽和飞机的配置数据等。</p>
+<p>开始游戏<code>play()</code>操作比较多，所以把步骤都拆分成独立的函数方法：<code>setState()</code>用于设置游戏状态，<code>dataReset()</code>用于重置游戏关卡数据，包括难度，位置及键盘监听，<code>createObject()</code>用于创建初始化画布上的对象，比如小飞机，怪兽等，最后的<code>animate()</code>则设置动画效果，涉及渲染画布上所有对象每一帧的变化及位移，并判断游戏的状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">play: function () &#123;</span><br><span class="line">    this.setStatus(&apos;playing&apos;);</span><br><span class="line">    // 重置每一关数据</span><br><span class="line">    this.dataReset();</span><br><span class="line">    // 创建画布上飞机，怪兽军团及分数的初始化对象</span><br><span class="line">    this.createObject();</span><br><span class="line">    // 开始动画</span><br><span class="line">    this.animate();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这里就大致的说明了一下这个小游戏项目框架的设计。下一篇会分析项目中对象的设计。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/26/High-Performance-JavaScript-Reading-Note-IV/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1459,7 +1799,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1470,7 +1810,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1481,7 +1821,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
