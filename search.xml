@@ -3,6 +3,39 @@
   
     
     <entry>
+      <title>工作总结(4)</title>
+      <link href="/2019/05/06/work-summary4/"/>
+      <url>/2019/05/06/work-summary4/</url>
+      <content type="html"><![CDATA[<p>这篇工作总结，会整理一些比较零散的开发内容。</p><h3 id="Element-UI相关"><a href="#Element-UI相关" class="headerlink" title="Element-UI相关"></a>Element-UI相关</h3><h4 id="el-scrollbar组件"><a href="#el-scrollbar组件" class="headerlink" title="el-scrollbar组件"></a>el-scrollbar组件</h4><p>在查ElementUI官方文档的时候，你会发现找不到滚动相关的组件，但实际上是有一个关于滚动相关的组件，只是没有文档。就是el-scrollbar组件。</p><p>这个组件可以在查官方文档页面元素的时候找到，我是因为官方文档左右独立滚动而发现的。我们可以查查它的源码。</p><p>源码中，在scrollbar/src下有main.js文件，这个文件中就有关于srollbar的实现源码：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;</span><br><span class="line">    native: Boolean, // 是否显示滚动条</span><br><span class="line">    wrapStyle: &#123;&#125;, // 外层容器el-scrollbar__wrap同层的style样式</span><br><span class="line">    wrapClass: &#123;&#125;, // 外层容器el-scrollbar__view同层的class样式</span><br><span class="line">    viewClass: &#123;&#125;, // 内层容器el-scrollbar__view同层的style样式</span><br><span class="line">    viewStyle: &#123;&#125;, // 内层容器el-scrollbar__view同层的class样式</span><br><span class="line">    noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能</span><br><span class="line">    tag: &#123;</span><br><span class="line">        type: String,</span><br><span class="line">        default: &apos;div&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure><p>上面就是我们使用el-scrollbar组件时可以传入的prop：<code>native</code>是用于判断是否显示滚动条，从源码的实现来看，滚动条是ElementUI自己实现的，也就是如果需要显示滚动条，可以考虑使用这个组件；<code>noresize</code>是用于判断是否需要监听尺寸变化事件，如果滚动内容的长度固定不变，可以设置为true以优化性能；<code>tag</code>是用于指定内层容器渲染的标签。知道这些，我们就可以知道怎么使用el-scrollbar组件了。</p><p>我们再看看ElementUI官网是怎么使用它的：以官网导航栏为例，在<code>.el-scrollbar</code>的父类<code>.page-component</code>上设定了高度为100%，然后在<code>.el-scrollbar</code>同层增加<code>.page-component__nav</code>类实现导航栏的样式，最后在内层容器内使用<code>.side-nav</code>再设定100%的高度。</p><p>我自己使用的过程中是在内层容器内使用一个类设定固定的高度，然后就可以实现滚动效果。</p><h4 id="el-table-表头跟表格宽度不一致"><a href="#el-table-表头跟表格宽度不一致" class="headerlink" title="el-table 表头跟表格宽度不一致"></a>el-table 表头跟表格宽度不一致</h4><p>我在开发中发现了这个问题，在网上也发现有很多人遇到这个问题，目前我使用的解决方案是：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 解决elementUI表头跟表格宽度不一致 */</span><br><span class="line">body .el-table th.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">body .el-table colgroup.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="安卓跟iOS的坑"><a href="#安卓跟iOS的坑" class="headerlink" title="安卓跟iOS的坑"></a>安卓跟iOS的坑</h3><h4 id="new-Date-转换时间戳"><a href="#new-Date-转换时间戳" class="headerlink" title="new Date()转换时间戳"></a>new Date()转换时间戳</h4><p>在iOS的微信H5开发中，使用<code>new Date(&#39;2019-5-4&#39;)</code>会出现报错，究其原因是iOS下不能使用<code>-</code>，应该使用<code>/</code>，即<code>new Date(&#39;2019/5/4&#39;)</code>。</p><h4 id="安卓非body标签无滚动条"><a href="#安卓非body标签无滚动条" class="headerlink" title="安卓非body标签无滚动条"></a>安卓非body标签无滚动条</h4><p>在开发的过程中，我们发现在安卓系统中，页面中除了body之外其他标签都无法传滚动条，但是iOS系统就会有。这种情况下我们可以自己实现或借助一些UI框架实现滚动条。如果选择借助的话，可以考虑ElementUI的el-scrollbar组件(前面在分析源码的时候就有这样一个prop)，也可以考虑better-scroll插件，通过配置来实现滚动条。</p><h3 id="前端开发的占位图"><a href="#前端开发的占位图" class="headerlink" title="前端开发的占位图"></a>前端开发的占位图</h3><p>其实开发中如果能考虑上占位图的话，对用户的使用体验是有很高的提升的。以往通过加载条来表示加载会让用户觉得加载时间很长，而使用占位图则会给用户一种页面逐渐加载完毕的效果。</p><p>网上有很多推荐的占位图实现方案，有给未加载数据的容器加占位图样式的，有在数据加载完毕前先画一些占位容器的。这里就不一一细讲，主要是找到一个觉得挺不错的插件可以方便占位图的实现的：vue-content-loader。</p><p>这个插件是通过实现SVG组件来完成占位图，看起来效果还不错，而且官方还给出一个页面可以通过拉拽，数据调整实现占位图组件。</p><p>另外，它还有一个React版本。虽然我还没有使用过，不知道效果如何，但是我觉得应该是很有尝试的必要的。</p><h3 id="vue中的图片懒加载"><a href="#vue中的图片懒加载" class="headerlink" title="vue中的图片懒加载"></a>vue中的图片懒加载</h3><p>除了占位图的加载优化，图片的懒加载也是前端开发中比较常见的加载优化点。在一个页面上，如果需要加载的图片很多，一般都会考虑优先加载第一版的图片，等用户滚动页面时，出现在窗口内的图片才会被加载。</p><p>这里可以使用vue-lazyload插件。这个插件使用起来非常简单。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// npm</span><br><span class="line">$ npm i vue-lazyload -S</span><br><span class="line"></span><br><span class="line">//main.js</span><br><span class="line">// 引入</span><br><span class="line">import VueLazyload from &apos;vue-lazyload&apos;</span><br><span class="line">// 注册</span><br><span class="line">Vue.use(VueLazyload)</span><br><span class="line">// 配置</span><br><span class="line">Vue.use(VueLazyload, &#123;</span><br><span class="line">  preLoad: 1.3,</span><br><span class="line">  error: &apos;dist/error.png&apos;,</span><br><span class="line">  loading: &apos;dist/loading.gif&apos;,</span><br><span class="line">  attempt: 1</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 例子</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li v-for=&quot;img in list&quot;&gt;</span><br><span class="line">        &lt;img v-lazy=&quot;img.src&quot; &gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure><p>以上是截取官方文档的部分代码。这样就可以完成简单的图片懒加载了。还有很多配置可以使用。</p>]]></content>
+      
+      <categories>
+          
+          <category> JavaScript </category>
+          
+          <category> Vue </category>
+          
+          <category> 工作总结 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ElementUI </tag>
+            
+            <tag> iOS </tag>
+            
+            <tag> Android </tag>
+            
+            <tag> 占位图 </tag>
+            
+            <tag> 图片懒加载 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>工作总结(3)</title>
       <link href="/2019/05/04/work-summary3/"/>
       <url>/2019/05/04/work-summary3/</url>

@@ -245,6 +245,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/06/work-summary4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/05/06/work-summary4/" itemprop="url">工作总结(4)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T23:28:05+08:00">
+                2019-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结，会整理一些比较零散的开发内容。</p>
+<h3 id="Element-UI相关"><a href="#Element-UI相关" class="headerlink" title="Element-UI相关"></a>Element-UI相关</h3><h4 id="el-scrollbar组件"><a href="#el-scrollbar组件" class="headerlink" title="el-scrollbar组件"></a>el-scrollbar组件</h4><p>在查ElementUI官方文档的时候，你会发现找不到滚动相关的组件，但实际上是有一个关于滚动相关的组件，只是没有文档。就是el-scrollbar组件。</p>
+<p>这个组件可以在查官方文档页面元素的时候找到，我是因为官方文档左右独立滚动而发现的。我们可以查查它的源码。</p>
+<p>源码中，在scrollbar/src下有main.js文件，这个文件中就有关于srollbar的实现源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;</span><br><span class="line">    native: Boolean, // 是否显示滚动条</span><br><span class="line">    wrapStyle: &#123;&#125;, // 外层容器el-scrollbar__wrap同层的style样式</span><br><span class="line">    wrapClass: &#123;&#125;, // 外层容器el-scrollbar__view同层的class样式</span><br><span class="line">    viewClass: &#123;&#125;, // 内层容器el-scrollbar__view同层的style样式</span><br><span class="line">    viewStyle: &#123;&#125;, // 内层容器el-scrollbar__view同层的class样式</span><br><span class="line">    noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能</span><br><span class="line">    tag: &#123;</span><br><span class="line">        type: String,</span><br><span class="line">        default: &apos;div&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>上面就是我们使用el-scrollbar组件时可以传入的prop：<code>native</code>是用于判断是否显示滚动条，从源码的实现来看，滚动条是ElementUI自己实现的，也就是如果需要显示滚动条，可以考虑使用这个组件；<code>noresize</code>是用于判断是否需要监听尺寸变化事件，如果滚动内容的长度固定不变，可以设置为true以优化性能；<code>tag</code>是用于指定内层容器渲染的标签。知道这些，我们就可以知道怎么使用el-scrollbar组件了。</p>
+<p>我们再看看ElementUI官网是怎么使用它的：以官网导航栏为例，在<code>.el-scrollbar</code>的父类<code>.page-component</code>上设定了高度为100%，然后在<code>.el-scrollbar</code>同层增加<code>.page-component__nav</code>类实现导航栏的样式，最后在内层容器内使用<code>.side-nav</code>再设定100%的高度。</p>
+<p>我自己使用的过程中是在内层容器内使用一个类设定固定的高度，然后就可以实现滚动效果。</p>
+<h4 id="el-table-表头跟表格宽度不一致"><a href="#el-table-表头跟表格宽度不一致" class="headerlink" title="el-table 表头跟表格宽度不一致"></a>el-table 表头跟表格宽度不一致</h4><p>我在开发中发现了这个问题，在网上也发现有很多人遇到这个问题，目前我使用的解决方案是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 解决elementUI表头跟表格宽度不一致 */</span><br><span class="line">body .el-table th.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">body .el-table colgroup.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="安卓跟iOS的坑"><a href="#安卓跟iOS的坑" class="headerlink" title="安卓跟iOS的坑"></a>安卓跟iOS的坑</h3><h4 id="new-Date-转换时间戳"><a href="#new-Date-转换时间戳" class="headerlink" title="new Date()转换时间戳"></a>new Date()转换时间戳</h4><p>在iOS的微信H5开发中，使用<code>new Date(&#39;2019-5-4&#39;)</code>会出现报错，究其原因是iOS下不能使用<code>-</code>，应该使用<code>/</code>，即<code>new Date(&#39;2019/5/4&#39;)</code>。</p>
+<h4 id="安卓非body标签无滚动条"><a href="#安卓非body标签无滚动条" class="headerlink" title="安卓非body标签无滚动条"></a>安卓非body标签无滚动条</h4><p>在开发的过程中，我们发现在安卓系统中，页面中除了body之外其他标签都无法传滚动条，但是iOS系统就会有。这种情况下我们可以自己实现或借助一些UI框架实现滚动条。如果选择借助的话，可以考虑ElementUI的el-scrollbar组件(前面在分析源码的时候就有这样一个prop)，也可以考虑better-scroll插件，通过配置来实现滚动条。</p>
+<h3 id="前端开发的占位图"><a href="#前端开发的占位图" class="headerlink" title="前端开发的占位图"></a>前端开发的占位图</h3><p>其实开发中如果能考虑上占位图的话，对用户的使用体验是有很高的提升的。以往通过加载条来表示加载会让用户觉得加载时间很长，而使用占位图则会给用户一种页面逐渐加载完毕的效果。</p>
+<p>网上有很多推荐的占位图实现方案，有给未加载数据的容器加占位图样式的，有在数据加载完毕前先画一些占位容器的。这里就不一一细讲，主要是找到一个觉得挺不错的插件可以方便占位图的实现的：vue-content-loader。</p>
+<p>这个插件是通过实现SVG组件来完成占位图，看起来效果还不错，而且官方还给出一个页面可以通过拉拽，数据调整实现占位图组件。</p>
+<p>另外，它还有一个React版本。虽然我还没有使用过，不知道效果如何，但是我觉得应该是很有尝试的必要的。</p>
+<h3 id="vue中的图片懒加载"><a href="#vue中的图片懒加载" class="headerlink" title="vue中的图片懒加载"></a>vue中的图片懒加载</h3><p>除了占位图的加载优化，图片的懒加载也是前端开发中比较常见的加载优化点。在一个页面上，如果需要加载的图片很多，一般都会考虑优先加载第一版的图片，等用户滚动页面时，出现在窗口内的图片才会被加载。</p>
+<p>这里可以使用vue-lazyload插件。这个插件使用起来非常简单。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// npm</span><br><span class="line">$ npm i vue-lazyload -S</span><br><span class="line"></span><br><span class="line">//main.js</span><br><span class="line">// 引入</span><br><span class="line">import VueLazyload from &apos;vue-lazyload&apos;</span><br><span class="line">// 注册</span><br><span class="line">Vue.use(VueLazyload)</span><br><span class="line">// 配置</span><br><span class="line">Vue.use(VueLazyload, &#123;</span><br><span class="line">  preLoad: 1.3,</span><br><span class="line">  error: &apos;dist/error.png&apos;,</span><br><span class="line">  loading: &apos;dist/loading.gif&apos;,</span><br><span class="line">  attempt: 1</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 例子</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li v-for=&quot;img in list&quot;&gt;</span><br><span class="line">        &lt;img v-lazy=&quot;img.src&quot; &gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure>
+<p>以上是截取官方文档的部分代码。这样就可以完成简单的图片懒加载了。还有很多配置可以使用。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/04/work-summary3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1788,173 +1971,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/12/19/Vuejs-Note-I/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/19/Vuejs-Note-I/" itemprop="url">Vue.js散记</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-19T08:15:35+08:00">
-                2018-12-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这里主要记录一下学习Vue过程中遇到的问题。</p>
-<h4 id="1-Vue-warn-Error-in-render-“TypeError-Cannot-read-property-‘xxx’-of-undefined"><a href="#1-Vue-warn-Error-in-render-“TypeError-Cannot-read-property-‘xxx’-of-undefined" class="headerlink" title="1. [Vue warn]: Error in render: “TypeError: Cannot read property ‘xxx’ of undefined"></a>1. [Vue warn]: Error in render: “TypeError: Cannot read property ‘xxx’ of undefined</h4><p>之前敲代码的时候，发现了这个报错，一开始的观察点在TypeError上，认为是某个props没有正确定义，但是检查的时候并没有写错。后面发现应该要看前面Error in render，是渲染时报错。最后是找到有个地方变量名写错了。</p>
-<h4 id="2-为什么data必须是一个函数"><a href="#2-为什么data必须是一个函数" class="headerlink" title="2. 为什么data必须是一个函数"></a>2. 为什么data必须是一个函数</h4><p>这个问题其实在vue.js官网有说明，并且给出了一个例子。正确的写法应该是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data: function () &#123;</span><br><span class="line">  return &#123;</span><br><span class="line">  	count: 0</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是因为，在创建组件的实例时，data作为一个函数可以返回一个初始化对象，能独立于其他实例的data对象。如果data不是作为一个函数，而只是一个数据，则会导致所有实例公用一个data对象。</p>
-<h4 id="3-计算属性computed，侦听属性wtach-amp-方法methods"><a href="#3-计算属性computed，侦听属性wtach-amp-方法methods" class="headerlink" title="3. 计算属性computed，侦听属性wtach&amp;方法methods"></a>3. 计算属性<code>computed</code>，侦听属性<code>wtach</code>&amp;方法<code>methods</code></h4><p>计算属性<code>computed</code>的设计，是用于处理一些复杂的运算。一般在template模板中是支持使用表达式的，但是如果需要进行一些复杂的运算或数据处理，就可以把这些运算或数据处理放到计算属性中处理。</p>
-<p>当然，这些复杂的运算或数据处理也可以定义为一个方法放到<code>methods</code>中，但是放在计算属性和放到方法中是有其不同的地方的。</p>
-<p>vue官网有明确的指出这两者的不同。计算属性<code>computed</code>是基于它们的依赖进行缓存的。也就是说，<code>methods</code>中所有的运算结果只有当依赖的变量发生改变的时候才会重新计算，否则只要变量不改变，计算属性不会重新执行函数，直接返回缓存的计算结果。相反的，方法<code>methods</code>是并非响应式的，每次触发重新渲染时，调用的方法总会在此执行函数，即使依赖并没有发生变化。</p>
-<p>计算属性<code>computed</code>的优势在于可以减少很多不必要的性能开销。而方法<code>methods</code>中的函数都是需要根据页面的渲染或不需要缓存函数结果的</p>
-<p>侦听属性<code>watch</code>跟计算属性<code>computed</code>也有极为相似的方面，侦听属性是需要监听数据的变化并作出响应。但是一般用于执行异步或开销较大的操作时，才比较适合。</p>
-<h4 id="4-指令v-for-amp-key"><a href="#4-指令v-for-amp-key" class="headerlink" title="4. 指令v-for &amp; key"></a>4. 指令<code>v-for</code> &amp; <code>key</code></h4><p><code>v-for</code>是vue.js用于渲染列表的指令，针对数组可以使用<code>(item, index) in items</code>的语法迭代数组，针对对象可以使用<code>(item, key, index) in items</code>的语法迭代对象。其中，<code>key</code>的用途主要在于优化渲染过程。vue.js在处理数据项的变化时，对只改变顺序的数据项会选择复用，这样能优化渲染性能。如果没有提供<code>key</code>也只是会报提示，不影响项目运行，但是建议提供（如果是在组件上使用，则必须提供<code>key</code>）。</p>
-<h4 id="5-父子组件通信"><a href="#5-父子组件通信" class="headerlink" title="5. 父子组件通信"></a>5. 父子组件通信</h4><p>vue.js的父子组件通信跟react类似，父组件向子组件传值，是通过props传入，子组件是通过<code>$emit</code>方法触发父组件的事件。父组件在使用子组件时，通过v-bind指令传入或通过v-for传入数组中的一个元素，子组件需要在props中声明这些接收的值。</p>
-<p>父组件通过props向子组件传值这点来看，vue.js的操作跟react是类似的，但是子组件向父组件通信的处理，就有点不同了。</p>
-<p>vue.js中，父组件中需要在子组件上用<code>v-on</code>指令监听事件，然后子组件上通过<code>$emit(event, arg)</code>来向父组件触发事件，必要时传入参数<code>arg</code>。react处理上不同，react中父组件需要通过props向子组件传入方法，子组件只要使用这个方法并传入参数即可，并不是通过事件触发。</p>
-<h4 id="6-通过插槽分发内容"><a href="#6-通过插槽分发内容" class="headerlink" title="6. 通过插槽分发内容"></a>6. 通过插槽分发内容</h4><p>另外开一篇文章来记录这个内容，因为插槽的分类比较多，能用起来的话作用也很强大。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2005,7 +2021,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2027,7 +2043,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
