@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,移动端," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇工作总结，主要针对移动端网页开发中遇到的软键盘坑来整理的。 最近在做移动端页面，然后遇到一个很多人都遇到的坑：当页面有固定在底部的评论框的情况下，当点击评论框获得聚焦之后，底部评论框会被软键盘顶起，但是不会贴着软键盘顶部，而且后面的页面也会向上滚动一定高度，而且仍然可以滚动。这个问题的结果就是，在评论框获得聚焦时，整个页面会滚动，输入框位置很突兀，如果输入框是textarea，则有可能有一部分">
+<meta name="keywords" content="iOS,移动端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工作总结(6)">
+<meta property="og:url" content="http://listentolife.github.io/2019/06/09/work-summary6/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="这篇工作总结，主要针对移动端网页开发中遇到的软键盘坑来整理的。 最近在做移动端页面，然后遇到一个很多人都遇到的坑：当页面有固定在底部的评论框的情况下，当点击评论框获得聚焦之后，底部评论框会被软键盘顶起，但是不会贴着软键盘顶部，而且后面的页面也会向上滚动一定高度，而且仍然可以滚动。这个问题的结果就是，在评论框获得聚焦时，整个页面会滚动，输入框位置很突兀，如果输入框是textarea，则有可能有一部分">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-09T14:40:19.406Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="工作总结(6)">
+<meta name="twitter:description" content="这篇工作总结，主要针对移动端网页开发中遇到的软键盘坑来整理的。 最近在做移动端页面，然后遇到一个很多人都遇到的坑：当页面有固定在底部的评论框的情况下，当点击评论框获得聚焦之后，底部评论框会被软键盘顶起，但是不会贴着软键盘顶部，而且后面的页面也会向上滚动一定高度，而且仍然可以滚动。这个问题的结果就是，在评论框获得聚焦时，整个页面会滚动，输入框位置很突兀，如果输入框是textarea，则有可能有一部分">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2019/06/09/work-summary6/"/>
+
+
+
+
+
+  <title>工作总结(6) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/06/09/work-summary6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">工作总结(6)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T22:38:28+08:00">
+                2019-06-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇工作总结，主要针对移动端网页开发中遇到的软键盘坑来整理的。</p>
+<p>最近在做移动端页面，然后遇到一个很多人都遇到的坑：当页面有固定在底部的评论框的情况下，当点击评论框获得聚焦之后，底部评论框会被软键盘顶起，但是不会贴着软键盘顶部，而且后面的页面也会向上滚动一定高度，而且仍然可以滚动。这个问题的结果就是，在评论框获得聚焦时，整个页面会滚动，输入框位置很突兀，如果输入框是textarea，则有可能有一部分推到页面顶部一样，用户体验非常差。</p>
+<p>这个问题拆解出来，有几个需要解决的问题：</p>
+<ol>
+<li><p>背景页面仍然可以滚动。我尝试了增加遮罩层，但是还是不受控制；</p>
+</li>
+<li><p>底部评论框顶起的位置不正确。这个问题在安卓系统不会出现，所以是iOS的坑；</p>
+</li>
+<li><p>底部评论框获得聚焦的时候，背景页面会被顶起。</p>
+</li>
+</ol>
+<p>这个坑我在网上找了很多帖子，发现真的是一个很难解决的问题。我也有找到一些解决方案，但是实际实现下来效果还是很差。这里我们一个个问题来整理如何解决。</p>
+<h4 id="背景页面滚动问题"><a href="#背景页面滚动问题" class="headerlink" title="背景页面滚动问题"></a>背景页面滚动问题</h4><p>这个问题不管在安卓还是iOS系统上都会出现。原因应该出现在本身页面高度超过窗口高度，而且移动端有touchmove事件，虽然有遮罩层，但是其实body是遮罩层的根节点，所以存在事件捕获跟冒泡的问题。</p>
+<p>因此，主要的问题是要阻止touchmove事件。解决方案需要完成两步操作：</p>
+<h5 id="1-禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获"><a href="#1-禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获" class="headerlink" title="1. 禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获"></a>1. 禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获</h5><p>处理的办法是设置body元素的touchAction属性为<code>none</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.body.style.touchAction = &apos;none&apos;;</span><br></pre></td></tr></table></figure>
+<p>这样就可以禁止body的touch事件。不过这个只是适用于安卓系统，在safari上并不适用，因为safari不支持该属性</p>
+<h5 id="2-阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动"><a href="#2-阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动" class="headerlink" title="2. 阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动"></a>2. 阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动</h5><p>处理的办法是使用<code>e.preventDefault()</code>，同时在绑定<code>addEventListener</code>的时候，需要再传一个<code>options</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">document.body.addEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; passive: false, capture: true &#125;);</span><br><span class="line"></span><br><span class="line">stopTouch (e) &#123;</span><br><span class="line">    e.preventDefault();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>addEventListener</code>的第三个参数<code>options</code>的写法比较少用到，我们一般用到的是<code>useCapture</code>，而且一般也是使用默认值<code>false</code>。在MDN有详细的说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">options</span><br><span class="line">一个指定有关 listener 属性的可选参数对象。可用的选项如下：</span><br><span class="line">capture:  Boolean，表示 listener 会在该类型的事件捕获阶段传播到该 EventTarget 时触发。</span><br><span class="line">once:  Boolean，表示 listener 在添加之后最多只调用一次。如果是 true， listener 会在其被调用之后自动移除。</span><br><span class="line">passive: Boolean，设置为true时，表示 listener 永远不会调用 preventDefault()。如果 listener 仍然调用了这个函数，客户端将会忽略它并抛出一个控制台警告。</span><br></pre></td></tr></table></figure>
+<p>我们在这里使用<code>{ passive: false }</code>，这样使用<code>preventDefault()</code>时Chrome等一些浏览器就不会报错；而使用<code>{ capture: true }</code>则可以是事件尽早被阻止。</p>
+<p>第一个问题完整的解决方案代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">watch: &#123;</span><br><span class="line">    show(newVal) &#123;</span><br><span class="line">        this.toggleContainerTouchAction(newVal);</span><br><span class="line">        if (newVal) &#123;</span><br><span class="line">            document.body.addEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; passive: false, capture: true &#125;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            document.body.removeEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; capture: true &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">method: &#123;</span><br><span class="line">    toggleContainerTouchAction (flag) &#123;</span><br><span class="line">        document.body.style.touchAction = flag ? &apos;none&apos; : &apos;auto&apos;;</span><br><span class="line">    &#125;,</span><br><span class="line">    stopTouch (e) &#123;</span><br><span class="line">        e.preventDefault();</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="底部评论框顶起的位置"><a href="#底部评论框顶起的位置" class="headerlink" title="底部评论框顶起的位置"></a>底部评论框顶起的位置</h4><p>首先，这个问题的根本问题是iOS在处理fixed布局时，当页面输入框获得焦点的时候，会把fixed改成absolute绝对定位，同时计算fixed容器在页面的位置，以此作为绝对定位的位置。正常来说其实会让底部评论框顶到软键盘顶部的位置，虽然如果滚动页面的话底部评论框是会跟软键盘分开，但是上面已经有解决方案了，所以其实还好。问题在于因为在软键盘上滑的同时，页面整体也会被动向上滚动，但评论框的位置是在页面滚动前计算的，所以才会出现顶起后还跟软键盘分离的情况。</p>
+<p>因此，首先可以想到的是，不用fixed布局，而改用absolute布局，同时在输入框获得焦点的时候，动态计算输入框容器的高度。</p>
+<p>不过直接放弃fixed布局其实是很可惜的，因为如果一开始写布局的时候就用绝对定位，那底部评论框就得一直动态计算位置，而且这个问题只是iOS系统才会出现，安卓系统是没问题的。</p>
+<p>所以在处理的时候，我把问题拆分了：</p>
+<ol>
+<li>输入框在布局上，iOS跟安卓是分开处理的；</li>
+<li>其次，iOS系统的布局，也按软键盘调起(等同于输入框获得焦点)与否分开处理；</li>
+<li>因为页面滚动已经被设置为不可滚动，所以动态计算可以控制在一定次数以内。这三个优化可以让方案实施时减少JS的操作，提高页面性能，增加CSS样式操作。</li>
+</ol>
+<h5 id="1-样式布局"><a href="#1-样式布局" class="headerlink" title="1. 样式布局"></a>1. 样式布局</h5><p>样式布局上，我把fixed布局跟absolute布局从原来class<code>.input-container</code>中分离出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.input-container-absolute &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.input-container-fixed &#123;</span><br><span class="line">    position: fixed;</span><br><span class="line">    bottom: 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后通过<code>v-bind</code>先把<code>.input-container-fixed</code>绑到输入框容器上。当输入框获得焦点的时候，判断平台是iOS还是安卓，如果是iOS，就改成<code>.input-container-absolute</code>，如果是安卓，就不变：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">handleComment () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        this.inputCls = &apos;input-container-absolute input-container&apos;;</span><br><span class="line">		/* ... */</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /*...*/</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>当输入框失去焦点的时候，再改回fixed布局：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">handleBlur () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        /* ... */</span><br><span class="line">		this.$refs.inputCon.style.top = &apos;&apos;;</span><br><span class="line">        this.inputCls = &apos;input-container-fixed input-container&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>这样对于安卓系统来说，解决iOS系统的js操作跟安卓系统来说一点影响都没有。</p>
+<h5 id="2-iOS系统的布局"><a href="#2-iOS系统的布局" class="headerlink" title="2. iOS系统的布局"></a>2. iOS系统的布局</h5><p>其实上面的代码也基本说明了，在iOS系统上，布局也不是完全使用绝对布局，就上面的代码，就可以保证在软键盘没有被调起的时候，不需要js控制布局。</p>
+<h5 id="3-动态计算"><a href="#3-动态计算" class="headerlink" title="3. 动态计算"></a>3. 动态计算</h5><p>这个问题是整个问题的核心点。首先，使用什么值来确定输入框的位置。因为使用了绝对定位，而且这个位置问题其实是y轴上滚动造成的，所以问题缩小为<code>top</code>跟<code>bottom</code>的选择上。一般fixed布局使用<code>bottom</code>，绝对定位也使用<code>bottom</code>可以统一定位方式，但是实际在<code>.input-container-fixed</code>跟<code>.input-container-absolute</code>的样式上，其实已经说明了绝对定位时，我是选择<code>top</code>来控制输入框的位置的。因为我在尝试使用<code>bottom</code>，发现计算不出来，尴尬…</p>
+<p>所以我是计算了<code>top</code>。怎么计算？我们这么考虑，应该是这样的公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top = 页面滚动高度 + 视窗高度 - 输入框容器高度</span><br></pre></td></tr></table></figure>
+<p>首先，页面滚动高度可以通过<code>document.documentElement.scrollTop</code>或<code>document.body.scrollTop</code>获得；输入框是在软键盘的顶部，而且其实当软键盘调起之后，实际的视窗高度是原来视窗高度减去软键盘高度。这部分不需要计算，直接使用<code>window.innerHeight</code>；输入框容器高度可以通过<code>offsetHeight</code>获得。因此，公式转换成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top = document.documentElement.scrollTop/document.body.scrollTop + window.innerHeight - this.$refs.input.offsetHeight</span><br></pre></td></tr></table></figure>
+<p>这里简单说一下，bottom的计算我就是用上面的公式，就是不减去容器高度而已，但是显示效果就是不对…</p>
+<p>所以就有下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">getScrollTop () &#123;</span><br><span class="line">    let scroll_top = 0;</span><br><span class="line">    if (document.documentElement &amp;&amp; document.documentElement.scrollTop) &#123;</span><br><span class="line">        scroll_top = document.documentElement.scrollTop;</span><br><span class="line">    &#125; else if (document.body) &#123;</span><br><span class="line">        scroll_top = document.body.scrollTop;</span><br><span class="line">    &#125;</span><br><span class="line">    return scroll_top;</span><br><span class="line">&#125;,</span><br><span class="line">		  </span><br><span class="line">handleScroll () &#123;</span><br><span class="line">    if (this.commentVisible) &#123;</span><br><span class="line">        this.scrollHeight = this.getScrollTop();</span><br><span class="line">		// +5px是为了确保输入框跟软键盘是贴在一起的，所以让输入框有一点点藏在软键盘下面是最保险的做法</span><br><span class="line">        this.$refs.inputCon.style.top = `$&#123;this.scrollHeight + window.innerHeight - this.$refs.inputCon.offsetHeight + 5&#125;px`;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>其实直接使用上面的代码也不能解决，因为软键盘弹出是有时间的，也就是如果一获取焦点就计算，那就会导致输入框还在软键盘弹出前视窗的底部。所以要动态计算，即在一定时间内，需要使用定时器<code>setInterval</code>不断计算输入框的位置，这样在软键盘调起的过程，输入框也能一直附在软键盘顶部：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scrollContent () &#123;</span><br><span class="line">    clearInterval(this.interval);</span><br><span class="line">    let i = 0;</span><br><span class="line">    this.interval = setInterval(() =&gt; &#123;</span><br><span class="line">        this.handleScroll();</span><br><span class="line">        i++;</span><br><span class="line">        if (i &gt; 20) &#123;</span><br><span class="line">            this.clearSrcoll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, 50)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>这里控制了只计算20次，是因为软键盘被调起的时间其实很短，测试情况大概1秒内就可以完成，不用一直动态计算，而且定时器间隔时间是50，所以就计算为20次。</p>
+<p>因此，样式布局的方法就得增加一些代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">clearSrcoll() &#123;</span><br><span class="line">    clearInterval(this.interval);</span><br><span class="line">&#125;,</span><br><span class="line">		  </span><br><span class="line">handleComment () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        this.inputCls = &apos;input-container-absolute input-container&apos;;</span><br><span class="line">		setTimeout(() =&gt; &#123;</span><br><span class="line">            this.scrollContent();</span><br><span class="line">        &#125;, 10)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /*...*/</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">handleBlur () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        /* ... */</span><br><span class="line">		this.clearSrcoll();</span><br><span class="line">		this.$refs.inputCon.style.top = &apos;&apos;;</span><br><span class="line">        this.inputCls = &apos;input-container-fixed input-container&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>这里要说明的是，跟业务代码是有不同的，因为实际上页面一开始放的评论框容器没有input标签，只是放了一个像输入框的底部容器，加了点击事件后，会控制显示输入框容器的显示，然后在DOM刷新之后(<code>this.$nextTick</code>)使用<code>focus()</code>触发输入框获得焦点。所以就不放完整代码了。</p>
+<h4 id="页面顶起"><a href="#页面顶起" class="headerlink" title="页面顶起"></a>页面顶起</h4><p>这个问题其实没有解决，考虑到影响不大，而且当页面高度只有一屏时，也不会出现(主要是没有找到很好的解决方案)，所以就不处理了。但是这个问题在其他情况下有解决方案，详情可以看工作总结(五)中关于iOS下微信H5页面的坑解决方案的整理。</p>
+<p>上面就是全部内容。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+            <a href="/tags/移动端/" rel="tag"># 移动端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/09/work-summary5/" rel="next" title="工作总结(5)">
+                <i class="fa fa-chevron-left"></i> 工作总结(5)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景页面滚动问题"><span class="nav-number">1.</span> <span class="nav-text">背景页面滚动问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获"><span class="nav-number">1.1.</span> <span class="nav-text">1. 禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动"><span class="nav-number">1.2.</span> <span class="nav-text">2. 阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#底部评论框顶起的位置"><span class="nav-number">2.</span> <span class="nav-text">底部评论框顶起的位置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-样式布局"><span class="nav-number">2.1.</span> <span class="nav-text">1. 样式布局</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-iOS系统的布局"><span class="nav-number">2.2.</span> <span class="nav-text">2. iOS系统的布局</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-动态计算"><span class="nav-number">2.3.</span> <span class="nav-text">3. 动态计算</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#页面顶起"><span class="nav-number">3.</span> <span class="nav-text">页面顶起</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
