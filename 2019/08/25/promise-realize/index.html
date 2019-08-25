@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,promise," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近在掘金上看了一些关于promise的文章，然后学习了一番，发现是可以自己手写实现一套promise的，于是做了一番学习，现在来整理一下。 Promise状态promise是有一套规范的，只要实现的promise符合这套规范，就说明显示的promise是可以正常使用的。这套规范的地址是 https://promisesaplus.com/ 。上面除了有规范，还给出了测试工具，方便测试代码。 pr">
+<meta name="keywords" content="JavaScript,promise">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写一个Promise">
+<meta property="og:url" content="http://listentolife.github.io/2019/08/25/promise-realize/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="最近在掘金上看了一些关于promise的文章，然后学习了一番，发现是可以自己手写实现一套promise的，于是做了一番学习，现在来整理一下。 Promise状态promise是有一套规范的，只要实现的promise符合这套规范，就说明显示的promise是可以正常使用的。这套规范的地址是 https://promisesaplus.com/ 。上面除了有规范，还给出了测试工具，方便测试代码。 pr">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-25T14:48:23.622Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手写一个Promise">
+<meta name="twitter:description" content="最近在掘金上看了一些关于promise的文章，然后学习了一番，发现是可以自己手写实现一套promise的，于是做了一番学习，现在来整理一下。 Promise状态promise是有一套规范的，只要实现的promise符合这套规范，就说明显示的promise是可以正常使用的。这套规范的地址是 https://promisesaplus.com/ 。上面除了有规范，还给出了测试工具，方便测试代码。 pr">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2019/08/25/promise-realize/"/>
+
+
+
+
+
+  <title>手写一个Promise | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/promise-realize/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">手写一个Promise</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T22:46:35+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Promise/" itemprop="url" rel="index">
+                    <span itemprop="name">Promise</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在掘金上看了一些关于promise的文章，然后学习了一番，发现是可以自己手写实现一套promise的，于是做了一番学习，现在来整理一下。</p>
+<h4 id="Promise状态"><a href="#Promise状态" class="headerlink" title="Promise状态"></a>Promise状态</h4><p>promise是有一套规范的，只要实现的promise符合这套规范，就说明显示的promise是可以正常使用的。这套规范的地址是 <a href="https://promisesaplus.com/" target="_blank" rel="noopener">https://promisesaplus.com/</a> 。上面除了有规范，还给出了测试工具，方便测试代码。</p>
+<p>promise的规范写的很详细，包括用语，各种情况下promise应该有的处理方式。这个就开始实现吧。</p>
+<p>规范的一开始就明确定义了(1.1)promise是一个带有<code>then</code>方法的对象或者函数，所以我们实现的promise需要有一个<code>then</code>方法；(2.1)promise有三个状态，<code>pending</code>等待态，<code>fulfilled</code>成功态，<code>rejected</code>失败态，而关于这三种状态关系，在(2.1)中有详细的说明：</p>
+<ol>
+<li>等待态可以转化为成功态或失败态；</li>
+<li>成功态不能转化为其他状态，而且需要有一个<code>value</code>；</li>
+<li>失败态不能转化为其他状态，而且需要有一个<code>reason</code>；<br>(<code>value</code>跟<code>reason</code>值不可变，但如果指向是对象的话则指向不可变)</li>
+</ol>
+<p>基于以上规范，promise需要有一个状态<code>state</code>和对应成功态的<code>value</code>跟失败态的<code>reason</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const PENDING = &apos;PENDING&apos;;</span><br><span class="line">const FULFILLED = &apos;FULFILLED&apos;;</span><br><span class="line">const REJECTED = &apos;REJECTED&apos;;</span><br><span class="line"></span><br><span class="line">class Promise &#123;</span><br><span class="line">  constructor (executor) &#123;</span><br><span class="line">    this.state = PENDING;</span><br><span class="line">	this.value = undefined;</span><br><span class="line">	this.reason = undefined;</span><br><span class="line">	// ...</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Promise-executor"><a href="#Promise-executor" class="headerlink" title="Promise executor"></a>Promise executor</h4><p>上面代码中<code>constructor</code>传入了一个<code>executor</code>，这个是按照原生Promise的写法，声明一个Promise对象实例需要传入<code>executor</code>，这个executor需要带有两个参数，包括<code>resolve</code>跟<code>reject</code>。</p>
+<p><code>resolve</code>跟<code>reject</code>是用来判断promise状态的两个函数，要求Promise转化为成功态时要调用<code>resolve</code>，并传入value，而转化为失败态时要调用<code>reject</code>，并传入reason。而且，<code>executor</code>是个立即执行的，是同步的。</p>
+<p>当<code>resolve</code>获得value时，会把值赋给promise的value，并判断当前是否为等待态，是则会把状态改为成功态；而<code>reject</code>操作类似，把获得的reason赋值给promise的reason，然后判断等待态后把状态改为失败态。</p>
+<p><code>executor</code>的执行可能出现运行报错，所以需要用<code>try catch</code>来捕获报错，捕获的报错则传给<code>reject</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">class Promise &#123;</span><br><span class="line">  constructor (executor) &#123;</span><br><span class="line">    this.state = PENDING;</span><br><span class="line">	this.value = undefined;</span><br><span class="line">	this.reason = undefined;</span><br><span class="line">    let resolve = (value) =&gt; &#123;</span><br><span class="line">      // ...</span><br><span class="line">      if (this.state === PENDING) &#123;</span><br><span class="line">        this.state = FULFILLED;</span><br><span class="line">        this.value = value;</span><br><span class="line">        this.onFulfilledStack.forEach(fn =&gt; fn());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    let reject = (reason) =&gt; &#123;</span><br><span class="line">      if (this.state === PENDING) &#123;</span><br><span class="line">        this.state = REJECTED;</span><br><span class="line">        this.reason = reason;</span><br><span class="line">        this.onRejectedStack.forEach(fn =&gt; fn());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">      executor(resolve, reject);</span><br><span class="line">    &#125; catch (exception) &#123;</span><br><span class="line">      reject(exception);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Promise-then"><a href="#Promise-then" class="headerlink" title="Promise then"></a>Promise then</h3><p>promise/A+规范要求实现的promise需要有<code>then</code>方法。这个方法需要传入两个回调函数，<code>onFulfilled</code>和<code>onRejected</code>。因为支持链式调用，所以也要求函数返回的是一个promise。</p>
+<p>首先，对于以上的要求，可以写出下面<code>then</code>方法的结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class Promise &#123;</span><br><span class="line">  // constructor...</span><br><span class="line">  then (onFulfilled, onRejected) &#123;</span><br><span class="line">  // ...</span><br><span class="line">  let promise2;</span><br><span class="line">  promise2 = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    // ...</span><br><span class="line">  &#125;);</span><br><span class="line">  return promise2;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>then</code>方法中的<code>onFulfilled</code>和<code>onRejected</code>跟<code>promise2</code>规范中有比较详细的要求，所以我们单独的实现。</p>
+<h4 id="onFulfilled和onRejected调用要求"><a href="#onFulfilled和onRejected调用要求" class="headerlink" title="onFulfilled和onRejected调用要求"></a><code>onFulfilled</code>和<code>onRejected</code>调用要求</h4><p>首先，只有当promise的状态为成功态时，才可以调用<code>onFulfilled</code>回调，并传入<code>value</code>，而只有为失败态时，才可以调用<code>onRejected</code>回调，并传入<code>reason</code>，而等待态的情况下，两个回调均不执行，会等待到状态转化之后才会根据状态执行。</p>
+<p>同时，由于<code>then</code>方法支持多次调用，也就是说在promise等待态时，<code>then</code>方法调用的情况，所以需要在promise内部使用两个数组来储存所有的<code>onFulfilled</code>和<code>onRejected</code>方法，并在转化状态后按照先后顺序调用执行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">// Promise constructor</span><br><span class="line">this.onFulfilledStack = [];</span><br><span class="line">this.onRejectedStack = [];</span><br><span class="line">let resolve = (value) =&gt; &#123;</span><br><span class="line">  if (this.state === PENDING) &#123;</span><br><span class="line">    this.state = FULFILLED;</span><br><span class="line">    this.value = value;</span><br><span class="line">    this.onFulfilledStack.forEach(fn =&gt; fn());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">let reject = (reason) =&gt; &#123;</span><br><span class="line">  if (this.state === PENDING) &#123;</span><br><span class="line">    this.state = REJECTED;</span><br><span class="line">    this.reason = reason;</span><br><span class="line">    this.onRejectedStack.forEach(fn =&gt; fn());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// then的promise2内部</span><br><span class="line">if (this.state === FULFILLED) &#123;</span><br><span class="line">  onFulfilled(this.value);</span><br><span class="line">&#125;</span><br><span class="line">if (this.state === REJECTED) &#123;</span><br><span class="line">  onRejected(this.reason);</span><br><span class="line">&#125;</span><br><span class="line">if (this.state === PENDING) &#123;</span><br><span class="line">  this.onFulfilledStack.push(() =&gt; &#123;</span><br><span class="line">    onFulfilled(this.value);</span><br><span class="line">  &#125;)</span><br><span class="line">  this.onRejectedStack.push(() =&gt; &#123;</span><br><span class="line">    onRejected(this.reason);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="onFulfilled和onRejected结果判断"><a href="#onFulfilled和onRejected结果判断" class="headerlink" title="onFulfilled和onRejected结果判断"></a><code>onFulfilled</code>和<code>onRejected</code>结果判断</h4><p>由于Promise链式调用，在then中执行<code>onFulfilled</code>和<code>onRejected</code>返回的值有可能也是一个Promise对象，也有可能是一个其他普通的值，还有可能是抛出一个错误，而这些值都有各自不同的处理要求：</p>
+<ol>
+<li>如果返回的值是普通值，则调用promise2的resolve；</li>
+<li>如果返回的值是一个promise，则需要等待执行完把这个promise的<code>value</code>或<code>reason</code>传给promise2的<code>resolve</code>或<code>reject</code>；</li>
+<li>如果是抛出一个错误，则调用promise2的reject；</li>
+<li>如果返回的值等于promise2，则抛出类型错误；</li>
+</ol>
+<p>基于上面的要求，可以使用一个<code>resolvePromise</code>来处理，需要传入以下值：</p>
+<ol>
+<li>执行<code>onFulfilled</code>和<code>onRejected</code>之后返回的值，x，用来判断处理结果;</li>
+<li>promise2的<code>resolve</code>或<code>reject</code>，用来接收x；</li>
+<li>promise2，用来判断x是否与之引用相等。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">promise2 = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  if (this.status === SUCCESS) &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        let x = onFulfilled(this.value);</span><br><span class="line">        resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  if (this.status === FAIL) &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        let x = onRejected(this.reason);</span><br><span class="line">        resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  if (this.status === PENDING) &#123;</span><br><span class="line">    this.onResolvedCallbacks.push(() =&gt; &#123;</span><br><span class="line">      setTimeout(() =&gt; &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          let x = onFulfilled(this.value);</span><br><span class="line">          resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">          reject(err)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">    this.onRejectedCallbacks.push(() =&gt; &#123;</span><br><span class="line">      setTimeout(() =&gt; &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          let x = onRejected(this.reason);</span><br><span class="line">          resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">          reject(err)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h4 id="返回值x的判断"><a href="#返回值x的判断" class="headerlink" title="返回值x的判断"></a>返回值<code>x</code>的判断</h4><p>Promise A+规范提供了对x的判断方案。首先，判断x是否为一个方法或者一个对象，因为Promise的实现可以通过<code>Function</code>或<code>Object</code>来实现。其次，x带有一个then方法，这是本身Promise规范要求<br>的方法。除此之外，都判断为普通值。</p>
+<p>另外，如果x是一个Promise，那么作为<code>x</code>成功态返回的值，同样也要判断是否为Promise，这个判断的处理跟<code>x</code>的处理相同，所以<code>resolvePromise</code>可以以递归方法的形式实现。</p>
+<p>在判断完<code>x</code>为Promise之后，Promise A+规范有一个比较严谨的考虑，就是为了防止同时出现成功态跟失败态，要在调用promise2的<code>resolve</code>或<code>reject</code>之后，禁止再调用promise2的<code>reject</code>或<code>resolve</code>。</p>
+<p>因此，<code>resolvePromise</code>实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">function resolvePromise (promise2, x, resolve, reject) &#123;</span><br><span class="line">  if (promise2 === x) &#123;</span><br><span class="line">    return reject(new TypeError(&apos;Chaining cycle detected for promise #&lt;my Promise&gt;&apos;))</span><br><span class="line">  &#125;</span><br><span class="line">  let called;</span><br><span class="line">  if (typeof x === &apos;function&apos; || (typeof x === &apos;object&apos; &amp;&amp; x != null)) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      let then = x.then</span><br><span class="line">        if (typeof then === &apos;function&apos;) &#123;</span><br><span class="line">        then.call(x, y =&gt; &#123;</span><br><span class="line">          if (called) return</span><br><span class="line">          called = true</span><br><span class="line">          resolvePromise (promise2, y, resolve, reject)</span><br><span class="line">        &#125;, r =&gt; &#123;</span><br><span class="line">          if (called) return // 2)</span><br><span class="line">          called = true</span><br><span class="line">          reject(r)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        resolve(x)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; catch (e) &#123;</span><br><span class="line">      if (called) return</span><br><span class="line">      called = true</span><br><span class="line">      reject(e)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    resolve(x)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>以上基本实现基于Promise A+规范的Promise类。最后可以安装<code>promise-aplus-tasts</code>库对实现的Promise做检验。测试之前需要加以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Promise.defer = Promise.deferred = function () &#123;</span><br><span class="line">  let dfd = &#123;&#125;</span><br><span class="line">  dfd.promise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    dfd.resolve = resolve;</span><br><span class="line">    dfd.reject = reject;</span><br><span class="line">    &#125;);</span><br><span class="line">    return dfd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码本身也实现了一种异步操作代码同步化的处理。最后使用命令<code>promises-aplus-tests xxx.js</code>执行测试。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/promise/" rel="tag"># promise</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/09/work-summary6/" rel="next" title="工作总结(6)">
+                <i class="fa fa-chevron-left"></i> 工作总结(6)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/25/wechat-mini-project-listentoweather-I/" rel="prev" title="微信小程序开发-倾听天气(一)">
+                微信小程序开发-倾听天气(一) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Promise状态"><span class="nav-number">1.</span> <span class="nav-text">Promise状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Promise-executor"><span class="nav-number">2.</span> <span class="nav-text">Promise executor</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Promise-then"><span class="nav-number"></span> <span class="nav-text">Promise then</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#onFulfilled和onRejected调用要求"><span class="nav-number">1.</span> <span class="nav-text">onFulfilled和onRejected调用要求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#onFulfilled和onRejected结果判断"><span class="nav-number">2.</span> <span class="nav-text">onFulfilled和onRejected结果判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#返回值x的判断"><span class="nav-number">3.</span> <span class="nav-text">返回值x的判断</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number"></span> <span class="nav-text">测试</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

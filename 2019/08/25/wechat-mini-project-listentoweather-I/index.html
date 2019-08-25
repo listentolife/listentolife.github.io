@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,微信小程序," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近开始尝试开发微信小程序。之前多多少少了解了微信小程序的开发，了解了wxml，wxss，wxs跟一些微信小程序的api，但是并没有什么想法应该要拿什么来练手。最近找到和风天气(https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。 简单的说，最基本的需要是用户需要查看所在地的天气情况跟">
+<meta name="keywords" content="JavaScript,微信小程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信小程序开发-倾听天气(一)">
+<meta property="og:url" content="http://listentolife.github.io/2019/08/25/wechat-mini-project-listentoweather-I/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="最近开始尝试开发微信小程序。之前多多少少了解了微信小程序的开发，了解了wxml，wxss，wxs跟一些微信小程序的api，但是并没有什么想法应该要拿什么来练手。最近找到和风天气(https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。 简单的说，最基本的需要是用户需要查看所在地的天气情况跟">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://listentolife.github.io/2019/08/25/images/gh_49128d023947_258.jpg">
+<meta property="og:updated_time" content="2019-08-25T15:13:30.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微信小程序开发-倾听天气(一)">
+<meta name="twitter:description" content="最近开始尝试开发微信小程序。之前多多少少了解了微信小程序的开发，了解了wxml，wxss，wxs跟一些微信小程序的api，但是并没有什么想法应该要拿什么来练手。最近找到和风天气(https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。 简单的说，最基本的需要是用户需要查看所在地的天气情况跟">
+<meta name="twitter:image" content="http://listentolife.github.io/2019/08/25/images/gh_49128d023947_258.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2019/08/25/wechat-mini-project-listentoweather-I/"/>
+
+
+
+
+
+  <title>微信小程序开发-倾听天气(一) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/wechat-mini-project-listentoweather-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">微信小程序开发-倾听天气(一)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T22:57:19+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/微信小程序/" itemprop="url" rel="index">
+                    <span itemprop="name">微信小程序</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近开始尝试开发微信小程序。之前多多少少了解了微信小程序的开发，了解了wxml，wxss，wxs跟一些微信小程序的api，但是并没有什么想法应该要拿什么来练手。最近找到和风天气(<a href="https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。" target="_blank" rel="noopener">https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。</a></p>
+<p>简单的说，最基本的需要是用户需要查看所在地的天气情况跟最近几天的天气预报，并获得一些建议，而和风天气开放给普通用户也有这些信息，所以这个需求可以很容易实现。目前我也是打算实现最基础的展示功能先上线，走完整个开发到上线的流程，看看有什么坑。</p>
+<p>话不多说，先上小程序码，可以去看看效果：</p>
+<p><img src="../images/gh_49128d023947_258.jpg" alt="倾听天气 小程序码"></p>
+<h3 id="创建小程序账号"><a href="#创建小程序账号" class="headerlink" title="创建小程序账号"></a>创建小程序账号</h3><p>第一步，肯定是要到微信公众平台申请一个小程序的账号，这个账号需要一个未申请过微信账号或其他开发账号的邮箱，然后申请之后还需要一个管理员。申请之后，可以得到一个AppID，这个AppID就是你开发小程序时需要绑定的。</p>
+<p>然后就下载微信开发者工具，安装。打开工具，选择小程序，然后在新建项目那里，在AppID填入你刚才注册获得的Appid。选择好目录，项目名称跟后端服务（目前我没有使用云服务，但计划之后的版本会加入），点击新建即可新建小程序项目。</p>
+<h3 id="腾讯地图开发者及和风天气开发者账号"><a href="#腾讯地图开发者及和风天气开发者账号" class="headerlink" title="腾讯地图开发者及和风天气开发者账号"></a>腾讯地图开发者及和风天气开发者账号</h3><p>从需求中分析到，需要获得用户的定位信息跟天气数据，前者可以通过微信小程序内置api获取，后者可以通过和风天气api获取。不过长远考虑可以获得更多地图数据以丰富小程序的功能，所以这里一并申请了腾讯地图开发者。</p>
+<p>其实申请也不难，腾讯地图api是在腾讯位置服务申请的开发者账号，只要用QQ或微信扫一下二维码就可以注册成功了，简直0操作成本。然后在控制台的key管理那里创建新密钥。通过这个密钥就可以获得腾讯地图的数据了</p>
+<p>注册和风天气的开发者账号也不难，进入官网之后进行注册。开发者的权限是跟开发者账号绑定的，一般的开发者（比如我）可以直接注册普通开发者，然后创建key，就可以获得最基础的数据。如果要申请认证开发者就需要提供开发上线的应用（目前我上线小程序之后就开始申请了）。申请就还需要提供个人信息了，但是因为小程序没有链接，所以我就直接写让他们去微信里面搜索了……</p>
+<p>最后，还需要在微信公众平台，小程序账号的开发一栏，进入开发设置，设置服务器域名的request合法域名。设置的是把接口的域名添加进去。注意，这个操作每个月是有显示修改次数的。</p>
+<p>这样，就完成了开发前的准备了。</p>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><p>开发的过程耗时不长，只是因为每天比较忙，所以只能腾三个晚上每天大概6个小时从各种注册到开发到上线申请。</p>
+<p>遇到的坑也不算太多，简单的百度一下也可以解决，不过既然是整理开发过程，我觉得还是可以拿一些出来说说的：</p>
+<h4 id="用户权限"><a href="#用户权限" class="headerlink" title="用户权限"></a>用户权限</h4><p>因为是第一个版本，没打算获取用户太多信息，只需要获得定位信息就可以了，所以目前只获取用户定位权限。</p>
+<p>现在微信小程序的用户权限都需要做多一些配置。比如获取定位权限，就需要先在app.json配置permission：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  &quot;permission&quot;: &#123;</span><br><span class="line">    &quot;scope.userLocation&quot;: &#123;</span><br><span class="line">      &quot;desc&quot;: &quot;你的位置信息将用于获取你所在地区的天气信息&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再在js文件中调用<code>wx.getLocation()</code>方法，这里我是在index.js中onLoad中调用<code>getUserLocation()</code>，在这个方法中获取定位的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">onLoad: function () &#123;</span><br><span class="line">  // 获取用户经纬度</span><br><span class="line">  this.getUserLocation()</span><br><span class="line">&#125;,</span><br><span class="line">getUserLocation () &#123;</span><br><span class="line">  wx.getLocation(&#123;</span><br><span class="line">    type: &apos;gcj02&apos;,</span><br><span class="line">    success: res =&gt; &#123;</span><br><span class="line">      this.updateLocation(res);</span><br><span class="line">    &#125;,</span><br><span class="line">    fail: err =&gt; &#123;</span><br><span class="line">      console.log(err)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="腾讯位置服务获取位置描述"><a href="#腾讯位置服务获取位置描述" class="headerlink" title="腾讯位置服务获取位置描述"></a>腾讯位置服务获取位置描述</h4><p>毕竟是腾讯的产品，腾讯位置服务也有微信小程序JS SDK，不需要使用API调用。引入的方法也不难。</p>
+<p>前面已经获得了key，然后在腾讯位置服务页面下载SDK，然后放到项目目录下（我的项目是放在了util目录下）。再在js文件中引入，并声明一个实例（官网也有详细的代码介）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 引入腾讯地图SDK核心类</span><br><span class="line">let QQMapWX = require(&apos;./qqmap-wx-jssdk.min.js&apos;);</span><br><span class="line"></span><br><span class="line">// 实例化地图API核心类</span><br><span class="line">let qqmapsdk = new QQMapWX(&#123;</span><br><span class="line">  key: config.MAP_API_KEY</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样就可以开始使用了。前面已经获得了用户的位置信息，这个位置信息主要可以获得位置的经纬度，然后我们就要考虑使用经纬度获取位置的描述信息了。这个可以使用腾讯位置服务SDK的逆地址解析接口<code>reverseGeocoder(options:Object)</code>。</p>
+<p>这个接口可以不传入任何字段，默认为当前位置坐标。然后返回的是经纬度对应的地理描述信息，不传则返回的是当前位置的描述信息。这个就有点有趣了，也就是可能可以绕过微信小程序的用户授权，直接获取用户的地理信息。不过为了不出问题，我们还是通过用户授权获取位置信息吧。</p>
+<h4 id="和风天气获取常规天气数据"><a href="#和风天气获取常规天气数据" class="headerlink" title="和风天气获取常规天气数据"></a>和风天气获取常规天气数据</h4><p>天气数据我通过和风天气的常规天气数据api获取的。前面已经获取了和风天气普通开发者的key了，这里使用<code>wx.request</code>向接口<code>https://free-api.heweather.net/s6/weather/{weather-type}?{parameters}</code>发出请求。接口的要求官网也是有说明的，这里就不多说。我是把腾讯位置服务跟和风天气的请求操作都做了封装，放在util目录的<code>api.js</code>中，这样可以减少在页面js文件中写请求内容，请求操作统一开发。这里我使用了<code>Promise.all</code>把常规天气数据请求都包起来了，方便全部请求完成之后再关闭加载弹窗。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">getHefengData (lat, lon) &#123;</span><br><span class="line">  wx.showLoading(&#123;</span><br><span class="line">    title: &apos;获取天气信息中&apos;,</span><br><span class="line">  &#125;)</span><br><span class="line">  Promise.all([this.getWthNow(lat, lon), this.getWthForecast(lat, lon), this.getWthHourly(lat, lon), this.getWthLifestyle(lat, lon)]).then(res =&gt; &#123;</span><br><span class="line">    wx.hideLoading();</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="wxs的使用"><a href="#wxs的使用" class="headerlink" title="wxs的使用"></a>wxs的使用</h4><p>因为微信小程序不支持在wxml中做数据处理，所以wxs的出现我觉得是js到wxml的中介物。数据或者状态通过wxs的处理后才能渲染到wxml。</p>
+<p>比如说这个项目中，接口获取的天气状态码需要转换成天气状态描述跟对应的图标，这个时候就需要通过wxs的处理。所以，在微信小程序中，js扮演的角色更多是获取数据，保存状态，数据通过wxs的处理变成需要渲染的内容放到wxml中。</p>
+<p>使用也不难，新建一个对应的wxs，把处理逻辑放进去，通过<code>&lt;wxs src=&quot;./xxx.wxs&quot; module=&quot;xxx&quot; /&gt;</code>引入到wxml中，然后通过<code>xxx.fn</code>来使用方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;text class=&apos;iconfont &#123;&#123;tools.getCondIcon(now.now.cond_code)&#125;&#125;&apos;&gt;&lt;/text&gt;</span><br></pre></td></tr></table></figure>
+<p>因为和风天气的天气状态比较多，所以我把天气状态对应的描述都放到<code>app.wxs</code>中，再在<code>index.wxs</code>引用。</p>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>页面设计其实比较简陋，所以没什么好写的，而且显示的都是文字，展示效果并不那么好，所以等之后的迭代有比较好的设计再看有没有什么可以整理的吧。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/微信小程序/" rel="tag"># 微信小程序</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/25/promise-realize/" rel="next" title="手写一个Promise">
+                <i class="fa fa-chevron-left"></i> 手写一个Promise
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/25/wechat-mini-project-listentoweather-II/" rel="prev" title="微信小程序开发-倾听天气(二)">
+                微信小程序开发-倾听天气(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建小程序账号"><span class="nav-number">1.</span> <span class="nav-text">创建小程序账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#腾讯地图开发者及和风天气开发者账号"><span class="nav-number">2.</span> <span class="nav-text">腾讯地图开发者及和风天气开发者账号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开发"><span class="nav-number">3.</span> <span class="nav-text">开发</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用户权限"><span class="nav-number">3.1.</span> <span class="nav-text">用户权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#腾讯位置服务获取位置描述"><span class="nav-number">3.2.</span> <span class="nav-text">腾讯位置服务获取位置描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#和风天气获取常规天气数据"><span class="nav-number">3.3.</span> <span class="nav-text">和风天气获取常规天气数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#wxs的使用"><span class="nav-number">3.4.</span> <span class="nav-text">wxs的使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结尾"><span class="nav-number">4.</span> <span class="nav-text">结尾</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

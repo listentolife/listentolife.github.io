@@ -245,6 +245,495 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/18/High-Performance-JavaScript-Reading-Note-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/18/High-Performance-JavaScript-Reading-Note-II/" itemprop="url">《高性能JavaScript》读书笔记(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-18T17:24:49+08:00">
+                2018-06-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《高性能JavaScript》第二章数据存取，涉及很多优化点，需要花点时间吸收。下面就开始吧。</p>
+<h3 id="数据存储不同方式之间的性能比较"><a href="#数据存储不同方式之间的性能比较" class="headerlink" title="数据存储不同方式之间的性能比较"></a>数据存储不同方式之间的性能比较</h3><p>第二章一开始就提到了数据存储的问题。js的数据存储分四类：字面量，本地变量，数组元素及对象成员。字面量跟本地变量在存取数据的性能消耗差不多，而数组元素跟对象成员消耗要大一些，但是也跟浏览器的优化有关。所以建议是尽量使用字面量和局部变量。</p>
+<h3 id="作用域链"><a href="#作用域链" class="headerlink" title="作用域链"></a>作用域链</h3><p>实际开发中，我们会根据项目需求使用各种变量跟方法。为了了解如何去优化代码的性能，就要了解作用域链。</p>
+<p>关于作用域链，我在我的第一篇博文<a href="https://listentolife.cc/2018/04/23/scope/" target="_blank" rel="noopener">《JavaScript作用域》</a> 中有提到过，当时是用链表的形式对全部作用域跟函数作用域做了模拟。这里就不再赘述。</p>
+<p>书中的图示（下图1.1）应该是更接近真实JavaScript作用域链的表现形式的，这里需要做一下说明。</p>
+<p>图1 书中举例的add()的作用域链<br><img src="../images/high-performance-JavaScript-2-1.png" alt="图1 书中举例的add()的作用域链"></p>
+<h4 id="什么叫作用域链"><a href="#什么叫作用域链" class="headerlink" title="什么叫作用域链"></a>什么叫作用域链</h4><p>书中给出的定义，作用域链是一个包含一个函数被创建的作用域中的对象集合，决定了哪些数据能被函数访问。作用域链在函数实例中是以一个内部属性<code>[[Scope]]</code>被储存的。当一个函数被创建时，它的作用域链会先被创建该函数的作用域中可访问的数据对象所填充。作用域链在创建时所填充的数据对象为全局对象。</p>
+<p>在函数创建完成并开始执行时，会对执行的变量按照出现在函数中的顺序，被复制(中文是写复制，但是我有个问题，按照变量提升的规则，函数中的局部变量应该在这个时候进行声明，那是不是就不仅仅是复制全局中的变量，还有声明了的变量呢？)到“活动对象”的新对象中。这个对象会被推入作用域链的最前端。如</p>
+<p>然后当函数执行完毕，执行环境被销毁，作用域链也会被销毁。如下图1.2</p>
+<p>图2 书中举例函数add()执行期的作用域链<br><img src="../images/high-performance-JavaScript-2-2.png" alt="图2 书中举例函数add()执行期的作用域链"></p>
+<h4 id="作用域链涉及的性能问题"><a href="#作用域链涉及的性能问题" class="headerlink" title="作用域链涉及的性能问题"></a>作用域链涉及的性能问题</h4><p>当函数在对变量操作时，每一次执行都会需要进行标识符的解析，而这就是性能优化的点。标识符(变量)的位置越深，它的读写速度就越慢。参考图1.1到图1.2的过程，在函数创建完毕，先创建“活动对象”时，如arguments是局部变量，则是直接声明，执行时不需要到全局对象中查找；而window则需要到最顶层的全局对象中查找。</p>
+<p>所以我们的性能优化就在于，尽可能的使用局部变量。使用局部变量来赋值全局变量的值，执行的时候只要找局部变量的标识符即可完成查询的性能优化。</p>
+<h4 id="with-amp-try-catch"><a href="#with-amp-try-catch" class="headerlink" title="with &amp; try-catch"></a>with &amp; try-catch</h4><p>with语句跟catch语句是书中提及的两个可以改变函数作用域链的语句。with语句可以创建一个新的变量对象，这个对象包含了参数指定的对象的所有属性。这个变量对象会推入作用域链的首位，即在活动对象的前面。这个语句使函数中可以避免多次书写参数，同时可以最优先访问参数的所有属性。问题在于函数的局部变量则降低了优先级，导致访问的代价变高了。</p>
+<p>如果函数没有什么局部变量而都是操作某个对象的属性为主，那么使用with语句有可取之处，但是如果函数以操作局部变量为主，则建议不要使用with语句来影响查询性能。</p>
+<p>同样的道理，catch语句有同样的问题。当try代码捕获错误是，代码的执行会直接跳转到catch语句，并把异常对象推入一个变量对象置于作用域的首位，同样的，catch代码块中，局部变量会降低优先级。</p>
+<p>如果要降低查询性能的影响，最好的方案是将这个异常对象作为参数直接委托给一个函数进行处理，这样，在catch代码块内，不会出现局部变量，也不会出现由于作用域链的变化而导致的性能问题。</p>
+<h4 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h4><p>闭包的特点我在写<a href="https://listentolife.cc/2018/04/23/scope/" target="_blank" rel="noopener">《JavaScript作用域》</a>的时候有提到，简单的说，就是可以在函数的外部调用内部的局部变量，并且闭包在执行完之后不会被马上销毁（换句话说，这个也是闭包的弊端：内存泄漏，内存开销）。</p>
+<p>实际上，因为闭包会一直保持在内存中，所以其在执行时，闭包创建的活动对象会一直在作用域链的最顶层，而闭包所调用的变量一般是所在执行环境或者更顶层环境的全局变量。这样就出现了查询的性能影响。</p>
+<p>如果要降低闭包对代码的性能影响，其一是要慎重的使用闭包，其二是在闭包中使用局部变量复制全局变量。</p>
+<h3 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h3><p>因为JavaScript很多操作都是对对象的操作，所以对JavaScript对象的了解能对优化代码是有很大的帮助的。</p>
+<h4 id="属性及方法"><a href="#属性及方法" class="headerlink" title="属性及方法"></a>属性及方法</h4><p>JavaScript对象包括了属性跟方法，区分的点在于对象的成员引用的是一个函数还是非函数类型。</p>
+<h4 id="原型及原型链"><a href="#原型及原型链" class="headerlink" title="原型及原型链"></a>原型及原型链</h4><p>JavaScript中的对象是基于原型的。原型是所有对象的基础，它已经定义并实现了一个对象所必需包含的成员列表，而且原型对象是为所有对象实例所共享。</p>
+<p>下图1.3及代码是书中举的一个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var book = &#123;</span><br><span class="line">  title: &quot;High Performance JavaScript&quot;,</span><br><span class="line">  publisher: &quot;Yahoo! Press&quot;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">alter(book.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
+<p>图3 书中实例book与原型的关系<br><img src="https://listentolife.cc/images/high-performance-JavaScript-2-3.png" alt="图3 书中实例book与原型的关系"></p>
+<p>图中可以看到，实例book虽然创建的时候只声明了两个实例成员，但是并没有定义<code>toString()</code>，然而<code>toString()</code>方法还是被正确执行了，是因为虽然实例book没有定义，但是book的原型对象已经定义了<code>toString()</code>方法。</p>
+<p>当<code>book.toString()</code>被调用时，先会从实例成员开始搜索，如果实例成员中没有搜索到，则从原型成员搜索，如果能搜索到，则能成功执行，否则才会报错。</p>
+<p>JavaScript有两个方案可以检测对象的成员，其中<code>in</code>操作符可以检测对象是否包含某个成员，不管这个成员是属于实例成员还是原型成员；而如果需要检测对象是否包含某个实例成员，则需要用<code>hasOwnProperty()</code>方法。</p>
+<p>JavaScript有原型对象，开发者也可以根据项目的需求通过构造函数来创建另一种类型的原型。下图1.4及代码是书中举的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function Book(title, publisher)&#123;</span><br><span class="line">  this.title = title;</span><br><span class="line">  this.publisher = publisher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Book.prototype.sayTitle = function()&#123;</span><br><span class="line">  alert(this.title);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var book1 = new Book(&quot;High Performance JavaScript&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line">var book2 = new Book(&quot;JavaScipt: The Good Parts&quot;, &quot;Yahoo! Press&quot;);</span><br><span class="line"></span><br><span class="line">alert(book1 instanceof Book);   // true</span><br><span class="line">alert(book1 instanceof Object); // true</span><br><span class="line"></span><br><span class="line">book1.sayTitle(); 		 //&quot;High Performance JavaScript&quot;</span><br><span class="line">alert(book1.toString()); // &quot;[object object]&quot;</span><br></pre></td></tr></table></figure>
+<p>图4 书中列举的原型链<br><img src="https://listentolife.cc/images/high-performance-JavaScript-2-4.png" alt="图4 书中列举的原型链"></p>
+<p>代码中，先是定义了一个 构造函数<code>Book</code>，然后在通过<code>Book</code>来创建实例<code>book1</code>跟<code>book2</code>。其中，<code>book1</code>跟<code>book2</code>的成员<code>title</code>跟<code>publisher</code>都是各自的成员，拥有不同的值，而两个实例的原型<code>__proto__</code>都是指向<code>Book.prototype</code>，而<code>Book.prototype</code>的<code>__proto__</code>又指向原型对象object。整个就是原型链。两个实例共享着一个原型链。</p>
+<p>从对原型链的认识，我们可以看到，当执行实例对象的成员时，明显的，成员的位置越深，搜索并访问的时间越长。</p>
+<h4 id="嵌套成员"><a href="#嵌套成员" class="headerlink" title="嵌套成员"></a>嵌套成员</h4><p>简单的说，对象的成员本身可能就是一个对象，所以会包含有自己的成员，也就是嵌套成员。这种结构会导致访问嵌套成员是，需要从最底层对象的成员开始搜索，而且成员的嵌套得越深，搜索读取的速度就越慢。</p>
+<p>因此，优化的方案，主要是在调用对象成员及嵌套成员时，可以把需要多次读取的对象成员复制到局部变量中进行使用。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>本章涉及都是JavaScript的一些数据处理。虽然每种数据存储的方式都有访问速度的快慢区别，但是并不代表开发中就应该避免使用访问速度慢的数据存储方式，二是应该根据项目要求进行慎重的使用。而最常见的优化方案仍然是利用局部变量来复制搜索访问比较慢但又需要经常调用的数据。</p>
+<p>文中用到的图片跟代码参考《高性能JavaScript》第二章。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/06/10/High-Performance-JavaScript-Reading-Note-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/10/High-Performance-JavaScript-Reading-Note-I/" itemprop="url">《高性能JavaScript》读书笔记(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T22:10:21+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《高性能JavaScript》这本书很多人推荐，我对这本书的印象也是值得学习前端的童鞋的细读吸收。作为学习者，同样也是要认真的学习这本书中为我们总结的一些开发中的经验，能提高我们开发代码的效率。</p>
+<p>第一章主要针对JavaScript的加载跟执行的优化。总结一下就是推迟加载JavaScript代码，减少JavaScript文件加载数量及异步加载JavaScript代码。</p>
+<h3 id="优化加载JavaScript代码的原因"><a href="#优化加载JavaScript代码的原因" class="headerlink" title="优化加载JavaScript代码的原因"></a>优化加载JavaScript代码的原因</h3><p>一般我们在入门前端初期，都会学到，<code>&lt;head&gt;</code>标签中可以放<code>&lt;script&gt;</code>标签，用来引入js文件或js代码。然后大部分人都会习惯性的把js代码从<code>&lt;head&gt;</code>标签引入。</p>
+<p>操作上是正确的，确实可以完成js代码的引入，但是由于js代码具有阻塞的特性，会影响页面的解析与加载时间。一般页面的加载，首先会HTML代码的<code>&lt;head&gt;</code>标签开始。当代码执行到<code>&lt;head&gt;</code>标签的<code>&lt;script&gt;</code>标签时，由于浏览器无法判断<code>&lt;script&gt;</code>标签中的代码是否会影响DOM节点，所以会暂停页面的加载，而优先执行<code>&lt;script&gt;</code>标签中的代码。</p>
+<p>如果<code>&lt;script&gt;</code>标签的代码是直接出现在标签中，则直接执行；而如果是通过引入的方式，则还需要下载之后再执行。一旦下载的文件较大，加上加载的时间，那将让网页的客户体验很糟糕。</p>
+<p>于是，就有了优化加载JavaScript代码的必要。从上面我们可以看到，一般可以优化的方案，就是把下载JavaScript文件的时间推迟，或者把执行JavaScript代码的时间推迟。下面我们就来总结一下优化的方案</p>
+<h3 id="加载JavaScript代码优化的方案"><a href="#加载JavaScript代码优化的方案" class="headerlink" title="加载JavaScript代码优化的方案"></a>加载JavaScript代码优化的方案</h3><h4 id="阻塞问题的优化"><a href="#阻塞问题的优化" class="headerlink" title="阻塞问题的优化"></a>阻塞问题的优化</h4><p>之所以会阻塞，就是因为JavaScript代码早于html的DOM代码执行了，再进一步说，因为JavaScript代码在<code>&lt;head&gt;</code>标签中，比<code>&lt;body&gt;</code>标签更早被获取，所以才会有阻塞的问题。因此，可以考虑让JavaScript代码被滞后获取。</p>
+<p>最简单的想法就是把 <strong><code>&lt;script&gt;</code>标签放到<code>&lt;body&gt;</code>标签底部</strong> ，这样可以减少对页面渲染的阻塞。这个也是目前开发中比较常见的一种优化方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">		&lt;title&gt;Example&lt;/title&gt;</span><br><span class="line">		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; herf=&quot;style.css&quot;&gt;</span><br><span class="line">	&lt;/head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;p&gt;Hello World&lt;/p&gt;</span><br><span class="line">		</span><br><span class="line">		&lt;script type=&quot;text/javascript&quot; src=&quot;file1.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">	&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>同样也要一种类似的方案，就是通过给 <strong><code>&lt;body&gt;</code>标签创建<code>&lt;script&gt;</code>标签，再引入js文件</strong> 的方案。这个方案看起来比上面的方案复杂了，但是在需要引入多个js文件的情况下，还是比较好的方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var script = document.createElement(&quot;srcipt&quot;);</span><br><span class="line">script.type = &quot;text/javascript&quot;;</span><br><span class="line">script.src = &quot;file1.js&quot;;</span><br><span class="line">document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);</span><br></pre></td></tr></table></figure>
+<p>另一种方案则是采用了 <strong>XMLHTTPRequest脚本注入</strong> ，先创建一个XHR对象，然后用这个对象下载js文件，然后再通过创建<code>&lt;script&gt;</code>元素把js代码引入到页面中。</p>
+<p>这种方案的优点就是可以下载JavaScript代码但不会立即执行，而且所有主流浏览器都能正常工作。但是也会有一个问题，就是因为涉及异步请求文件，所以需要遵循同域。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var xhr = new XMLHttpRequest();</span><br><span class="line">xhr.open(&quot;get&quot;, &quot;file1.js&quot;, &quot;true);</span><br><span class="line">xhr.noreadystatechange = function () &#123;</span><br><span class="line">	if (xhr.readyState == 4) &#123;</span><br><span class="line">		if (xhr.status &gt;= 200 &amp; xhr.status &lt; 300 || xhr.status == 304) &#123;</span><br><span class="line">			var script = document.createElement(&quot;script&quot;);</span><br><span class="line">			script.type = &quot;text/javascript&quot;;</span><br><span class="line">			script.src = xhr.responseText;</span><br><span class="line">			document.body.appendChild(script);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure>
+<p>在《高性能JavaScript》的后面《推荐的无阻塞模式》一节中也是对这个方案做了封装，使这个方案适合添加大良的JavaScript代码。</p>
+<h4 id="加载JavaScript的优化"><a href="#加载JavaScript的优化" class="headerlink" title="加载JavaScript的优化"></a>加载JavaScript的优化</h4><p>一般一个项目加载JavaScript文件都会有好几个文件（特别是强调模块化工程化的前端开发），如果遇到一个HTML页面需要加载多个js文件，则每个js文件都会需要单独的下载跟执行，会影响页面的总体性能。因此，书中提及了雅虎提供的合并处理器，可以用一个URL包含多个文件，从而使URL上的文件可以同时加载。<br>不过，从现在前端开发的做法上来看，虽然开发上强调模块化，但是实际已经把开发跟上线分离，实际上线的项目中，已经通过打包工具减少了文件（一般可以看到打包的js文件就剩一个bound.js了），所以书中的这个方案可以说已经通过工程化得到更好更广泛的解决了。</p>
+<h4 id="执行JavaScript的优化"><a href="#执行JavaScript的优化" class="headerlink" title="执行JavaScript的优化"></a>执行JavaScript的优化</h4><p>书中也提及如何延迟js代码的执行。HTML 4为<code>&lt;script&gt;</code>标签定义了一个扩展属性：defer，这个属性主要是表明当前元素的脚本不影响DOM，所以浏览器会在页面加载完成后在执行<code>&lt;script&gt;</code>标签中的脚本。</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>书中还提及几个库，都是针对无阻塞脚本加载开发的，这里就没在深入了解了。</p>
+<p>总结一下，优化JavaScript代码的加载跟执行对页面的客户体验会有很大的提升。从当前前端开发来看，更多的方案是把多个js文件打包成少量的js文件，然后把<code>&lt;script&gt;</code>标签放到<code>&lt;body&gt;</code>标签底部。书中也提及了一些其他的方案，这些方案也可以在一些小项目中使用，一样能提升页面性能。</p>
+<p>上面使用的代码示例都是书中的代码示例。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/24/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/24/hello-world/" itemprop="url">Hello World</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T08:22:48+08:00">
+                2018-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2018/04/23/scope/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -537,7 +1026,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -548,7 +1037,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -559,7 +1048,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
