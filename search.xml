@@ -14,7 +14,7 @@
           
           <category> Vue </category>
           
-          <category> axios </category>
+          <category> Axios </category>
           
       </categories>
       
@@ -23,7 +23,7 @@
             
             <tag> JavaScript </tag>
             
-            <tag> axios </tag>
+            <tag> Axios </tag>
             
         </tags>
       
@@ -75,7 +75,7 @@
       
         <tags>
             
-            <tag> canvas </tag>
+            <tag> Canvas </tag>
             
             <tag> 生成图片 </tag>
             
@@ -181,7 +181,7 @@
             
             <tag> JavaScript </tag>
             
-            <tag> promise </tag>
+            <tag> Promise </tag>
             
         </tags>
       
@@ -233,11 +233,11 @@
       
         <tags>
             
-            <tag> wechat </tag>
+            <tag> Wechat </tag>
             
-            <tag> js-sdk </tag>
+            <tag> JSSDK </tag>
             
-            <tag> wechatpay </tag>
+            <tag> Wechatpay </tag>
             
         </tags>
       
@@ -286,7 +286,7 @@
           
           <category> JavaScript </category>
           
-          <category> axios </category>
+          <category> Axios </category>
           
           <category> 工作总结 </category>
           
@@ -295,7 +295,7 @@
       
         <tags>
             
-            <tag> axios </tag>
+            <tag> Axios </tag>
             
         </tags>
       
@@ -320,11 +320,11 @@
       
         <tags>
             
-            <tag> vue watch </tag>
+            <tag> Vue Watch </tag>
             
-            <tag> vue-router </tag>
+            <tag> Vue-router </tag>
             
-            <tag> vue use </tag>
+            <tag> Vue Use </tag>
             
         </tags>
       
@@ -353,9 +353,9 @@
             
             <tag> Vue </tag>
             
-            <tag> promise </tag>
+            <tag> Promise </tag>
             
-            <tag> css </tag>
+            <tag> CSS </tag>
             
         </tags>
       
@@ -428,7 +428,7 @@
             
             <tag> Vue </tag>
             
-            <tag> keepAlive </tag>
+            <tag> KeepAlive </tag>
             
         </tags>
       
@@ -594,9 +594,9 @@
             
             <tag> React </tag>
             
-            <tag> redux </tag>
+            <tag> Redux </tag>
             
-            <tag> react-redux </tag>
+            <tag> React-redux </tag>
             
         </tags>
       
@@ -623,7 +623,7 @@
             
             <tag> React </tag>
             
-            <tag> style-components </tag>
+            <tag> Style-components </tag>
             
         </tags>
       
