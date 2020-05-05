@@ -245,6 +245,673 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/05/promise-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/05/promise-test/" itemprop="url">关于promise题目的打印</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T15:53:36+08:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Promise/" itemprop="url" rel="index">
+                    <span itemprop="name">Promise</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>原题，请问打印顺序。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"1"</span>)</span><br><span class="line">      resolve()</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"2"</span>)</span><br><span class="line">      <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"3"</span>)</span><br><span class="line">          resolve()</span><br><span class="line">      &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"4"</span>)</span><br><span class="line">      &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"5"</span>)</span><br><span class="line">      &#125;)</span><br><span class="line">      </span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"6"</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"7"</span>)</span><br><span class="line">      resolve()</span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"8"</span>)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+<p>下面是我自己的理解分析过程。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"1"</span>) <span class="comment">// -&gt; 同步走到7</span></span><br><span class="line">      resolve() <span class="comment">// 存入2的promise</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"2"</span>) <span class="comment">// -&gt; 同步走到3</span></span><br><span class="line">      <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"3"</span>) <span class="comment">// -&gt; 同步走到9</span></span><br><span class="line">          resolve() <span class="comment">// 存入4的promise，但是同步未走完，要走到9那里</span></span><br><span class="line">      &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"4"</span>) <span class="comment">// -&gt; 同步走完，出栈6</span></span><br><span class="line">          <span class="comment">// resolve() // 4先于6存入，所以先执行4，后执行6，然后存入5</span></span><br><span class="line">      &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"5"</span>) <span class="comment">// -&gt; end</span></span><br><span class="line">          <span class="comment">// resolve() // 没有then不需要存入</span></span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="comment">// console.log("9") // 同步走完，出栈8</span></span><br><span class="line">      <span class="comment">// resolve() // 存入6。</span></span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">       * 其实实现promise的时候，每个then都是Promise，也就是可以考虑每* 个then执行完都会执行一次resolve，把后面的then入栈</span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line">      </span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"6"</span>) <span class="comment">// -&gt; 同步走完，出栈5</span></span><br><span class="line">      <span class="comment">// resolve() // 没有then不需要存入</span></span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"7"</span>) <span class="comment">// -&gt; 同步走完，出栈2</span></span><br><span class="line">      resolve() <span class="comment">// 存入8的promise</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"8"</span>) <span class="comment">// -&gt; 同步走完，出栈4</span></span><br><span class="line">      <span class="comment">// resolve() // 没有then不需要存入</span></span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/05/work-summary12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/05/work-summary12/" itemprop="url">工作总结(12)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T15:50:44+08:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结将整理一下几个工作中遇到的问题。</p>
+<h3 id="webpack插件CleanWebpackPlugin的排除配置"><a href="#webpack插件CleanWebpackPlugin的排除配置" class="headerlink" title="webpack插件CleanWebpackPlugin的排除配置"></a>webpack插件CleanWebpackPlugin的排除配置</h3><p>我们一般都知道webpack的CleanWebpackPlugin插件是用在打包时删除之前打包的文件，这样可以帮我们自动清理打包文件。我之所以配置CleanWebpackPlugin插件的排除配置是因为我希望打包完之后dist目录可以保留git仓库的信息，方便我在打包之后直接上传打包文件。但是如果没有做任何配置的话，这个插件是会直接删除整个目录下的文件的，所以需要配置。</p>
+<p>（听说原来这个插件没有这个问题，我遇到这个问题是在3.0.0版本，所以不排除是版本的原因）</p>
+<p>这个配置我自己找了很久，因为需要排除的不是某几个文件，而且.git目录，但是没有找到有人尝试排除目录，所以一开始只找到配置项<code>cleanOnceBeforeBuildPatterns</code>。这个配置项是配置打包之前删除文件，默认为<code>[&#39;**/*&#39;]</code>。只要在加上正则匹配非.git目录及目录内文件即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> CleanWebpackPlugin(&#123;</span><br><span class="line">  <span class="comment">// 必须加这两个目录匹配，前一个是匹配不是.git的目录，后一个是匹配不是.git目录下的文件</span></span><br><span class="line">  cleanOnceBeforeBuildPatterns: [<span class="string">'**/*'</span>, <span class="string">'!\.git'</span>, <span class="string">'!\.git/**/*'</span>]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="处理图片防盗链的方案"><a href="#处理图片防盗链的方案" class="headerlink" title="处理图片防盗链的方案"></a>处理图片防盗链的方案</h3><p>公司的项目有需要抓取文章的内容并需要把图片单独列出来提供使用，但是在这期间遇到一个问题是，因为图片是有防盗链处理的，所以当需要单独列出来的时候图片会报错无法显示。究其原因，是因为请求图片的时候请求的header会自动带上页面的相关信息，服务器就是通过对这部分的判断来选择是否返回图片数据。因此，最好的方案是在当前页面加上下面这个meta属性</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"referrer"</span> <span class="attr">content</span>=<span class="string">"never"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个mate属性能禁止header发送页面相关信息，可以绕过图片防盗链的检查。</p>
+<p>不过这样做也是有缺点的，一是影响页面跳转，比如<code>history.back()</code>会找不到上一个页面，二是一些第三方的统计代码失效。</p>
+<p>如果项目是单页面项目(如Vue构建的项目)只是某些页面有处理防盗链图片的话，建议最好是在进入页面时加上这个mate属性，再退出这个页面时再把这个属性置为<code>default</code>。</p>
+<h3 id="页面的部分涉及router-view的刷新"><a href="#页面的部分涉及router-view的刷新" class="headerlink" title="页面的部分涉及router-view的刷新"></a>页面的部分涉及router-view的刷新</h3><p>一般来说，我们在使用Vue开发项目的时候，一个页面一般会把一些功能模块拆分出来，变成一个个组件，这些组件是被解耦出来的，所以功能也比较独立。但是如果需要根据其中一个组件中数据的变化让另一个组件的数据也随之变化，就会出现一些问题，特别是如果一个组件的数据变化，在<code>router-view</code>中渲染的路由也要刷新。</p>
+<p>我遇到的问题就是这种，<code>router-view</code>中渲染的路由需要根据其他组件数据的变化来刷新。</p>
+<p>首先，考虑在父组件上通过<code>this.$root.$on</code>来增加一个监听，然后当子组件中数据变化需要让router-view中渲染的路由重新刷新，则可以调用<code>this.$root.$emit</code>来触发监听事件，还可以传入参数。这一步就完成子组件数据变化的监听。</p>
+<p>因为需要刷新渲染的路由，所以可以考虑直接在<code>router-view</code>上使用<code>v-if</code>，<code>v-if</code>在切换真假值时，会直接卸载组件（所以这里不能使用<code>v-show</code>），然后当dom渲染完之后再将重新挂载组件，这样就相当于刷新了一次。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;router-view v-<span class="keyword">if</span>=<span class="string">"isRouterAlive"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">router-view</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">created() &#123;</span></span><br><span class="line"><span class="xml">  console.log("allcontainer created")</span></span><br><span class="line"><span class="xml">  this.$root.$on('reload', this.reload);</span></span><br><span class="line"><span class="xml">&#125;,</span></span><br><span class="line"><span class="xml">methods: &#123;</span></span><br><span class="line"><span class="xml">  reload () &#123;</span></span><br><span class="line"><span class="xml">    this.isRouterAlive = false</span></span><br><span class="line"><span class="xml">    this.$nextTick(function() &#123;</span></span><br><span class="line"><span class="xml">      this.isRouterAlive = true</span></span><br><span class="line"><span class="xml">      console.log('reload')</span></span><br><span class="line"><span class="xml">    &#125;)</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="canvas渲染跨域图片的方案"><a href="#canvas渲染跨域图片的方案" class="headerlink" title="canvas渲染跨域图片的方案"></a>canvas渲染跨域图片的方案</h3><p>这里有一个需求可能会经常需要做，就是分享的时候生成一张图片，而这张图片一般是通过页面的显示生成的。之前的工作总结中是有整理过的，可以用<code>html2canvas</code>来实现。但是这里有个问题，就是如果dom结构中如果有跨域的图片，则最后生成的图片将不会出现这些跨域的图片。所以这个问题需要处理。</p>
+<p>我现在的处理方案是需要后端返回这张图的Blob对象，然后将这个Blob对象转换为本地地址，显示到页面上。转为本地地址的方案可以使用window上自带的方法<code>window.URL.createObjectURL</code>，这个方法传入一个Blob对象，返回一个url，这个url可以在页面上显示图片。这样就可以使跨域图片转为本地图片。</p>
+<p>以上就是这次总结的内容。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/05/work-summary11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/05/work-summary11/" itemprop="url">工作总结(11) - 图片压缩</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T15:49:05+08:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结将整理一下如何实现图片压缩。</p>
+<p>之所以需要处理图片压缩，是因为现在很多时候从用户那获得图片并上传，其实对图片的质量要求大部分情况下都不高，而各个客户端的硬件能力也比较强，用户能提供比较高质量的图片，但对要求不高的服务端来说却是一种压力，所以在处理上传图片之前，如果能对图片做一步压缩可以减轻用户的流量负担，也可以减轻服务端的压力。</p>
+<p>因为从用户那获得的是一个file对象，所以压缩的对象也是file对象。然后压缩可以通过图片的清晰度，尺寸来压缩。最后，因为图片压缩是一个异步处理，需要有一个回调函数来处理，当然，后面可以改成promise的方式。所以实现图片压缩方法，需要传入的参数就是这四个<code>file</code>，<code>option</code>（包含<code>quality</code>和<code>scale</code>）和<code>callback</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> photoCompress = <span class="function"><span class="keyword">function</span> (<span class="params">file, options, callback</span>)</span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，file对象需要转成data:URL格式的Base64字符串，这样图片才能被canvas渲染到画布上。这里用到<code>FileReader</code>对象。它能让Web应用程序异步读取存储在用户计算机上的文件，得到几种格式的文件内容。这里用到<code>FileReader.readAsDataURL()</code>来转格式，然后需要调用<code>FileReader.onload</code>在读取操作完成后执行之后的操作</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> photoCompress = <span class="function"><span class="keyword">function</span> (<span class="params">file, options, callback</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> ready = <span class="keyword">new</span> FileReader()</span><br><span class="line">  <span class="comment">/*调用ready.readAsDataURL()来读取指定的Blob对象或File对象中的内容。当读取操作完成时，readyState属性的值会成为DONE，如果设置了onload事件处理程序,则调用之.同时,result属性中将包含一个data:URL格式的字符串以表示所读取文件的内容.*/</span></span><br><span class="line">  ready.readAsDataURL(file)</span><br><span class="line">  ready.onload=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="comment">// 获取读取后的文件内容</span></span><br><span class="line">    <span class="keyword">let</span> re = <span class="keyword">this</span>.result</span><br><span class="line">    <span class="comment">// 进行下一步的处理</span></span><br><span class="line">    canvasDataURL(re, options, callback)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获得文件内容之后，就可以来生成一个canvas画布，渲染图片了。先把图片文件加载好，然后在生成canvas标签，宽高直接取图片的宽高，然后生成画布，再把图片渲染到画布上，最后再获得压缩后的图片内容。尺寸的压缩可以在取宽高之后直接使用，得到压缩尺寸后的宽高，而清晰度则在最后获取压缩图片的时候调用<code>canvas.toDataURL()</code>时传入。这一步可以封装一个<code>canvasDataURL()</code>来实现，传入文件内容<code>path</code>，<code>option</code>（包含<code>quality</code>和<code>scale</code>）和<code>callback</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> canvasDataURL = <span class="function"><span class="keyword">function</span> (<span class="params">path, options, callback</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">let</span> img = <span class="keyword">new</span> Image()</span><br><span class="line">  img.src = path</span><br><span class="line">  img.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> that = <span class="keyword">this</span></span><br><span class="line">    <span class="keyword">let</span> imgScale = options.scale &amp;&amp; options.scale &lt;= <span class="number">1</span> &amp;&amp; options.scale &gt; <span class="number">0</span> ? options.scale : <span class="number">1</span></span><br><span class="line">    <span class="comment">// 默认按比例压缩</span></span><br><span class="line">    <span class="keyword">let</span> w = that.width * imgScale</span><br><span class="line">    <span class="keyword">let</span> h = that.height * imgScale</span><br><span class="line">    <span class="keyword">let</span> scale = w / h</span><br><span class="line">    w = options.width || w</span><br><span class="line">    h = options.height || (w / scale)</span><br><span class="line">    <span class="keyword">let</span> quality = options.quality &amp;&amp; options.quality &lt;= <span class="number">1</span> &amp;&amp; options.quality &gt; <span class="number">0</span> ? options.quality : <span class="number">0.7</span>  <span class="comment">// 默认图片质量为0.7</span></span><br><span class="line">    <span class="comment">//生成canvas</span></span><br><span class="line">    <span class="keyword">let</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>)</span><br><span class="line">    <span class="keyword">let</span> ctx = canvas.getContext(<span class="string">'2d'</span>)</span><br><span class="line">    <span class="comment">// 创建属性节点</span></span><br><span class="line">    <span class="keyword">let</span> anw = <span class="built_in">document</span>.createAttribute(<span class="string">"width"</span>)</span><br><span class="line">    anw.nodeValue = w</span><br><span class="line">    <span class="keyword">let</span> anh = <span class="built_in">document</span>.createAttribute(<span class="string">"height"</span>)</span><br><span class="line">    anh.nodeValue = h</span><br><span class="line">    canvas.setAttributeNode(anw)</span><br><span class="line">    canvas.setAttributeNode(anh)</span><br><span class="line">    ctx.drawImage(that, <span class="number">0</span>, <span class="number">0</span>, w, h)</span><br><span class="line">    <span class="comment">// quality值越小，所绘制出的图像越模糊</span></span><br><span class="line">    <span class="keyword">let</span> base64 = canvas.toDataURL(<span class="string">'image/jpeg'</span>, quality)</span><br><span class="line">    <span class="comment">// 回调函数返回base64的值</span></span><br><span class="line">    callback(base64)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就可以通过<code>callback</code>获得压缩后的<code>data URI</code>。但是这样的内容还需要转成file对象，才能用做上传或者其他用。</p>
+<p>所以，在调用<code>photoCompress</code>方法时传入的<code>callback</code>中，需要做一步转化。首先要先将<code>data URI</code>中的base64编码截出来，转成blob对象，然后在用blob对象转成file对象。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将base64编码转成blob对象</span></span><br><span class="line"><span class="keyword">const</span> ConvertBase64UrlToBlob = <span class="function">(<span class="params">urlData</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 分离类型跟base64 data</span></span><br><span class="line">  <span class="keyword">let</span> arr = urlData.split(<span class="string">','</span>)</span><br><span class="line">  <span class="comment">// 分离出图片类型</span></span><br><span class="line">  <span class="keyword">let</span> mime = arr[<span class="number">0</span>].match(<span class="regexp">/:(.*?);/</span>)[<span class="number">1</span>]</span><br><span class="line">  <span class="keyword">let</span> bstr = atob(arr[<span class="number">1</span>])</span><br><span class="line">  <span class="keyword">let</span> n = bstr.length</span><br><span class="line">  <span class="keyword">let</span> u8arr = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(n)</span><br><span class="line">  <span class="keyword">while</span> (n--) &#123;</span><br><span class="line">    u8arr[n] = bstr.charCodeAt(n)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Blob([u8arr], &#123;<span class="attr">type</span>: mime&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了外部调用使用时是处理同步状态，所以在调用<code>photoCompress</code>方法时会用一个函数包装，利用promise来处理。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">compress (file) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    photoCompress(file, &#123;</span><br><span class="line">      quality: <span class="number">0.6</span>,</span><br><span class="line">      scale: <span class="number">1</span></span><br><span class="line">    &#125;, (dataUrl) =&gt; &#123;</span><br><span class="line">      <span class="keyword">let</span> item = ConvertBase64UrlToBlob(dataUrl);</span><br><span class="line">      <span class="keyword">let</span> newFile = <span class="keyword">new</span> File([item], file.name, &#123;<span class="attr">type</span>: item.type&#125;);</span><br><span class="line">      resolve(newFile);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样调用的时候，就可以通过<code>then</code>或者<code>async await</code>来拿到压缩后的file文件。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/05/work-summary10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/05/work-summary10/" itemprop="url">工作总结(10) - 处理文件流</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T15:46:58+08:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结将整理一下如何处理文件流。</p>
+<ul>
+<li>图片blob对象转为本地地址</li>
+</ul>
+<p>一般图片blob对象转为本地地址的需求场景是需要后端生成一个二维码，一般返回是一个blob对象，然后前端需要通过这个blob对象生成一张图片展示出来。</p>
+<p>这个实现的方案比较简单，主要依靠web API <code>URL.createObjectURL()</code>。所以首先需要判断浏览器是否支持<code>URL.createObjectURL()</code>方法。</p>
+<p>发请求的时候，因为需要后端返回一个blob类型，所以请求头需要设置<code>responseType</code>为<code>blob</code>，返回就是blob对象。</p>
+<p>然后调用<code>URL.createObjectURL()</code>方法，把blob对象传入，这个方法将创建并返回一个URL对象，这个url就可以用于页面上图片的显示。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里使用axios来演示</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.URL.createObjectURL) &#123;</span><br><span class="line">  <span class="keyword">this</span>.axios.post(api, &#123;</span><br><span class="line">    url: url</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    responseType: <span class="string">'blob'</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> url = <span class="built_in">window</span>.URL.createObjectURL(response.data)</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不过MDN上有提示到如果不需要这些URL对象的时候，最好通过<code>URL.revokeObjectURL()</code>方法来释放掉，虽然浏览器在document卸载的时候会自动释放这些URL对象。这个情况需要根据业务需要进行处理了。</p>
+<ul>
+<li>文档blob对象转为文档文件下载</li>
+</ul>
+<p>处理文档blob对象转文档文件也是要涉及到图片blob对象转图片地址的处理，不过因为文档文件的格式各有不同，下载的文件还有文件名，而且转出来的文档文件还需要实现下载，所以实现的步骤就比较多。</p>
+<p>首先，发请求的时候仍然需要按照上述请求图片blob对象一样，请求头需要设置<code>responseType</code>为<code>blob</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里使用axios来演示</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.URL.createObjectURL) &#123;</span><br><span class="line">  <span class="keyword">this</span>.axios.post(api, &#123;</span><br><span class="line">    url: url</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    responseType: <span class="string">'blob'</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>响应返回之后，响应头中有一个值需要用到，<code>Content-Disposition</code>。<code>Content-Disposition</code>中提供了文件的默认文件名，一般格式为<code>attachment;filename=FileName.txt</code>。所以我们需要先获取到文件的文件名：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fileName = res.headers[<span class="string">'content-disposition'</span>].split(<span class="string">';'</span>)[<span class="number">1</span>].split(<span class="string">'='</span>)[<span class="number">1</span>];</span><br><span class="line"><span class="comment">// 如果涉及到文件名为中文，以上代码最后得到的字符串可能是一串乱码，所以才要再做一步处理</span></span><br><span class="line"><span class="comment">// decodeURIComponent方法传入一个编码后的部分URI，返回一个解码后URI字符串</span></span><br><span class="line"><span class="comment">// escape方法可以生成新的由十六进制转义序列替换的字符串，但方法已经被Web标准废弃，MDN建议使用 encodeURI 或 encodeURIComponent 代替</span></span><br><span class="line"><span class="comment">// decodeURI方法返回一个给定编码统一资源标识符(URI)的未编码版本的新字符串</span></span><br><span class="line">fileName = <span class="built_in">decodeURI</span>(<span class="built_in">escape</span>(<span class="built_in">decodeURIComponent</span>(fileName)));</span><br></pre></td></tr></table></figure>
+<p>下一步就是要把blob对象转化为文档文件。因为不同文件的文件类型不同，如果返回的blob对象的文档类型不是对应的文件类型（可以通过blob对象中的<code>type</code>或者响应头的<code>Content-Type</code>获得），则需要把blob对象先转为对应文件类型的blob对象，然后调用<code>URL.createObjectURL()</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是转为xlxs格式，'application/vnd.ms-excel;charset=utf-8'是xlxs的固定写法</span></span><br><span class="line"><span class="keyword">let</span> url = <span class="built_in">window</span>.URL.createObjectURL(<span class="keyword">new</span> Blob([res.data], &#123;<span class="attr">type</span>: <span class="string">'application/vnd.ms-excel;charset=utf-8'</span>&#125;));</span><br></pre></td></tr></table></figure>
+<p>因为还要实现自动下载，所以可以生成一个a标签，link属性指向上述生成的url，然后js控制点击，就可以实现下载:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> link = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">link.style.display = <span class="string">'none'</span>;</span><br><span class="line">link.href = url;</span><br><span class="line">link.setAttribute(<span class="string">'download'</span>, filename);</span><br><span class="line"><span class="built_in">document</span>.body.appendChild(link);</span><br><span class="line">link.click();</span><br></pre></td></tr></table></figure>
+<p>完整代码就不贴了，基本实现流程就是这样。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/12/06/Axios-Encapsulation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1318,832 +1985,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/promise-realize/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/25/promise-realize/" itemprop="url">手写一个Promise</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T22:46:35+08:00">
-                2019-08-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Promise/" itemprop="url" rel="index">
-                    <span itemprop="name">Promise</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近在掘金上看了一些关于promise的文章，然后学习了一番，发现是可以自己手写实现一套promise的，于是做了一番学习，现在来整理一下。</p>
-<h4 id="Promise状态"><a href="#Promise状态" class="headerlink" title="Promise状态"></a>Promise状态</h4><p>promise是有一套规范的，只要实现的promise符合这套规范，就说明显示的promise是可以正常使用的。这套规范的地址是 <a href="https://promisesaplus.com/" target="_blank" rel="noopener">https://promisesaplus.com/</a> 。上面除了有规范，还给出了测试工具，方便测试代码。</p>
-<p>promise的规范写的很详细，包括用语，各种情况下promise应该有的处理方式。这个就开始实现吧。</p>
-<p>规范的一开始就明确定义了(1.1)promise是一个带有<code>then</code>方法的对象或者函数，所以我们实现的promise需要有一个<code>then</code>方法；(2.1)promise有三个状态，<code>pending</code>等待态，<code>fulfilled</code>成功态，<code>rejected</code>失败态，而关于这三种状态关系，在(2.1)中有详细的说明：</p>
-<ol>
-<li>等待态可以转化为成功态或失败态；</li>
-<li>成功态不能转化为其他状态，而且需要有一个<code>value</code>；</li>
-<li>失败态不能转化为其他状态，而且需要有一个<code>reason</code>；<br>(<code>value</code>跟<code>reason</code>值不可变，但如果指向是对象的话则指向不可变)</li>
-</ol>
-<p>基于以上规范，promise需要有一个状态<code>state</code>和对应成功态的<code>value</code>跟失败态的<code>reason</code>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const PENDING = &apos;PENDING&apos;;</span><br><span class="line">const FULFILLED = &apos;FULFILLED&apos;;</span><br><span class="line">const REJECTED = &apos;REJECTED&apos;;</span><br><span class="line"></span><br><span class="line">class Promise &#123;</span><br><span class="line">  constructor (executor) &#123;</span><br><span class="line">    this.state = PENDING;</span><br><span class="line">	this.value = undefined;</span><br><span class="line">	this.reason = undefined;</span><br><span class="line">	// ...</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="Promise-executor"><a href="#Promise-executor" class="headerlink" title="Promise executor"></a>Promise executor</h4><p>上面代码中<code>constructor</code>传入了一个<code>executor</code>，这个是按照原生Promise的写法，声明一个Promise对象实例需要传入<code>executor</code>，这个executor需要带有两个参数，包括<code>resolve</code>跟<code>reject</code>。</p>
-<p><code>resolve</code>跟<code>reject</code>是用来判断promise状态的两个函数，要求Promise转化为成功态时要调用<code>resolve</code>，并传入value，而转化为失败态时要调用<code>reject</code>，并传入reason。而且，<code>executor</code>是个立即执行的，是同步的。</p>
-<p>当<code>resolve</code>获得value时，会把值赋给promise的value，并判断当前是否为等待态，是则会把状态改为成功态；而<code>reject</code>操作类似，把获得的reason赋值给promise的reason，然后判断等待态后把状态改为失败态。</p>
-<p><code>executor</code>的执行可能出现运行报错，所以需要用<code>try catch</code>来捕获报错，捕获的报错则传给<code>reject</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">class Promise &#123;</span><br><span class="line">  constructor (executor) &#123;</span><br><span class="line">    this.state = PENDING;</span><br><span class="line">	this.value = undefined;</span><br><span class="line">	this.reason = undefined;</span><br><span class="line">    let resolve = (value) =&gt; &#123;</span><br><span class="line">      // ...</span><br><span class="line">      if (this.state === PENDING) &#123;</span><br><span class="line">        this.state = FULFILLED;</span><br><span class="line">        this.value = value;</span><br><span class="line">        this.onFulfilledStack.forEach(fn =&gt; fn());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    let reject = (reason) =&gt; &#123;</span><br><span class="line">      if (this.state === PENDING) &#123;</span><br><span class="line">        this.state = REJECTED;</span><br><span class="line">        this.reason = reason;</span><br><span class="line">        this.onRejectedStack.forEach(fn =&gt; fn());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">      executor(resolve, reject);</span><br><span class="line">    &#125; catch (exception) &#123;</span><br><span class="line">      reject(exception);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Promise-then"><a href="#Promise-then" class="headerlink" title="Promise then"></a>Promise then</h3><p>promise/A+规范要求实现的promise需要有<code>then</code>方法。这个方法需要传入两个回调函数，<code>onFulfilled</code>和<code>onRejected</code>。因为支持链式调用，所以也要求函数返回的是一个promise。</p>
-<p>首先，对于以上的要求，可以写出下面<code>then</code>方法的结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class Promise &#123;</span><br><span class="line">  // constructor...</span><br><span class="line">  then (onFulfilled, onRejected) &#123;</span><br><span class="line">  // ...</span><br><span class="line">  let promise2;</span><br><span class="line">  promise2 = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    // ...</span><br><span class="line">  &#125;);</span><br><span class="line">  return promise2;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>then</code>方法中的<code>onFulfilled</code>和<code>onRejected</code>跟<code>promise2</code>规范中有比较详细的要求，所以我们单独的实现。</p>
-<h4 id="onFulfilled和onRejected调用要求"><a href="#onFulfilled和onRejected调用要求" class="headerlink" title="onFulfilled和onRejected调用要求"></a><code>onFulfilled</code>和<code>onRejected</code>调用要求</h4><p>首先，只有当promise的状态为成功态时，才可以调用<code>onFulfilled</code>回调，并传入<code>value</code>，而只有为失败态时，才可以调用<code>onRejected</code>回调，并传入<code>reason</code>，而等待态的情况下，两个回调均不执行，会等待到状态转化之后才会根据状态执行。</p>
-<p>同时，由于<code>then</code>方法支持多次调用，也就是说在promise等待态时，<code>then</code>方法调用的情况，所以需要在promise内部使用两个数组来储存所有的<code>onFulfilled</code>和<code>onRejected</code>方法，并在转化状态后按照先后顺序调用执行。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">// Promise constructor</span><br><span class="line">this.onFulfilledStack = [];</span><br><span class="line">this.onRejectedStack = [];</span><br><span class="line">let resolve = (value) =&gt; &#123;</span><br><span class="line">  if (this.state === PENDING) &#123;</span><br><span class="line">    this.state = FULFILLED;</span><br><span class="line">    this.value = value;</span><br><span class="line">    this.onFulfilledStack.forEach(fn =&gt; fn());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">let reject = (reason) =&gt; &#123;</span><br><span class="line">  if (this.state === PENDING) &#123;</span><br><span class="line">    this.state = REJECTED;</span><br><span class="line">    this.reason = reason;</span><br><span class="line">    this.onRejectedStack.forEach(fn =&gt; fn());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// then的promise2内部</span><br><span class="line">if (this.state === FULFILLED) &#123;</span><br><span class="line">  onFulfilled(this.value);</span><br><span class="line">&#125;</span><br><span class="line">if (this.state === REJECTED) &#123;</span><br><span class="line">  onRejected(this.reason);</span><br><span class="line">&#125;</span><br><span class="line">if (this.state === PENDING) &#123;</span><br><span class="line">  this.onFulfilledStack.push(() =&gt; &#123;</span><br><span class="line">    onFulfilled(this.value);</span><br><span class="line">  &#125;)</span><br><span class="line">  this.onRejectedStack.push(() =&gt; &#123;</span><br><span class="line">    onRejected(this.reason);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
-<h4 id="onFulfilled和onRejected结果判断"><a href="#onFulfilled和onRejected结果判断" class="headerlink" title="onFulfilled和onRejected结果判断"></a><code>onFulfilled</code>和<code>onRejected</code>结果判断</h4><p>由于Promise链式调用，在then中执行<code>onFulfilled</code>和<code>onRejected</code>返回的值有可能也是一个Promise对象，也有可能是一个其他普通的值，还有可能是抛出一个错误，而这些值都有各自不同的处理要求：</p>
-<ol>
-<li>如果返回的值是普通值，则调用promise2的resolve；</li>
-<li>如果返回的值是一个promise，则需要等待执行完把这个promise的<code>value</code>或<code>reason</code>传给promise2的<code>resolve</code>或<code>reject</code>；</li>
-<li>如果是抛出一个错误，则调用promise2的reject；</li>
-<li>如果返回的值等于promise2，则抛出类型错误；</li>
-</ol>
-<p>基于上面的要求，可以使用一个<code>resolvePromise</code>来处理，需要传入以下值：</p>
-<ol>
-<li>执行<code>onFulfilled</code>和<code>onRejected</code>之后返回的值，x，用来判断处理结果;</li>
-<li>promise2的<code>resolve</code>或<code>reject</code>，用来接收x；</li>
-<li>promise2，用来判断x是否与之引用相等。</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">promise2 = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  if (this.status === SUCCESS) &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        let x = onFulfilled(this.value);</span><br><span class="line">        resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  if (this.status === FAIL) &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        let x = onRejected(this.reason);</span><br><span class="line">        resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  if (this.status === PENDING) &#123;</span><br><span class="line">    this.onResolvedCallbacks.push(() =&gt; &#123;</span><br><span class="line">      setTimeout(() =&gt; &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          let x = onFulfilled(this.value);</span><br><span class="line">          resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">          reject(err)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">    this.onRejectedCallbacks.push(() =&gt; &#123;</span><br><span class="line">      setTimeout(() =&gt; &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          let x = onRejected(this.reason);</span><br><span class="line">          resolvePromise(promise2, x, resolve, reject)</span><br><span class="line">        &#125; catch (err) &#123;</span><br><span class="line">          reject(err)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<h4 id="返回值x的判断"><a href="#返回值x的判断" class="headerlink" title="返回值x的判断"></a>返回值<code>x</code>的判断</h4><p>Promise A+规范提供了对x的判断方案。首先，判断x是否为一个方法或者一个对象，因为Promise的实现可以通过<code>Function</code>或<code>Object</code>来实现。其次，x带有一个then方法，这是本身Promise规范要求<br>的方法。除此之外，都判断为普通值。</p>
-<p>另外，如果x是一个Promise，那么作为<code>x</code>成功态返回的值，同样也要判断是否为Promise，这个判断的处理跟<code>x</code>的处理相同，所以<code>resolvePromise</code>可以以递归方法的形式实现。</p>
-<p>在判断完<code>x</code>为Promise之后，Promise A+规范有一个比较严谨的考虑，就是为了防止同时出现成功态跟失败态，要在调用promise2的<code>resolve</code>或<code>reject</code>之后，禁止再调用promise2的<code>reject</code>或<code>resolve</code>。</p>
-<p>因此，<code>resolvePromise</code>实现如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">function resolvePromise (promise2, x, resolve, reject) &#123;</span><br><span class="line">  if (promise2 === x) &#123;</span><br><span class="line">    return reject(new TypeError(&apos;Chaining cycle detected for promise #&lt;my Promise&gt;&apos;))</span><br><span class="line">  &#125;</span><br><span class="line">  let called;</span><br><span class="line">  if (typeof x === &apos;function&apos; || (typeof x === &apos;object&apos; &amp;&amp; x != null)) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      let then = x.then</span><br><span class="line">        if (typeof then === &apos;function&apos;) &#123;</span><br><span class="line">        then.call(x, y =&gt; &#123;</span><br><span class="line">          if (called) return</span><br><span class="line">          called = true</span><br><span class="line">          resolvePromise (promise2, y, resolve, reject)</span><br><span class="line">        &#125;, r =&gt; &#123;</span><br><span class="line">          if (called) return // 2)</span><br><span class="line">          called = true</span><br><span class="line">          reject(r)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        resolve(x)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; catch (e) &#123;</span><br><span class="line">      if (called) return</span><br><span class="line">      called = true</span><br><span class="line">      reject(e)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    resolve(x)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>以上基本实现基于Promise A+规范的Promise类。最后可以安装<code>promise-aplus-tasts</code>库对实现的Promise做检验。测试之前需要加以下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Promise.defer = Promise.deferred = function () &#123;</span><br><span class="line">  let dfd = &#123;&#125;</span><br><span class="line">  dfd.promise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    dfd.resolve = resolve;</span><br><span class="line">    dfd.reject = reject;</span><br><span class="line">    &#125;);</span><br><span class="line">    return dfd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这段代码本身也实现了一种异步操作代码同步化的处理。最后使用命令<code>promises-aplus-tests xxx.js</code>执行测试。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/06/09/work-summary6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/09/work-summary6/" itemprop="url">工作总结(6)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T22:38:28+08:00">
-                2019-06-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇工作总结，主要针对移动端网页开发中遇到的软键盘坑来整理的。</p>
-<p>最近在做移动端页面，然后遇到一个很多人都遇到的坑：当页面有固定在底部的评论框的情况下，当点击评论框获得聚焦之后，底部评论框会被软键盘顶起，但是不会贴着软键盘顶部，而且后面的页面也会向上滚动一定高度，而且仍然可以滚动。这个问题的结果就是，在评论框获得聚焦时，整个页面会滚动，输入框位置很突兀，如果输入框是textarea，则有可能有一部分推到页面顶部一样，用户体验非常差。</p>
-<p>这个问题拆解出来，有几个需要解决的问题：</p>
-<ol>
-<li><p>背景页面仍然可以滚动。我尝试了增加遮罩层，但是还是不受控制；</p>
-</li>
-<li><p>底部评论框顶起的位置不正确。这个问题在安卓系统不会出现，所以是iOS的坑；</p>
-</li>
-<li><p>底部评论框获得聚焦的时候，背景页面会被顶起。</p>
-</li>
-</ol>
-<p>这个坑我在网上找了很多帖子，发现真的是一个很难解决的问题。我也有找到一些解决方案，但是实际实现下来效果还是很差。这里我们一个个问题来整理如何解决。</p>
-<h4 id="背景页面滚动问题"><a href="#背景页面滚动问题" class="headerlink" title="背景页面滚动问题"></a>背景页面滚动问题</h4><p>这个问题不管在安卓还是iOS系统上都会出现。原因应该出现在本身页面高度超过窗口高度，而且移动端有touchmove事件，虽然有遮罩层，但是其实body是遮罩层的根节点，所以存在事件捕获跟冒泡的问题。</p>
-<p>因此，主要的问题是要阻止touchmove事件。解决方案需要完成两步操作：</p>
-<h5 id="1-禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获"><a href="#1-禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获" class="headerlink" title="1. 禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获"></a>1. 禁止body的touch事件。这样可以确保touchmove事件不会从body元素开始捕获</h5><p>处理的办法是设置body元素的touchAction属性为<code>none</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.body.style.touchAction = &apos;none&apos;;</span><br></pre></td></tr></table></figure>
-<p>这样就可以禁止body的touch事件。不过这个只是适用于安卓系统，在safari上并不适用，因为safari不支持该属性</p>
-<h5 id="2-阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动"><a href="#2-阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动" class="headerlink" title="2. 阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动"></a>2. 阻止body发生默认的行为。这样可以保证touchmove事件不会触发body元素的滚动</h5><p>处理的办法是使用<code>e.preventDefault()</code>，同时在绑定<code>addEventListener</code>的时候，需要再传一个<code>options</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">document.body.addEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; passive: false, capture: true &#125;);</span><br><span class="line"></span><br><span class="line">stopTouch (e) &#123;</span><br><span class="line">    e.preventDefault();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>addEventListener</code>的第三个参数<code>options</code>的写法比较少用到，我们一般用到的是<code>useCapture</code>，而且一般也是使用默认值<code>false</code>。在MDN有详细的说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">options</span><br><span class="line">一个指定有关 listener 属性的可选参数对象。可用的选项如下：</span><br><span class="line">capture:  Boolean，表示 listener 会在该类型的事件捕获阶段传播到该 EventTarget 时触发。</span><br><span class="line">once:  Boolean，表示 listener 在添加之后最多只调用一次。如果是 true， listener 会在其被调用之后自动移除。</span><br><span class="line">passive: Boolean，设置为true时，表示 listener 永远不会调用 preventDefault()。如果 listener 仍然调用了这个函数，客户端将会忽略它并抛出一个控制台警告。</span><br></pre></td></tr></table></figure>
-<p>我们在这里使用<code>{ passive: false }</code>，这样使用<code>preventDefault()</code>时Chrome等一些浏览器就不会报错；而使用<code>{ capture: true }</code>则可以是事件尽早被阻止。</p>
-<p>第一个问题完整的解决方案代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">watch: &#123;</span><br><span class="line">    show(newVal) &#123;</span><br><span class="line">        this.toggleContainerTouchAction(newVal);</span><br><span class="line">        if (newVal) &#123;</span><br><span class="line">            document.body.addEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; passive: false, capture: true &#125;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            document.body.removeEventListener(&apos;touchmove&apos;, this.stopTouch, &#123; capture: true &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">method: &#123;</span><br><span class="line">    toggleContainerTouchAction (flag) &#123;</span><br><span class="line">        document.body.style.touchAction = flag ? &apos;none&apos; : &apos;auto&apos;;</span><br><span class="line">    &#125;,</span><br><span class="line">    stopTouch (e) &#123;</span><br><span class="line">        e.preventDefault();</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="底部评论框顶起的位置"><a href="#底部评论框顶起的位置" class="headerlink" title="底部评论框顶起的位置"></a>底部评论框顶起的位置</h4><p>首先，这个问题的根本问题是iOS在处理fixed布局时，当页面输入框获得焦点的时候，会把fixed改成absolute绝对定位，同时计算fixed容器在页面的位置，以此作为绝对定位的位置。正常来说其实会让底部评论框顶到软键盘顶部的位置，虽然如果滚动页面的话底部评论框是会跟软键盘分开，但是上面已经有解决方案了，所以其实还好。问题在于因为在软键盘上滑的同时，页面整体也会被动向上滚动，但评论框的位置是在页面滚动前计算的，所以才会出现顶起后还跟软键盘分离的情况。</p>
-<p>因此，首先可以想到的是，不用fixed布局，而改用absolute布局，同时在输入框获得焦点的时候，动态计算输入框容器的高度。</p>
-<p>不过直接放弃fixed布局其实是很可惜的，因为如果一开始写布局的时候就用绝对定位，那底部评论框就得一直动态计算位置，而且这个问题只是iOS系统才会出现，安卓系统是没问题的。</p>
-<p>所以在处理的时候，我把问题拆分了：</p>
-<ol>
-<li>输入框在布局上，iOS跟安卓是分开处理的；</li>
-<li>其次，iOS系统的布局，也按软键盘调起(等同于输入框获得焦点)与否分开处理；</li>
-<li>因为页面滚动已经被设置为不可滚动，所以动态计算可以控制在一定次数以内。这三个优化可以让方案实施时减少JS的操作，提高页面性能，增加CSS样式操作。</li>
-</ol>
-<h5 id="1-样式布局"><a href="#1-样式布局" class="headerlink" title="1. 样式布局"></a>1. 样式布局</h5><p>样式布局上，我把fixed布局跟absolute布局从原来class<code>.input-container</code>中分离出来：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.input-container-absolute &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.input-container-fixed &#123;</span><br><span class="line">    position: fixed;</span><br><span class="line">    bottom: 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后通过<code>v-bind</code>先把<code>.input-container-fixed</code>绑到输入框容器上。当输入框获得焦点的时候，判断平台是iOS还是安卓，如果是iOS，就改成<code>.input-container-absolute</code>，如果是安卓，就不变：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">handleComment () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        this.inputCls = &apos;input-container-absolute input-container&apos;;</span><br><span class="line">		/* ... */</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /*...*/</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>当输入框失去焦点的时候，再改回fixed布局：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">handleBlur () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        /* ... */</span><br><span class="line">		this.$refs.inputCon.style.top = &apos;&apos;;</span><br><span class="line">        this.inputCls = &apos;input-container-fixed input-container&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>这样对于安卓系统来说，解决iOS系统的js操作跟安卓系统来说一点影响都没有。</p>
-<h5 id="2-iOS系统的布局"><a href="#2-iOS系统的布局" class="headerlink" title="2. iOS系统的布局"></a>2. iOS系统的布局</h5><p>其实上面的代码也基本说明了，在iOS系统上，布局也不是完全使用绝对布局，就上面的代码，就可以保证在软键盘没有被调起的时候，不需要js控制布局。</p>
-<h5 id="3-动态计算"><a href="#3-动态计算" class="headerlink" title="3. 动态计算"></a>3. 动态计算</h5><p>这个问题是整个问题的核心点。首先，使用什么值来确定输入框的位置。因为使用了绝对定位，而且这个位置问题其实是y轴上滚动造成的，所以问题缩小为<code>top</code>跟<code>bottom</code>的选择上。一般fixed布局使用<code>bottom</code>，绝对定位也使用<code>bottom</code>可以统一定位方式，但是实际在<code>.input-container-fixed</code>跟<code>.input-container-absolute</code>的样式上，其实已经说明了绝对定位时，我是选择<code>top</code>来控制输入框的位置的。因为我在尝试使用<code>bottom</code>，发现计算不出来，尴尬…</p>
-<p>所以我是计算了<code>top</code>。怎么计算？我们这么考虑，应该是这样的公式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top = 页面滚动高度 + 视窗高度 - 输入框容器高度</span><br></pre></td></tr></table></figure>
-<p>首先，页面滚动高度可以通过<code>document.documentElement.scrollTop</code>或<code>document.body.scrollTop</code>获得；输入框是在软键盘的顶部，而且其实当软键盘调起之后，实际的视窗高度是原来视窗高度减去软键盘高度。这部分不需要计算，直接使用<code>window.innerHeight</code>；输入框容器高度可以通过<code>offsetHeight</code>获得。因此，公式转换成：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top = document.documentElement.scrollTop/document.body.scrollTop + window.innerHeight - this.$refs.input.offsetHeight</span><br></pre></td></tr></table></figure>
-<p>这里简单说一下，bottom的计算我就是用上面的公式，就是不减去容器高度而已，但是显示效果就是不对…</p>
-<p>所以就有下面的代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">getScrollTop () &#123;</span><br><span class="line">    let scroll_top = 0;</span><br><span class="line">    if (document.documentElement &amp;&amp; document.documentElement.scrollTop) &#123;</span><br><span class="line">        scroll_top = document.documentElement.scrollTop;</span><br><span class="line">    &#125; else if (document.body) &#123;</span><br><span class="line">        scroll_top = document.body.scrollTop;</span><br><span class="line">    &#125;</span><br><span class="line">    return scroll_top;</span><br><span class="line">&#125;,</span><br><span class="line">		  </span><br><span class="line">handleScroll () &#123;</span><br><span class="line">    if (this.commentVisible) &#123;</span><br><span class="line">        this.scrollHeight = this.getScrollTop();</span><br><span class="line">		// +5px是为了确保输入框跟软键盘是贴在一起的，所以让输入框有一点点藏在软键盘下面是最保险的做法</span><br><span class="line">        this.$refs.inputCon.style.top = `$&#123;this.scrollHeight + window.innerHeight - this.$refs.inputCon.offsetHeight + 5&#125;px`;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>其实直接使用上面的代码也不能解决，因为软键盘弹出是有时间的，也就是如果一获取焦点就计算，那就会导致输入框还在软键盘弹出前视窗的底部。所以要动态计算，即在一定时间内，需要使用定时器<code>setInterval</code>不断计算输入框的位置，这样在软键盘调起的过程，输入框也能一直附在软键盘顶部：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scrollContent () &#123;</span><br><span class="line">    clearInterval(this.interval);</span><br><span class="line">    let i = 0;</span><br><span class="line">    this.interval = setInterval(() =&gt; &#123;</span><br><span class="line">        this.handleScroll();</span><br><span class="line">        i++;</span><br><span class="line">        if (i &gt; 20) &#123;</span><br><span class="line">            this.clearSrcoll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, 50)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>这里控制了只计算20次，是因为软键盘被调起的时间其实很短，测试情况大概1秒内就可以完成，不用一直动态计算，而且定时器间隔时间是50，所以就计算为20次。</p>
-<p>因此，样式布局的方法就得增加一些代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">clearSrcoll() &#123;</span><br><span class="line">    clearInterval(this.interval);</span><br><span class="line">&#125;,</span><br><span class="line">		  </span><br><span class="line">handleComment () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        this.inputCls = &apos;input-container-absolute input-container&apos;;</span><br><span class="line">		setTimeout(() =&gt; &#123;</span><br><span class="line">            this.scrollContent();</span><br><span class="line">        &#125;, 10)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /*...*/</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">handleBlur () &#123;</span><br><span class="line">    if (this.tp.platformInfo === &apos;iOS&apos;) &#123;</span><br><span class="line">        /* ... */</span><br><span class="line">		this.clearSrcoll();</span><br><span class="line">		this.$refs.inputCon.style.top = &apos;&apos;;</span><br><span class="line">        this.inputCls = &apos;input-container-fixed input-container&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>这里要说明的是，跟业务代码是有不同的，因为实际上页面一开始放的评论框容器没有input标签，只是放了一个像输入框的底部容器，加了点击事件后，会控制显示输入框容器的显示，然后在DOM刷新之后(<code>this.$nextTick</code>)使用<code>focus()</code>触发输入框获得焦点。所以就不放完整代码了。</p>
-<h4 id="页面顶起"><a href="#页面顶起" class="headerlink" title="页面顶起"></a>页面顶起</h4><p>这个问题其实没有解决，考虑到影响不大，而且当页面高度只有一屏时，也不会出现(主要是没有找到很好的解决方案)，所以就不处理了。但是这个问题在其他情况下有解决方案，详情可以看工作总结(五)中关于iOS下微信H5页面的坑解决方案的整理。</p>
-<p>上面就是全部内容。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/06/09/work-summary5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/09/work-summary5/" itemprop="url">工作总结(5)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-09T22:35:28+08:00">
-                2019-06-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本篇总结主要涉及微信H5开发中的比较重要的内容，整理下来也是为了以后可以方便开发。</p>
-<p>其实微信接口的使用在微信公众号文档中都有详细的讲解，所以我会整理工作中使用微信接口的代码逻辑。所有代码都是在Vuejs框架下开发的。</p>
-<h3 id="微信网页授权"><a href="#微信网页授权" class="headerlink" title="微信网页授权"></a>微信网页授权</h3><p>微信网页授权是微信H5中最为重要的，因为如果授权不成功，用户也进不了页面中来。</p>
-<p>微信网页授权分两种情况，用scope来体现：当scope为<code>snsapi_base</code>时，网页授权可以获得用户的openid，而且是静默授权，并自动跳转到回调页中，相当于直接进入H5页面中；当scope为<code>snsapi_userinfo</code>时，网页授权可以获得用户的基本信息，但是需要用户手动同意。还有一种是涉及用户关注公众号的，暂且不提。这里我们主要也是整理前一种网页授权方式。</p>
-<p>微信公众号文档中对网页授权流程有分步骤，按照以获取用户openid为目的，操作就是引导用户打开以下链接：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// appid为公众号唯一标识</span><br><span class="line">// redirect_uri是授权后重定向的回调链接，对应业务链接</span><br><span class="line">// response_type是返回类型，请填写code</span><br><span class="line">// scope是授权类型</span><br><span class="line">// state为可选的参数，重定向后会带上，业务可以带一些参数</span><br><span class="line">// #wechat_redirect是无论直接打开还是做页面302重定向时候，必须带此参数</span><br><span class="line">https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&amp;redirect_uri=REDIRECT_URI&amp;response_type=code&amp;scope=SCOPE&amp;state=STATE#wechat_redirect</span><br></pre></td></tr></table></figure>
-<p>然后静默获得用户授权之后，会跳转到以下链接：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// redirect_uri是重定向的回调链接</span><br><span class="line">// code是换取access_token的票据</span><br><span class="line">// state是网页授权时带上的可选参数</span><br><span class="line">redirect_uri/?code=CODE&amp;state=STATE</span><br></pre></td></tr></table></figure>
-<p>我在搜索相关开发博客的时候也有看到在前端完成上面跳转的，简单说就是先判断链接是否带有code参数，没有的话就把<code>window.location.href</code>指向网页授权链接，重定向之后获得code参数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">this.wxCode = this.$route.query.code ? code : &apos;&apos;;</span><br><span class="line">let local = window.location.href;</span><br><span class="line">if (this.wxCode == null || this.wxCode === &apos;&apos;) &#123; // 如果获取不到code，则重定向</span><br><span class="line">    window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=$&#123;APPID&#125;&amp;redirect_uri=$&#123;encodeURIComponent(local)&#125;&amp;response_type=$&#123;this.wxCode&#125;&amp;scope=$&#123;wxConfig.scope&#125;#wechat_redirect`;</span><br><span class="line">&#125; else &#123; </span><br><span class="line">    // 如果获取到code，发请求后端</span><br><span class="line">    /* ... */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是实际开发中我们并没有在前端做这部分内容，而且交给后端做重定向。因为网页授权链接中带有appid，是公众号唯一标识，比较重要，考虑到保险起见，不放在前端代码中。</p>
-<p>上面的代码可以看到，获取code之后，还需要后端获取access_token。文档也有提到，这部分安全级别非常高，涉及公众号secret跟用户的access_token，所以不允许在客户端请求。因此，获得code之后，我们可以把code通过接口传到服务器，在服务器进行access_token的获取。这一步可以获取到用户的openid，这个openid是用户跟公众号唯一的openid，所以非常有用。所以最终的代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">computed: &#123;</span><br><span class="line">    inWx () &#123; // 判断是否在微信环境中</span><br><span class="line">        const userAgent = navigator.userAgent.toLowerCase();</span><br><span class="line">        return  /micromessenger/.test(userAgent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line">created () &#123;</span><br><span class="line">    if (this.inWx) &#123;</span><br><span class="line">        this.initInfo();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;,</span><br><span class="line">methods: &#123;</span><br><span class="line">    initInfo () &#123;</span><br><span class="line">        this.wxCode = this.$route.query.code;</span><br><span class="line">        // 由于是后端实现网页重定向跟授权的，所以其实前端只要获得code并发起请求传给服务器就可以了</span><br><span class="line">        /* ... */</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="微信SDK"><a href="#微信SDK" class="headerlink" title="微信SDK"></a>微信SDK</h3><p>首先，使用微信sdk的前提是域名已绑定微信公众号。然后步骤是：引入js文件，通过config配置权限，通过ready接口跟error接口处理验证，最后用checkJsApi接口判断接口支持情况。</p>
-<h4 id="引入js文件"><a href="#引入js文件" class="headerlink" title="引入js文件"></a>引入js文件</h4><p>在html文件中引入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;http://res.wx.qq.com/open/js/jweixin-1.2.0.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">// 或</span><br><span class="line">// &lt;script src=&quot;http://res2.wx.qq.com/open/js/jweixin-1.4.0.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">// 都支持https</span><br></pre></td></tr></table></figure>
-<h4 id="config配置"><a href="#config配置" class="headerlink" title="config配置"></a>config配置</h4><p>根据微信公众号文档，config配置需要以下字段：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> wx.config(&#123;</span><br><span class="line">    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。</span><br><span class="line">    appId: &apos;&apos;, // 必填，公众号的唯一标识</span><br><span class="line">    timestamp: , // 必填，生成签名的时间戳</span><br><span class="line">    nonceStr: &apos;&apos;, // 必填，生成签名的随机串</span><br><span class="line">    signature: &apos;&apos;,// 必填，签名</span><br><span class="line">    jsApiList: [] // 必填，需要使用的JS接口列表</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p> 由于appid是公众号唯一标识，最好不要存放在客户端，所以可以通过请求从服务器获得除debug跟jsApiList之外的信息。所以会分两步走：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"> data() &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">        jsApiList: [</span><br><span class="line">            &apos;updateAppMessageShareData&apos;, </span><br><span class="line">            &apos;updateTimelineShareData&apos;, </span><br><span class="line">            &apos;onMenuShareTimeline&apos;, </span><br><span class="line">            &apos;onMenuShareAppMessage&apos;, </span><br><span class="line">            &apos;onMenuShareQQ&apos;, </span><br><span class="line">            &apos;onMenuShareWeibo&apos;,</span><br><span class="line">            &apos;onMenuShareQZone&apos;, </span><br><span class="line">            &apos;previewImage&apos;, </span><br><span class="line">            &apos;openLocation&apos;, </span><br><span class="line">            &apos;getLocation&apos;</span><br><span class="line">        ],</span><br><span class="line">        checkResult: &#123;&#125;,</span><br><span class="line">        wxShareConfig: &#123;&#125;,</span><br><span class="line">        wxconfig_share: &#123;</span><br><span class="line">            title: &apos;&apos;, // 分享标题</span><br><span class="line">            desc: &apos;&apos;, // 分享描述</span><br><span class="line">            link: &apos;&apos;, // 分享链接</span><br><span class="line">            imgUrl: &apos;&apos;, // 分享图标</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;,</span><br><span class="line">methods: &#123;</span><br><span class="line">     getWechatConfig () &#123;</span><br><span class="line">        axios.get(api).then(res =&gt; &#123;</span><br><span class="line">            this.wxConfig = res.data;</span><br><span class="line">		    this.wxInit(this.wxConfig);</span><br><span class="line">	    &#125;).catch(error =&gt; &#123;</span><br><span class="line">            /* ... */</span><br><span class="line">        &#125;</span><br><span class="line">     &#125;,</span><br><span class="line">    wxInit(_rpdata) &#123;</span><br><span class="line">        // this.jsApiList = _rpdata.jsApiList;</span><br><span class="line">        wx.config(&#123;</span><br><span class="line">            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。</span><br><span class="line">            appId: _rpdata.appId, // 必填，公众号的唯一标识</span><br><span class="line">            timestamp: _rpdata.timeStamp, // 必填，生成签名的时间戳</span><br><span class="line">            nonceStr: _rpdata.nonceStr, // 必填，生成签名的随机串</span><br><span class="line">            signature: _rpdata.signature, // 必填，签名，见附录1</span><br><span class="line">            jsApiList: this.jsApiList // 必填，需要使用的JS接口列表</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="ready接口跟error接口处理"><a href="#ready接口跟error接口处理" class="headerlink" title="ready接口跟error接口处理"></a>ready接口跟error接口处理</h4><p> 在传入config之后，可以直接调用ready接口处理验证成功的，而error接口则是处理验证失败的情况：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">methods: &#123;</span><br><span class="line">    wxInit(_rpdata) &#123;</span><br><span class="line">        // this.jsApiList = _rpdata.jsApiList;</span><br><span class="line">        wx.config(&#123;</span><br><span class="line">            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。</span><br><span class="line">            appId: _rpdata.appId, // 必填，公众号的唯一标识</span><br><span class="line">            timestamp: _rpdata.timeStamp, // 必填，生成签名的时间戳</span><br><span class="line">            nonceStr: _rpdata.nonceStr, // 必填，生成签名的随机串</span><br><span class="line">            signature: _rpdata.signature, // 必填，签名，见附录1</span><br><span class="line">            jsApiList: this.jsApiList // 必填，需要使用的JS接口列表</span><br><span class="line">        &#125;);</span><br><span class="line">        wx.ready(() =&gt; &#123;</span><br><span class="line">            /* ... */</span><br><span class="line">        &#125;);</span><br><span class="line">        wx.error(function (res) &#123;</span><br><span class="line">            /* ... */</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="checkJsApi接口"><a href="#checkJsApi接口" class="headerlink" title="checkJsApi接口"></a>checkJsApi接口</h3><p> 验证成功之后，还需要调用checkJsApi接口来判断客户端是否支持指定JS接口：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">wxInit(_rpdata) &#123;</span><br><span class="line">    /* ... */</span><br><span class="line">    wx.ready(() =&gt; &#123;</span><br><span class="line">        wx.checkJsApi(&#123;</span><br><span class="line">            this.checkJsApi().then(() =&gt; &#123;</span><br><span class="line">                /* ... */</span><br><span class="line">				/* 这里就可以调用各种验证成功的接口了 */</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    /* ... */</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">checkJsApi() &#123;</span><br><span class="line">    return new Promise((resolve) =&gt; &#123;</span><br><span class="line">        wx.checkJsApi(&#123;</span><br><span class="line">            jsApiList: this.jsApiList, // 需要检测的JS接口列表，所有JS接口列表见附录2,</span><br><span class="line">            success: (res) =&gt; &#123;</span><br><span class="line">                console.log(res)</span><br><span class="line">                console.log(res.checkResult)</span><br><span class="line">                this.checkResult = res.checkResult;</span><br><span class="line">                // 以键值对的形式返回，可用的api值true，不可用为false</span><br><span class="line">                // 如：&#123;&quot;checkResult&quot;:&#123;&quot;chooseImage&quot;:true&#125;,&quot;errMsg&quot;:&quot;checkJsApi:ok&quot;&#125;</span><br><span class="line">                this.checkResult = res.checkResult;</span><br><span class="line">                resolve();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p> 以上完成微信SDK基础配置处理。</p>
-<h3 id="微信分享"><a href="#微信分享" class="headerlink" title="微信分享"></a>微信分享</h3><p> 微信分享这块包括了所有分享的平台，使用的也是微信SDK所提供的所有分享相关的接口。目前微信分享有以下这些接口：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> updateAppMessageShareData // 分享给朋友及分享到QQ接口</span><br><span class="line">updateTimelineShareData // 分享到朋友圈及分享到QQ空间接口</span><br><span class="line">onMenuShareTimeline // 分享到朋友圈接口(即将废弃)</span><br><span class="line">onMenuShareAppMessage // 分享给朋友接口(即将废弃)</span><br><span class="line">onMenuShareQQ // 分享到QQ接口(即将废弃)</span><br><span class="line">onMenuShareWeibo // 分享到腾讯微博</span><br><span class="line">onMenuShareQZone // 分享到QQ空间</span><br></pre></td></tr></table></figure>
-<p> 所有接口的写法基本相同，所有这里只列举一个接口的写法作为例子。通过上面的接口验证后，就可以调用这些接口了。</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> wxShareInit() &#123;</span><br><span class="line">    const checkResult = this.checkResult;</span><br><span class="line">    if (checkResult.updateAppMessageShareData) &#123;</span><br><span class="line">        wx.updateAppMessageShareData(&#123;</span><br><span class="line">            title: this.wxconfig_share.title, // 分享标题</span><br><span class="line">            desc: this.wxconfig_share.desc, // 分享描述</span><br><span class="line">            link: this.wxconfig_share.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致</span><br><span class="line">            imgUrl: this.wxconfig_share.imgUrl, // 分享图标</span><br><span class="line">            success: function () &#123;</span><br><span class="line">                // 用户确认分享后执行的回调函数</span><br><span class="line">                console.log(&apos;share AppMessage success!&apos;)</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">	// 其他接口写法相同</span><br><span class="line">	/*...*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="微信关注"><a href="#微信关注" class="headerlink" title="微信关注"></a>微信关注</h3><p>微信关注这个比较容易，其实就是跳转到历史消息页面，如果用户没有关注公众号的话，这个页面会显示关注按钮。这个链接的形式是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://mp.weixin.qq.com/mp/profile_ext?action=home&amp;__biz=xxxxxxxx#wechat_redirect</span><br></pre></td></tr></table></figure>
-<p>其中，xxxxxxxx用公众号的uin id的base64编码替换。这个公众号的uin id可以在微信公众平台登入账号后，在源代码中查找uin即可找到一串数字，然后把这串数字用base64编码，获得。</p>
-<p>不过实际的效果是这个页面的关注按钮有时会出现，有时没有，后来网上查了一下，这个页面的关注按钮已经被微信屏蔽了，除非跟微信投钱合作，才会显示。所以……</p>
-<h3 id="微信关注判断"><a href="#微信关注判断" class="headerlink" title="微信关注判断"></a>微信关注判断</h3><p>微信关注的判断目前我还没有做过，但是大致的了解到判断的方案。最关键的是需要获得openid，获得access_token，然后通过获取用户基本信息接口获得用户信息，进而判断。</p>
-<p>首先，获得openid的方法已经在微信网页授权一节有说明，故可以获得；获得access_token需要前端获取code，然后传给服务器去换access_token，所以这一步也在微信网页授权一节有说明，故也可以获得。</p>
-<p>获取用户基本信息接口为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// http请求方式: GET</span><br><span class="line">https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&amp;openid=OPENID&amp;lang=zh_CN</span><br></pre></td></tr></table></figure>
-<p>然后根据微信公众号开发文档所介绍的，返回的数据有这些：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;subscribe&quot;: 1, </span><br><span class="line">    &quot;openid&quot;: &quot;o6_bmjrPTlm6_2sgVt7hMZOPfL2M&quot;, </span><br><span class="line">    &quot;nickname&quot;: &quot;Band&quot;, </span><br><span class="line">    &quot;sex&quot;: 1, </span><br><span class="line">    &quot;language&quot;: &quot;zh_CN&quot;, </span><br><span class="line">    &quot;city&quot;: &quot;广州&quot;, </span><br><span class="line">    &quot;province&quot;: &quot;广东&quot;, </span><br><span class="line">    &quot;country&quot;: &quot;中国&quot;, </span><br><span class="line">    &quot;headimgurl&quot;:&quot;http://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0&quot;,</span><br><span class="line">    &quot;subscribe_time&quot;: 1382694957,</span><br><span class="line">    &quot;unionid&quot;: &quot; o6_bmasdasdsad6_2sgVt7hMZOPfL&quot;</span><br><span class="line">    &quot;remark&quot;: &quot;&quot;,</span><br><span class="line">    &quot;groupid&quot;: 0,</span><br><span class="line">    &quot;tagid_list&quot;:[128,2],</span><br><span class="line">    &quot;subscribe_scene&quot;: &quot;ADD_SCENE_QR_CODE&quot;,</span><br><span class="line">    &quot;qr_scene&quot;: 98765,</span><br><span class="line">    &quot;qr_scene_str&quot;: &quot;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里可以获得到不少的信息了，这里我们关注的是<code>subscribe</code>这个字段，是指用户是否订阅该公众号标识。0为未关注，1为已关注。这样，我们就可以判断用户是否关注公众号了。</p>
-<h3 id="微信支付"><a href="#微信支付" class="headerlink" title="微信支付"></a>微信支付</h3><p>微信支付有两种方案，一种是依赖上面的微信JS-SDK，再配置完成之后调用chooseWXPay方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 官方文档</span><br><span class="line">wx.chooseWXPay(&#123;</span><br><span class="line">    timestamp: 0, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符</span><br><span class="line">    nonceStr: &apos;&apos;, // 支付签名随机串，不长于 32 位</span><br><span class="line">    package: &apos;&apos;, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）</span><br><span class="line">    signType: &apos;&apos;, // 签名方式，默认为&apos;SHA1&apos;，使用新版支付需传入&apos;MD5&apos;</span><br><span class="line">    paySign: &apos;&apos;, // 支付签名</span><br><span class="line">    success: function (res) &#123;</span><br><span class="line">        // 支付成功后的回调函数</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>可以参考上面微信分享一节的封装方案进行开发。</p>
-<p>另一种方案是调用在微信内置浏览器才有的WeixinJSBridge内置对象。这种方案使用起来比较简单，不需要引入什么，配置什么，只要是在微信内置浏览器中，就一定能调用这个内置对象。使用的时候只要先判断是否存在WeixinJSBridge内置对象，存在则可以传入请求参数，然后再判断返回的支付信息。需要传入的参数跟上面的一样，一般需要发起支付请求给服务器，让服务器提供需要的参数，然后在去调用WeixinJSBridge内置对象：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">// 微信支付api相关配置文档</span><br><span class="line">onBridgeReady (data) &#123;</span><br><span class="line">    if (typeof WeixinJSBridge === &apos;undefined&apos;) &#123;</span><br><span class="line">    this.$toast(&#123;</span><br><span class="line">        message: &apos;请使用微信内置浏览器进行支付&apos;,</span><br><span class="line">        position: &apos;bottom&apos;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        WeixinJSBridge.invoke(</span><br><span class="line">            &apos;getBrandWCPayRequest&apos;,</span><br><span class="line">            &#123;</span><br><span class="line">                appId: data.appId, // 公众号名称，由商户传入</span><br><span class="line">                timeStamp: data.timeStamp, // 时间戳，自1970年以来的秒数</span><br><span class="line">                nonceStr: data.nonceStr, // 随机串</span><br><span class="line">                package: data.package,</span><br><span class="line">                signType: data.signType, // 微信签名方式：</span><br><span class="line">                paySign: data.paySign // 微信签名</span><br><span class="line">            &#125;,</span><br><span class="line">            res =&gt; &#123;</span><br><span class="line">                if (res.err_msg === &apos;get_brand_wcpay_request:ok&apos;) &#123;</span><br><span class="line">                    this.$toast(&#123;</span><br><span class="line">                        message: &apos;支付成功&apos;,</span><br><span class="line">                        position: &apos;bottom&apos;</span><br><span class="line">                    &#125;);</span><br><span class="line">                    /* ... */</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    this.$toast(&#123;</span><br><span class="line">                        message: &apos;支付失败&apos;,</span><br><span class="line">                        position: &apos;bottom&apos;</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="微信地图"><a href="#微信地图" class="headerlink" title="微信地图"></a>微信地图</h3><p>在微信H5中调起微信地图也是一个常见的功能点，也是可以通过微信JS-SDK的接口来实现。</p>
-<p>一般使用微信地图分两种情况：一种是需要打开已知地点的微信地图，方便用户对地点进行导航；另一种是需要打开用户所在位置的微信地图。</p>
-<h4 id="已知地点的微信地图"><a href="#已知地点的微信地图" class="headerlink" title="已知地点的微信地图"></a>已知地点的微信地图</h4><p>这里使用的为微信JS-SDK 中的openLocation接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 官方文档</span><br><span class="line">wx.openLocation(&#123;</span><br><span class="line">    latitude: 0, // 纬度，浮点数，范围为90 ~ -90</span><br><span class="line">    longitude: 0, // 经度，浮点数，范围为180 ~ -180。</span><br><span class="line">    name: &apos;&apos;, // 位置名</span><br><span class="line">    address: &apos;&apos;, // 地址详情说明</span><br><span class="line">    scale: 1, // 地图缩放级别,整形值,范围从1~28。默认为最大</span><br><span class="line">    infoUrl: &apos;&apos; // 在查看位置界面底部显示的超链接,可点击跳转</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>根据官方文档，我们需要拿到已知地点的纬度，经度，位置名跟地址详情说明。我们可以通过以下网页获得：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.gpsspg.com/maps.htm</span><br></pre></td></tr></table></figure>
-<p>然后参考前面微信分享的封装进行开发。</p>
-<h4 id="打开用户所在位置的微信地图"><a href="#打开用户所在位置的微信地图" class="headerlink" title="打开用户所在位置的微信地图"></a>打开用户所在位置的微信地图</h4><p>这里还需要使用另一个接口：getLocation接口。也很简单，这里直接贴代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">wx.getLocation(&#123;</span><br><span class="line">    type: &apos;gcj02&apos;,</span><br><span class="line">    success: function (res) &#123;</span><br><span class="line">         wx.openLocation(&#123;</span><br><span class="line">            latitude: res.latitude,</span><br><span class="line">            longitude: res.longitude,</span><br><span class="line">            name: config.name,</span><br><span class="line">            address: config.address,</span><br><span class="line">            scale: 28,</span><br><span class="line">            infoUrl: &apos;&apos;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;,</span><br><span class="line">    cancel: function (res) &#123;</span><br><span class="line">        console.log(&apos;cancel: &apos;, res);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<h3 id="微信H5的坑"><a href="#微信H5的坑" class="headerlink" title="微信H5的坑"></a>微信H5的坑</h3><h4 id="iOS中微信环境下页面有浮框软键盘隐藏后页面不能点击问题"><a href="#iOS中微信环境下页面有浮框软键盘隐藏后页面不能点击问题" class="headerlink" title="iOS中微信环境下页面有浮框软键盘隐藏后页面不能点击问题"></a>iOS中微信环境下页面有浮框软键盘隐藏后页面不能点击问题</h4><p>问题是这样的：浮框中有输入框，使用了fixed布局，可能在页面正中间，也可能出现在页面底部。当输入框失去焦点时，软键盘隐藏，但是页面所有点击事件都发生错乱。</p>
-<p>其实和这个问题跟iOS系统有关，也跟微信有关。本身iOS系统下调出软键盘就会影响页面布局，然后滚动页面，然后微信内置浏览器会在软键盘隐藏时恢复页面布局，但是并没有恢复监听事件的位置。也就是在虽然有监听事件的标签元素恢复到原位了，但是监听的区域并没有恢复，因为受到页面滚动的影响。</p>
-<p>如何处理？分两种情况：一种情况是浮框只出现在页面第一屏，这种情况下，在软键盘隐藏的同时，操作页面滚动到顶部，即可恢复正常的监听区域：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scrollBack () &#123; // 绑定在blur事件上</span><br><span class="line">    window.scrollTo(0, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>另一种情况是浮框在底部，这种情况主要跟iOS系统有关，会单独放在下一篇工作总结中详细整理。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/06/work-summary4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/06/work-summary4/" itemprop="url">工作总结(4)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T23:28:05+08:00">
-                2019-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇工作总结，会整理一些比较零散的开发内容。</p>
-<h3 id="Element-UI相关"><a href="#Element-UI相关" class="headerlink" title="Element-UI相关"></a>Element-UI相关</h3><h4 id="el-scrollbar组件"><a href="#el-scrollbar组件" class="headerlink" title="el-scrollbar组件"></a>el-scrollbar组件</h4><p>在查ElementUI官方文档的时候，你会发现找不到滚动相关的组件，但实际上是有一个关于滚动相关的组件，只是没有文档。就是el-scrollbar组件。</p>
-<p>这个组件可以在查官方文档页面元素的时候找到，我是因为官方文档左右独立滚动而发现的。我们可以查查它的源码。</p>
-<p>源码中，在scrollbar/src下有main.js文件，这个文件中就有关于srollbar的实现源码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;</span><br><span class="line">    native: Boolean, // 是否显示滚动条</span><br><span class="line">    wrapStyle: &#123;&#125;, // 外层容器el-scrollbar__wrap同层的style样式</span><br><span class="line">    wrapClass: &#123;&#125;, // 外层容器el-scrollbar__view同层的class样式</span><br><span class="line">    viewClass: &#123;&#125;, // 内层容器el-scrollbar__view同层的style样式</span><br><span class="line">    viewStyle: &#123;&#125;, // 内层容器el-scrollbar__view同层的class样式</span><br><span class="line">    noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能</span><br><span class="line">    tag: &#123;</span><br><span class="line">        type: String,</span><br><span class="line">        default: &apos;div&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>上面就是我们使用el-scrollbar组件时可以传入的prop：<code>native</code>是用于判断是否显示滚动条，从源码的实现来看，滚动条是ElementUI自己实现的，也就是如果需要显示滚动条，可以考虑使用这个组件；<code>noresize</code>是用于判断是否需要监听尺寸变化事件，如果滚动内容的长度固定不变，可以设置为true以优化性能；<code>tag</code>是用于指定内层容器渲染的标签。知道这些，我们就可以知道怎么使用el-scrollbar组件了。</p>
-<p>我们再看看ElementUI官网是怎么使用它的：以官网导航栏为例，在<code>.el-scrollbar</code>的父类<code>.page-component</code>上设定了高度为100%，然后在<code>.el-scrollbar</code>同层增加<code>.page-component__nav</code>类实现导航栏的样式，最后在内层容器内使用<code>.side-nav</code>再设定100%的高度。</p>
-<p>我自己使用的过程中是在内层容器内使用一个类设定固定的高度，然后就可以实现滚动效果。</p>
-<h4 id="el-table-表头跟表格宽度不一致"><a href="#el-table-表头跟表格宽度不一致" class="headerlink" title="el-table 表头跟表格宽度不一致"></a>el-table 表头跟表格宽度不一致</h4><p>我在开发中发现了这个问题，在网上也发现有很多人遇到这个问题，目前我使用的解决方案是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 解决elementUI表头跟表格宽度不一致 */</span><br><span class="line">body .el-table th.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">body .el-table colgroup.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="安卓跟iOS的坑"><a href="#安卓跟iOS的坑" class="headerlink" title="安卓跟iOS的坑"></a>安卓跟iOS的坑</h3><h4 id="new-Date-转换时间戳"><a href="#new-Date-转换时间戳" class="headerlink" title="new Date()转换时间戳"></a>new Date()转换时间戳</h4><p>在iOS的微信H5开发中，使用<code>new Date(&#39;2019-5-4&#39;)</code>会出现报错，究其原因是iOS下不能使用<code>-</code>，应该使用<code>/</code>，即<code>new Date(&#39;2019/5/4&#39;)</code>。</p>
-<h4 id="安卓非body标签无滚动条"><a href="#安卓非body标签无滚动条" class="headerlink" title="安卓非body标签无滚动条"></a>安卓非body标签无滚动条</h4><p>在开发的过程中，我们发现在安卓系统中，页面中除了body之外其他标签都无法传滚动条，但是iOS系统就会有。这种情况下我们可以自己实现或借助一些UI框架实现滚动条。如果选择借助的话，可以考虑ElementUI的el-scrollbar组件(前面在分析源码的时候就有这样一个prop)，也可以考虑better-scroll插件，通过配置来实现滚动条。</p>
-<h3 id="前端开发的占位图"><a href="#前端开发的占位图" class="headerlink" title="前端开发的占位图"></a>前端开发的占位图</h3><p>其实开发中如果能考虑上占位图的话，对用户的使用体验是有很高的提升的。以往通过加载条来表示加载会让用户觉得加载时间很长，而使用占位图则会给用户一种页面逐渐加载完毕的效果。</p>
-<p>网上有很多推荐的占位图实现方案，有给未加载数据的容器加占位图样式的，有在数据加载完毕前先画一些占位容器的。这里就不一一细讲，主要是找到一个觉得挺不错的插件可以方便占位图的实现的：vue-content-loader。</p>
-<p>这个插件是通过实现SVG组件来完成占位图，看起来效果还不错，而且官方还给出一个页面可以通过拉拽，数据调整实现占位图组件。</p>
-<p>另外，它还有一个React版本。虽然我还没有使用过，不知道效果如何，但是我觉得应该是很有尝试的必要的。</p>
-<h3 id="vue中的图片懒加载"><a href="#vue中的图片懒加载" class="headerlink" title="vue中的图片懒加载"></a>vue中的图片懒加载</h3><p>除了占位图的加载优化，图片的懒加载也是前端开发中比较常见的加载优化点。在一个页面上，如果需要加载的图片很多，一般都会考虑优先加载第一版的图片，等用户滚动页面时，出现在窗口内的图片才会被加载。</p>
-<p>这里可以使用vue-lazyload插件。这个插件使用起来非常简单。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// npm</span><br><span class="line">$ npm i vue-lazyload -S</span><br><span class="line"></span><br><span class="line">//main.js</span><br><span class="line">// 引入</span><br><span class="line">import VueLazyload from &apos;vue-lazyload&apos;</span><br><span class="line">// 注册</span><br><span class="line">Vue.use(VueLazyload)</span><br><span class="line">// 配置</span><br><span class="line">Vue.use(VueLazyload, &#123;</span><br><span class="line">  preLoad: 1.3,</span><br><span class="line">  error: &apos;dist/error.png&apos;,</span><br><span class="line">  loading: &apos;dist/loading.gif&apos;,</span><br><span class="line">  attempt: 1</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 例子</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li v-for=&quot;img in list&quot;&gt;</span><br><span class="line">        &lt;img v-lazy=&quot;img.src&quot; &gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure>
-<p>以上是截取官方文档的部分代码。这样就可以完成简单的图片懒加载了。还有很多配置可以使用。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2189,7 +2035,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2200,7 +2046,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2211,7 +2057,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-count">60</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2262,7 +2108,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

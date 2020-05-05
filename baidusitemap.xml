@@ -4,6 +4,104 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2020/05/05/promise-test/</loc>
+    <lastmod>2020-05-05T07:57:15.143Z</lastmod>
+    <data>
+        <display>
+        <title>关于promise题目的打印</title>
+        <pubTime>2020-05-05T07:53:36.000Z</pubTime>
+        
+        <tag>Promise</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="Promise" url="http://listentolife.github.io/categories/JavaScript/Promise/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/05/work-summary12/</loc>
+    <lastmod>2020-05-05T07:52:33.732Z</lastmod>
+    <data>
+        <display>
+        <title>工作总结(12)</title>
+        <pubTime>2020-05-05T07:50:44.000Z</pubTime>
+        
+        <tag>webpack</tag>
+         
+        <tag>图片防盗链</tag>
+         
+        <tag>router-view</tag>
+         
+        <tag>canvas</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="工作总结" url="http://listentolife.github.io/categories/JavaScript/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/05/work-summary10/</loc>
+    <lastmod>2020-05-05T07:50:24.248Z</lastmod>
+    <data>
+        <display>
+        <title>工作总结(10) - 处理文件流</title>
+        <pubTime>2020-05-05T07:46:58.000Z</pubTime>
+        
+        <tag>文件流</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="工作总结" url="http://listentolife.github.io/categories/JavaScript/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/05/work-summary11/</loc>
+    <lastmod>2020-05-05T07:50:21.512Z</lastmod>
+    <data>
+        <display>
+        <title>工作总结(11) - 图片压缩</title>
+        <pubTime>2020-05-05T07:49:05.000Z</pubTime>
+        
+        <tag>图片压缩</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="工作总结" url="http://listentolife.github.io/categories/JavaScript/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2019/06/09/work-summary5/</loc>
     <lastmod>2019-12-07T14:19:12.647Z</lastmod>
     <data>
