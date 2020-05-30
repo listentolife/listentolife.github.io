@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,webpack," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇整理了plugins的配置。这篇开始整理webpack其他的一些配置项。 resolveresolve是指定webpack打包构建过程中模块如何解析的相关配置。比如代码中的模块路径怎么解析，文件名怎么解析。这里简单整理一下两个配置项extensions及alias。 extensionsextensions是用来解析文件名的。我们一般会在引用文件是省略掉一些文件的扩展名，那么配置这一项可以告">
+<meta name="keywords" content="JavaScript,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack4配置总结(六)">
+<meta property="og:url" content="http://listentolife.github.io/2020/05/30/webpack-summary6/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="上一篇整理了plugins的配置。这篇开始整理webpack其他的一些配置项。 resolveresolve是指定webpack打包构建过程中模块如何解析的相关配置。比如代码中的模块路径怎么解析，文件名怎么解析。这里简单整理一下两个配置项extensions及alias。 extensionsextensions是用来解析文件名的。我们一般会在引用文件是省略掉一些文件的扩展名，那么配置这一项可以告">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-30T13:26:23.420Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack4配置总结(六)">
+<meta name="twitter:description" content="上一篇整理了plugins的配置。这篇开始整理webpack其他的一些配置项。 resolveresolve是指定webpack打包构建过程中模块如何解析的相关配置。比如代码中的模块路径怎么解析，文件名怎么解析。这里简单整理一下两个配置项extensions及alias。 extensionsextensions是用来解析文件名的。我们一般会在引用文件是省略掉一些文件的扩展名，那么配置这一项可以告">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2020/05/30/webpack-summary6/"/>
+
+
+
+
+
+  <title>webpack4配置总结(六) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/30/webpack-summary6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">webpack4配置总结(六)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-30T21:25:37+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇整理了<code>plugins</code>的配置。这篇开始整理webpack其他的一些配置项。</p>
+<h3 id="resolve"><a href="#resolve" class="headerlink" title="resolve"></a><code>resolve</code></h3><p><code>resolve</code>是指定webpack打包构建过程中模块如何解析的相关配置。比如代码中的模块路径怎么解析，文件名怎么解析。这里简单整理一下两个配置项<code>extensions</code>及<code>alias</code>。</p>
+<h4 id="extensions"><a href="#extensions" class="headerlink" title="extensions"></a><code>extensions</code></h4><p><code>extensions</code>是用来解析文件名的。我们一般会在引用文件是省略掉一些文件的扩展名，那么配置这一项可以告诉webpack，在解析省略扩展名的文件时，去匹配什么扩展名。这个配置项接受一个数组，这个数组列举了需要匹配的扩展名。匹配上顺序是数组从左到右，即优先匹配数组左侧的元素。如配置了<code>[&#39;.js&#39;, &#39;.vue&#39;]</code>，则当遇到<code>/src/main</code>这个文件名时，会先在<code>src</code>目录下匹配是否存在<code>main.js</code>文件，有则解析这个文件，没有则继续匹配判断是否存在<code>main.vue</code>文件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">resolve: &#123;</span><br><span class="line">  extensions: [<span class="string">'.js'</span>, <span class="string">'.vue'</span>], <span class="comment">// 自动解析确定的扩展名</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="alias"><a href="#alias" class="headerlink" title="alias"></a><code>alias</code></h4><p><code>alias</code>是用来创建<code>import</code>或<code>require</code>的别名，换言之，我们可以通过别名来压缩长路径。比如说，我们需要在文件中引入一个<code>src</code>目录下另一个目录中的文件，如果文件的层级很深，可能会写出<code>import xxx from &#39;../../../components/btn.vue&#39;</code>。通过配置别名，我们可以把<code>@</code>作为<code>src</code>目录的别名，这样就可以把前面的代码改写成<code>import xxx from &#39;@/components/btn.vue&#39;</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">resolve: &#123;</span><br><span class="line">  alias: &#123; <span class="comment">// 配置模块引入中的别名</span></span><br><span class="line">    <span class="string">'vue'</span>: <span class="string">'vue/dist/vue.esm.js'</span>,</span><br><span class="line">    <span class="string">'@'</span>: path.join(__dirname, <span class="string">"../src"</span>),</span><br><span class="line">    <span class="string">'@images'</span>: path.join(__dirname, <span class="string">"../src/common/images"</span>),</span><br><span class="line">    <span class="string">'@components'</span>: path.join(__dirname, <span class="string">"../src/components"</span>),</span><br><span class="line">    <span class="string">'@common'</span>: path.join(__dirname, <span class="string">"../src/common"</span>),</span><br><span class="line">    <span class="string">'@api'</span>: path.join(__dirname, <span class="string">"../src/api"</span>),</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="devServer"><a href="#devServer" class="headerlink" title="devServer"></a><code>devServer</code></h3><p><code>devServer</code>这个配置项是需要安装<code>webpack-dev-server</code>来启用的，用来配置本地服务器的。只要安装了<code>webpack-dev-server</code>就可以使用它来在本地启动服务器进行项目本地调试。不过还是有一些可配置的选项的。</p>
+<p><code>port</code>可以配置端口，默认是8080，如果有多个本地项目运行占用了8080端口，会自动后移端口号。<code>compress</code>为配置是否启用gzip压缩，可以提升返回页面的速度。<code>contentBase</code>为配置webpack启动在哪个目录下启动服务。<code>historyApiFallback</code>为配置是否启用HTML5 History API，当出现404响应时会被替代为<code>index.html</code>，这一项可以配置布尔值，也可以进一步配置选项。还有其他的选项可以到官网上查看。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">devServer: &#123;</span><br><span class="line">  <span class="comment">// 开发服务的配置</span></span><br><span class="line">  <span class="comment">// port: 8080, // 不配置默认为8080，如果同时有多个本地项目运行且占用8080端口，会自动改端口</span></span><br><span class="line">  compress: <span class="literal">true</span>, <span class="comment">// 启用gzip压缩 可以提升返回页面的速度</span></span><br><span class="line">  contentBase: path.resolve(__dirname, <span class="string">'../dist'</span>), <span class="comment">// webpack 启动服务会在dist目录下 </span></span><br><span class="line">  historyApiFallback: <span class="literal">true</span> <span class="comment">// 当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="optimization"><a href="#optimization" class="headerlink" title="optimization"></a><code>optimization</code></h3><p><code>optimization</code>是webpack的优化配置项，从webpack4开始，用来根据不同的打包环境（设置<code>mode</code>）对打包进行优化，而且支持手动配置及重写的。<code>optimization</code>的可选配置项，有些是设置值，有些是通过引入插件来实现的，所以这里会结合实际情况来整理一些配置项的使用方法。</p>
+<h4 id="minimizer"><a href="#minimizer" class="headerlink" title="minimizer"></a><code>minimizer</code></h4><p><code>minimizer</code>支持用户自定义打包压缩的插件，并替换掉webpack默认的压缩插件。一方面，用户可以自行选择压缩js代码的插件，另一方面，项目中还有其他编程语言需要使用压缩插件。webpack打包压缩默认只压缩js代码，但是css代码并没有压缩。而如果指定了压缩css代码的插件，那么原有的压缩js代码的功能就会被覆盖掉，所以同时也需要指定压缩js代码的插件。这里就使用到了<code>optimize-css-assets-webpack-plugin</code>及<code>terser-webpack-plugin</code>。</p>
+<h5 id="optimize-css-assets-webpack-plugin"><a href="#optimize-css-assets-webpack-plugin" class="headerlink" title="optimize-css-assets-webpack-plugin"></a><code>optimize-css-assets-webpack-plugin</code></h5><p><code>optimize-css-assets-webpack-plugin</code>是用来压缩优化css代码的插件，默认使用<code>cssnano</code>来压缩优化。它接收5个配置项，分别是：<code>assetnameRegExp</code>（一个匹配文件的正则表达式），<code>cssProcessor</code>（自定义用于优化压缩css的处理器），<code>cssProcessorOptions</code>（传递给css处理器的选项）， <code>cssProcessorPluginOptions</code>（传递给css处理器的插件选项）及<code>canPrint</code>（一个布尔值，指定是否可以将信息打印到控制台）。</p>
+<h5 id="terser-webpack-plugin"><a href="#terser-webpack-plugin" class="headerlink" title="terser-webpack-plugin"></a><code>terser-webpack-plugin</code></h5><p><code>terser-webpack-plugin</code>是用来压缩js代码的插件。因为配置了<code>minimizer</code>，覆盖了默认的压缩功能，所以也需要配置压缩js的插件。这个插件有比较多的配置项，不过不配置也可以达到最佳的优化效果，所以需要配置可以去看官方文档。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">optimization: &#123;</span><br><span class="line">  minimizer: [</span><br><span class="line">    <span class="keyword">new</span> OptimizeCSSAssetsPlugin(), <span class="comment">// 压缩css，但使用之后js文件也需要手动压缩</span></span><br><span class="line">    <span class="keyword">new</span> TerserWebpackPlugin(), <span class="comment">// 压缩js</span></span><br><span class="line">  ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="runtimeChunk"><a href="#runtimeChunk" class="headerlink" title="runtimeChunk"></a><code>runtimeChunk</code></h4><p><code>runtimeChunk</code>是用来优化持久化缓存的。从我的理解来说，<code>runtimeChunk</code>默认是<code>false</code>，意思是webpack打包构建之后，会各个模块之间的引用和加载的逻辑内嵌到模块中，如果某个模块发生改变时，会导致除了除此之外引用及加载的模块一并发生改变，导致缓存失败。</p>
+<p>如果设置为<code>true</code>（也可以是一个<code>object</code>配置对象来表示启用）或者<code>multiple</code>，会在打包构建之后，给每个入口文件都生成一个对应的<code>runtime</code>文件，里面会存放有生成一个包含chunk映射关系的表。一旦某个模块发生改变时，只会修改该模块跟对应的<code>runtime</code>文档，不会影响到引用及加载的模块，实现持久化缓存。</p>
+<p>如果设置<code>single</code>，则表示在打包构建之后，只生成一个<code>runtime</code>文件，存放项目所有chunk映射关系表。</p>
+<p>如果是一个<code>object</code>配置对象，里面可以配置<code>name</code>来指定生成的<code>runtime</code>文件的命名。</p>
+<h4 id="splitChunks"><a href="#splitChunks" class="headerlink" title="splitChunks"></a><code>splitChunks</code></h4><p><code>splitChunks</code>这个配置项是用来定义使用什么策略拆分打包模块。里面有非常多的可配置选项来制定你的拆分打包策略。下面来一个个的介绍配置项：</p>
+<h5 id="chunks"><a href="#chunks" class="headerlink" title="chunks"></a><code>chunks</code></h5><p><code>chunks</code>用来指定哪些模块会应用优化。支持配置三个值<code>all</code>，<code>async</code>，<code>initial</code>。<code>all</code>是指同时拆分同步和异步代码，<code>async</code>是默认值，指只拆分异步代码，<code>initial</code>虽然也会同时拆分同步和异步代码，但是异步代码内容不会再拆分。</p>
+<h5 id="minSize"><a href="#minSize" class="headerlink" title="minSize"></a><code>minSize</code></h5><p><code>minSize</code>用来指定文件超过<code>minSize</code>值则会启用抽离。</p>
+<h5 id="maxSize"><a href="#maxSize" class="headerlink" title="maxSize"></a><code>maxSize</code></h5><p><code>maxSize</code>用来指定拆分的模块最大尺寸，不过有些模块即使大小超过<code>maxSize</code>，但是拆分不一定是最佳选择。</p>
+<h5 id="minChunks"><a href="#minChunks" class="headerlink" title="minChunks"></a><code>minChunks</code></h5><p><code>minChunks</code>指定模块至少达到<code>minChunks</code>引用次数才会启用抽离。</p>
+<h5 id="maxAsyncRequests"><a href="#maxAsyncRequests" class="headerlink" title="maxAsyncRequests"></a><code>maxAsyncRequests</code></h5><p><code>maxAsyncRequests</code>指定并行请求数量</p>
+<h5 id="maxInitialRequests"><a href="#maxInitialRequests" class="headerlink" title="maxInitialRequests"></a><code>maxInitialRequests</code></h5><p><code>maxInitialRequests</code>指定首屏并行请求数量</p>
+<h5 id="automaticNameDelimiter"><a href="#automaticNameDelimiter" class="headerlink" title="automaticNameDelimiter"></a><code>automaticNameDelimiter</code></h5><p><code>automaticNameDelimiter</code>指定拆分模块的命名的界定符。webpack默认拆分模块的命名会使用模块的来源和名称使用界定符来生成。默认界定符为<code>~</code>。</p>
+<h5 id="automaticNameMaxLength"><a href="#automaticNameMaxLength" class="headerlink" title="automaticNameMaxLength"></a><code>automaticNameMaxLength</code></h5><p><code>automaticNameMaxLength</code>指定拆分模块的命名的最大长度。</p>
+<h5 id="cacheGroups"><a href="#cacheGroups" class="headerlink" title="cacheGroups"></a><code>cacheGroups</code></h5><p><code>cacheGroups</code>用来自定义缓存组。<code>cacheGroups</code>接受一个对象，这个对象的键名为缓存组组名，值是一个对象，可以设置一系列相关配置。如果需要禁用默认缓存组，可以在<code>cacheGroups</code>下设置<code>default: false</code>。缓存组有以下配置项：</p>
+<p><code>priority</code>是用来设定缓存组的优先级。因为一个模块可以属于多个缓存组，所以模块会根据缓存组的优先级来选定放在哪个缓存组中。</p>
+<p><code>reuseExistingChunk</code>是用来指定当前模块包含从主模块中拆分出来的模块，是否重用该模块。</p>
+<p><code>test</code>是用来指定缓存组选择的模块，接受一个正则表达式来匹配模块名或路径。</p>
+<p><code>filename</code>指定缓存组模块的文件名占位符</p>
+<p><code>enforce</code>指定webpack是否忽略<code>splitChunks.minSize</code>，<code>splitChunks.minChunks</code>，<code>splitChunks.maxAsyncRequests</code>和<code>splitChunks.maxInitialRequests</code>，只创建缓存组模块。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">optimization: &#123;</span><br><span class="line">  splitChunks: &#123;</span><br><span class="line">    chunks: <span class="string">'all'</span>, <span class="comment">// 'async' 默认支持异步的代码分割 如import()</span></span><br><span class="line">    minSize: <span class="number">30000</span>, <span class="comment">// 文件超过30k，就会抽离</span></span><br><span class="line">    maxSize: <span class="number">0</span>,</span><br><span class="line">    minChunks: <span class="number">1</span>, <span class="comment">// 最少模块引用1次才抽离</span></span><br><span class="line">    maxAsyncRequests: <span class="number">6</span>, <span class="comment">// 最多6个请求</span></span><br><span class="line">    maxInitialRequests: <span class="number">4</span>, <span class="comment">// 最多首屏加载4个请求</span></span><br><span class="line">    automaticNameDelimiter: <span class="string">'~'</span>, <span class="comment">// 抽离文件名***~a~b，代表a,b都有引用，使用~来分隔</span></span><br><span class="line">    automaticNameMaxLength: <span class="number">30</span>, <span class="comment">// 最长名字大小</span></span><br><span class="line">    cacheGroups: &#123; <span class="comment">// 缓存组</span></span><br><span class="line">      vues: &#123;</span><br><span class="line">        test: <span class="regexp">/[\\/]node_modules[\\/]\/vue|vue-router|vuex/</span>,</span><br><span class="line">        priority: <span class="number">1</span> <span class="comment">// 优先级</span></span><br><span class="line">      &#125;,</span><br><span class="line">      vendors: &#123;</span><br><span class="line">        test: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">        priority: <span class="number">-10</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="keyword">default</span>: &#123;</span><br><span class="line">        minChunks: <span class="number">1</span>, <span class="comment">// 至少引用1次</span></span><br><span class="line">        priority: <span class="number">-20</span>,</span><br><span class="line">        reuseExistingChunk: <span class="literal">true</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>至此，整理完了我的模板项目的webpack配置。</p>
+<p>这套webpack配置我也尝试改成基于React的项目，也能成功的跑通。当然，webpack的配置不一定每个项目都相同，都是有不同的需求跟优化的空间。目前我这个模板项目还是有一些地方可以再优化，或者在我更深入了解webpack之后可能又会有更好的配置。之后还有webpack5，也是以后需要去研究应用的内容。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary5/" rel="next" title="webpack4配置总结(五)">
+                <i class="fa fa-chevron-left"></i> webpack4配置总结(五)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/30/axios-source-analysis1/" rel="prev" title="axios源码学习(一)：通过axios有多少种方法可以发起请求？">
+                axios源码学习(一)：通过axios有多少种方法可以发起请求？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#resolve"><span class="nav-number">1.</span> <span class="nav-text">resolve</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#extensions"><span class="nav-number">1.1.</span> <span class="nav-text">extensions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#alias"><span class="nav-number">1.2.</span> <span class="nav-text">alias</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#devServer"><span class="nav-number">2.</span> <span class="nav-text">devServer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#optimization"><span class="nav-number">3.</span> <span class="nav-text">optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#minimizer"><span class="nav-number">3.1.</span> <span class="nav-text">minimizer</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#optimize-css-assets-webpack-plugin"><span class="nav-number">3.1.1.</span> <span class="nav-text">optimize-css-assets-webpack-plugin</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#terser-webpack-plugin"><span class="nav-number">3.1.2.</span> <span class="nav-text">terser-webpack-plugin</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#runtimeChunk"><span class="nav-number">3.2.</span> <span class="nav-text">runtimeChunk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#splitChunks"><span class="nav-number">3.3.</span> <span class="nav-text">splitChunks</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#chunks"><span class="nav-number">3.3.1.</span> <span class="nav-text">chunks</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#minSize"><span class="nav-number">3.3.2.</span> <span class="nav-text">minSize</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#maxSize"><span class="nav-number">3.3.3.</span> <span class="nav-text">maxSize</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#minChunks"><span class="nav-number">3.3.4.</span> <span class="nav-text">minChunks</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#maxAsyncRequests"><span class="nav-number">3.3.5.</span> <span class="nav-text">maxAsyncRequests</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#maxInitialRequests"><span class="nav-number">3.3.6.</span> <span class="nav-text">maxInitialRequests</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#automaticNameDelimiter"><span class="nav-number">3.3.7.</span> <span class="nav-text">automaticNameDelimiter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#automaticNameMaxLength"><span class="nav-number">3.3.8.</span> <span class="nav-text">automaticNameMaxLength</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cacheGroups"><span class="nav-number">3.3.9.</span> <span class="nav-text">cacheGroups</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

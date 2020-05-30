@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,webpack," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇整理了loader的使用，这篇整理一下babel跟postcss-loader的配置。 .babelrc插件跟预设其实，.babelrc配置文件是用来支持我们在使用babel解析编译代码时，使用一些插件来处理高版本语法或者提案语法。插件跟预设的区别在于，预设其实是一些插件的组合，它方便我们处理一类语法的打包编译问题，不需要我们手动配置一系列插件。.babelrc里只需要写成一个JSON格式。">
+<meta name="keywords" content="JavaScript,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack4配置总结(四)">
+<meta property="og:url" content="http://listentolife.github.io/2020/05/30/webpack-summary4/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="上一篇整理了loader的使用，这篇整理一下babel跟postcss-loader的配置。 .babelrc插件跟预设其实，.babelrc配置文件是用来支持我们在使用babel解析编译代码时，使用一些插件来处理高版本语法或者提案语法。插件跟预设的区别在于，预设其实是一些插件的组合，它方便我们处理一类语法的打包编译问题，不需要我们手动配置一系列插件。.babelrc里只需要写成一个JSON格式。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-30T13:24:48.556Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack4配置总结(四)">
+<meta name="twitter:description" content="上一篇整理了loader的使用，这篇整理一下babel跟postcss-loader的配置。 .babelrc插件跟预设其实，.babelrc配置文件是用来支持我们在使用babel解析编译代码时，使用一些插件来处理高版本语法或者提案语法。插件跟预设的区别在于，预设其实是一些插件的组合，它方便我们处理一类语法的打包编译问题，不需要我们手动配置一系列插件。.babelrc里只需要写成一个JSON格式。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2020/05/30/webpack-summary4/"/>
+
+
+
+
+
+  <title>webpack4配置总结(四) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/30/webpack-summary4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">webpack4配置总结(四)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-30T21:24:09+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇整理了loader的使用，这篇整理一下<code>babel</code>跟<code>postcss-loader</code>的配置。</p>
+<h3 id="babelrc"><a href="#babelrc" class="headerlink" title=".babelrc"></a><code>.babelrc</code></h3><h4 id="插件跟预设"><a href="#插件跟预设" class="headerlink" title="插件跟预设"></a>插件跟预设</h4><p>其实，<code>.babelrc</code>配置文件是用来支持我们在使用babel解析编译代码时，使用一些插件来处理高版本语法或者提案语法。插件跟预设的区别在于，预设其实是一些插件的组合，它方便我们处理一类语法的打包编译问题，不需要我们手动配置一系列插件。<code>.babelrc</code>里只需要写成一个JSON格式。</p>
+<h4 id="预设-babel-preset-env"><a href="#预设-babel-preset-env" class="headerlink" title="预设@babel/preset-env"></a>预设@babel/preset-env</h4><p>按照官网的说法，<code>@babel/preset-env</code>是一个智能的预设，它可以解析编译最新的js语法。它可以根据目标浏览器环境情况编译合适的插件列表，使编译打包后的项目能在目标浏览器环境中正常运行。</p>
+<p>而目标浏览器的罗列，可以在<code>package.json</code>中使用<code>browserslist</code>属性设置，也可以设置预设属性<code>targets</code>，还可以在项目根目录上创建<code>.browserslistrc</code>来设置，如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// .browserslistrc</span></span><br><span class="line">cover <span class="number">95</span>%</span><br></pre></td></tr></table></figure>
+<p><code>@babel/preset-env</code>除了上面提到的<code>targets</code>配置项外，还有两个配置项是在我的项目中使用到的。一个是<code>useBuiltIns</code>，另一个是<code>corejs</code>，两个配置项有关联。</p>
+<p><code>useBuiltIns</code>有三个值，其中默认值为<code>false</code>，意思是不引入babel编译的结果，把引入的位置，引入那些polyfill交给用户处理。之前的做法是安装<code>@bable/polyfill</code>，然后在入口文件中引入，但其实这样会引入很多用不着的polyfill。</p>
+<blockquote>
+<p>这里说明一下，polyfill在MDN上有定义解释，我这里就摘一下：</p>
+<blockquote>
+<p>Polyfill 是一块代码（通常是 Web 上的 JavaScript），用来为旧浏览器提供它没有原生支持的较新的功能。<br>比如说 polyfill 可以让 IE7 使用 Silverlight 插件来模拟 HTML Canvas 元素的功能，或模拟 CSS 实现 rem 单位的支持，或 text-shadow，或其他任何你想要的功能。</p>
+</blockquote>
+</blockquote>
+<p>如果设置值为<code>entry</code>，则会将文件中<code>import &#39;@babel/polyfilll&#39;</code>语句结合<code>targets</code>，转换为一系列引入语句，去掉目标浏览器已支持的polyfilll模块，不管代码里有没有用到，只要目标浏览器不支持都会引入对应的polyfilll 模块。虽然要比全部引入要好，但是使用不到的polyfill还是会有。</p>
+<p>而且现在babel也废弃了<code>@bable/polyfill</code>，所以需要我们自己选择使用哪个兼容库。那么这里的<code>useBuiltIns</code>也就最好设置为<code>usage</code>。</p>
+<p>设置<code>usage</code>，则不需要手动在代码中引入<code>@babel/polyfill</code>，而且打包的时候会根据实际代码的需要引入实际用上的polyfill模块。同时，因为<code>@babel/polyfill</code>已经不建议用，被废弃了，所以我们需要通过设置<code>corejs</code>来指明使用的那个版本的<code>core-js</code>。</p>
+<blockquote>
+<p>其实<code>@babel/polyfill</code>是对<code>core-js</code>(<code>core-js/stable</code>)做了封装，而且引用了<code>regenerator-runtime/runtime</code>。<br><code>core-js</code>其实是把所有新语法通过ES6之前的语法实现（现在已经支持到ES2019）。</p>
+</blockquote>
+<p>这里可以设置为<code>2</code>或<code>3</code>，指定使用<code>core-js</code>哪个版本。关于<code>core-js</code>到底使用<code>2</code>还是<code>3</code>，怎么选择，原因是什么，我也还没有搞得很明白，网上关于这方面的说法不多，目前自己的项目中用的是<code>2</code>，而且版本是<a href="mailto:`core-js@2.6.11" target="_blank" rel="noopener">`core-js@2.6.11</a>`，安装版本不同可能还会报错。所以这部分需要等以后了解了再整理出来。</p>
+<p>所以最终预设的配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"presets"</span>: [ <span class="comment">// 预设，从下到上执行</span></span><br><span class="line">    [<span class="string">"@babel/preset-env"</span>, &#123;</span><br><span class="line">      <span class="string">"useBuiltIns"</span>: <span class="string">"usage"</span>, <span class="comment">// 使用的api 会自动转化 并且是按需加载</span></span><br><span class="line">      <span class="string">"corejs"</span>: <span class="number">2</span> <span class="comment">// 替换掉babel-polyfill，babel-polyfill已不建议使用</span></span><br><span class="line">    &#125;]</span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h4><p>转回来我们来了解一下什么是插件。因为babel是一个编译器，虽然有解析，转换和打印输出三个步骤，但实际在转换上并不会做什么处理，也就是什么的不做就到打印输出了。但它支持插件，可以通过插件来进行代码转换。所以，所谓的插件，就是可以对babel解析的代码进行转换的编译工具（自己理解）。</p>
+<p>配置插件，是通过<code>plugins</code>这个配置属性来配置的。<code>plugins</code>接受一个数组，这个数组用来列举插件。执行的顺序是从上到下。如果插件需要进一步配置，则写成数组。数组的第一项是插件名，第二项是配置json。</p>
+<p>这里简单介绍一下我项目中使用到的插件：</p>
+<p><code>@babel/plugin-proposal-decorators</code>插件是用来解析支持装饰器草案语法的，按babel的举例演示，实际上是把装饰器语法转换为高级函数，用来返回类或者函数。这个插件有两个可选配置，一个是<code>decoratorsBeforeExport</code>，用来指定是否支持<code>export</code>语法前使用装饰器。值为<code>true</code>和<code>false</code>。另一个是<code>legacy</code>，用来指定是否支持旧式装饰器的语法和行为，默认值为<code>false</code>。</p>
+<p><code>@babel/plugin-proposal-class-properties</code>插件是用来解析支持class草案语法。这个插件有一个可选配置<code>loose</code>，这个配置默认为<code>false</code>，即</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  x = <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>中<code>x</code>会使用<code>Object.defineProperty</code>来严格定义。如果<code>loose</code>设置为<code>true</code>，则为宽松处理，<code>x</code>将直接使用赋值表达式来处理。</p>
+<p>上面两个插件如果同时使用时，官网有对配置上有明确的说明，<code>@babel/plugin-proposal-decorators</code>必须要在<code>@babel/plugin-proposal-class-properties</code>前面调用，而且如果<code>@babel/plugin-proposal-decorators</code>的<code>legacy</code>设置了<code>true</code>，则要求<code>@babel/plugin-proposal-class-properties</code>的<code>loose</code>设置为<code>true</code>。</p>
+<p>最后一个插件是<code>@babel/plugin-transform-runtime</code>。这个插件还需要安装<code>@babel/runtime</code>，是用例使用帮助函数来压缩代码。插件的功能是将编译后代码中把重复的代码块用过帮助函数来处理，使得代码量得以减少。</p>
+<p>最后列一下配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"plugins"</span>: [ <span class="comment">// 插件 从上到下执行</span></span><br><span class="line">    [<span class="string">"@babel/plugin-proposal-decorators"</span>, &#123;<span class="string">"legacy"</span>: <span class="literal">true</span>&#125;], <span class="comment">// 支持解析装饰器草案语法，legacy表示保留装饰器语法，需要@babel/plugin-proposal-class-properties的loose配置为true</span></span><br><span class="line">    [<span class="string">"@babel/plugin-proposal-class-properties"</span>, &#123;<span class="string">"loose"</span>: <span class="literal">true</span>&#125;], <span class="comment">// 支持解析class草案语法，loose表示宽松处理，即class A&#123;a = 1&#125;会转化为class A&#123;this.a = 1&#125;</span></span><br><span class="line">    <span class="string">"@babel/plugin-transform-runtime"</span> <span class="comment">// 需要安装@babel/runtime，使用帮助函数压缩代码</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="postcss-config-js"><a href="#postcss-config-js" class="headerlink" title="postcss.config.js"></a><code>postcss.config.js</code></h3><p>上篇说到，<code>postcss</code>是一个用来转化css代码的js工具，它支持配置插件来转化css代码，可以直接在webpack配置中配置<code>option</code>，也可以通过<code>postcss.config.js</code>来配置。</p>
+<p>跟<code>.babelrc</code>的最外层写法不一样，<code>postcss.config.js</code>需要写成一个模块导出。里面的结构好像也不一样，只有一个<code>plugins</code>的配置项，这个配置项需要传入一个数组，这个数组的每一项就是需要使用的插件，通过<code>require</code>引入。</p>
+<p>官方文档上列了很多插件，这里就不细细展开，只简单整理一下项目中使用的两个插件。</p>
+<p><code>autoprefixer</code>插件是用来添加浏览器前缀。这个插件方便我们在打包的时候生成不同浏览器不同前缀的样式。</p>
+<p><code>postcss-pxtorem</code>是用来把<code>px</code>单位转化为<code>rem</code>的插件。这个插件主要使用在移动端。移动端的屏幕尺寸有很多种，尺寸比例也各不相同。一般我们会使用<code>rem</code>的写法，只是一套经典的解决方案。这里使用<code>postcss-pxtorem</code>，配置的时候可以配置<code>rootValue</code>，用来指定一单位rem等于多少px。这样可以让你在开发时只要使用<code>px</code>，打包的时候会以375px视窗宽度换算宽度的rem值，然后项目上线后会以这个值来计算其他宽度的比例。比如<code>rootValue</code>设置37.5，则视窗宽度将固定为10rem，其他尺寸均以这个为标准。</p>
+<p>这个插件让我们不需要关注怎么实现移动端屏幕适配问题。当然，如还有有些配置项还是需要注意的，如<code>propList</code>可以配置那些样式属性不需要转化，<code>unitPrecision</code>为转换成rem后保留的小数点位数，<code>exclude</code>为排除转化的目录。</p>
+<p>还有一个问题，如果有需要不转化<code>px</code>，还可以写成<code>PX</code>。</p>
+<p>最后，附上配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'autoprefixer'</span>),</span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'postcss-pxtorem'</span>)(&#123;</span><br><span class="line">      rootValue: <span class="number">30.1932367</span>, <span class="comment">// body宽折算为12.42rem。如果这里设置37.5，则宽折算为10rem</span></span><br><span class="line">      unitPrecision: <span class="number">5</span>,</span><br><span class="line">      propList: [<span class="string">'*'</span>],</span><br><span class="line">      <span class="comment">// exclude: /node_modules/i</span></span><br><span class="line">    &#125;) </span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来将整理webpack配置中的插件<code>plugins</code>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary3/" rel="next" title="webpack4配置总结(三)">
+                <i class="fa fa-chevron-left"></i> webpack4配置总结(三)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary5/" rel="prev" title="webpack4配置总结(五)">
+                webpack4配置总结(五) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#babelrc"><span class="nav-number">1.</span> <span class="nav-text">.babelrc</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#插件跟预设"><span class="nav-number">1.1.</span> <span class="nav-text">插件跟预设</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预设-babel-preset-env"><span class="nav-number">1.2.</span> <span class="nav-text">预设@babel/preset-env</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插件"><span class="nav-number">1.3.</span> <span class="nav-text">插件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#postcss-config-js"><span class="nav-number">2.</span> <span class="nav-text">postcss.config.js</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,axios," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="花了两天时间读了一遍axios源码，终于理解了axios内部是怎么运行的，这期间学习到了很多，所以想分享一下。想了很久，决定用一些问题来作为引子，一点点的整理一下我对axios源码的理解。下面我会用到一些官方文档的用例来说明。 用过axios的童鞋应该都知道，axios有很多请求的api，用起来是非常方便的。那么大家知道axios有多少种方法方式可以发起请求吗？为什么这些方法方式都可以发起请求？内">
+<meta name="keywords" content="JavaScript,axios">
+<meta property="og:type" content="article">
+<meta property="og:title" content="axios源码学习(一)：通过axios有多少种方法可以发起请求？">
+<meta property="og:url" content="http://listentolife.github.io/2020/05/30/axios-source-analysis1/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="花了两天时间读了一遍axios源码，终于理解了axios内部是怎么运行的，这期间学习到了很多，所以想分享一下。想了很久，决定用一些问题来作为引子，一点点的整理一下我对axios源码的理解。下面我会用到一些官方文档的用例来说明。 用过axios的童鞋应该都知道，axios有很多请求的api，用起来是非常方便的。那么大家知道axios有多少种方法方式可以发起请求吗？为什么这些方法方式都可以发起请求？内">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-30T13:28:23.996Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="axios源码学习(一)：通过axios有多少种方法可以发起请求？">
+<meta name="twitter:description" content="花了两天时间读了一遍axios源码，终于理解了axios内部是怎么运行的，这期间学习到了很多，所以想分享一下。想了很久，决定用一些问题来作为引子，一点点的整理一下我对axios源码的理解。下面我会用到一些官方文档的用例来说明。 用过axios的童鞋应该都知道，axios有很多请求的api，用起来是非常方便的。那么大家知道axios有多少种方法方式可以发起请求吗？为什么这些方法方式都可以发起请求？内">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2020/05/30/axios-source-analysis1/"/>
+
+
+
+
+
+  <title>axios源码学习(一)：通过axios有多少种方法可以发起请求？ | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/30/axios-source-analysis1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">axios源码学习(一)：通过axios有多少种方法可以发起请求？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-30T21:27:10+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/axios/" itemprop="url" rel="index">
+                    <span itemprop="name">axios</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>花了两天时间读了一遍axios源码，终于理解了axios内部是怎么运行的，这期间学习到了很多，所以想分享一下。想了很久，决定用一些问题来作为引子，一点点的整理一下我对axios源码的理解。下面我会用到一些官方文档的用例来说明。</p>
+<p>用过axios的童鞋应该都知道，axios有很多请求的api，用起来是非常方便的。那么大家知道axios有多少种方法方式可以发起请求吗？为什么这些方法方式都可以发起请求？内部是怎么实现的。</p>
+<p>这里我会先整理一下有哪些方法api，然后最后来整理一下源码中是如果实现这些方法的。</p>
+<h2 id="axios发起请求的方法"><a href="#axios发起请求的方法" class="headerlink" title="axios发起请求的方法"></a>axios发起请求的方法</h2><p>我们现在说说有哪些方法。首先要说明一下，我们一般都是这样引入axios的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">'axios'</span></span><br></pre></td></tr></table></figure>
+<h3 id="axios"><a href="#axios" class="headerlink" title="axios()"></a>axios()</h3><p><code>axios()</code>是可以直接作为函数调用的。本身就是一个请求函数，可以直接传入请求的url，请求数据及请求配置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">axios(&#123;</span><br><span class="line">  method: <span class="string">'post'</span>,</span><br><span class="line">  url: <span class="string">'/user/12345'</span>,</span><br><span class="line">  data: &#123;</span><br><span class="line">    firstName: <span class="string">'Fred'</span>,</span><br><span class="line">    lastName: <span class="string">'Flintstone'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>其实内部相当于调用了<code>createInstance(config)</code>方法。</p>
+<h3 id="axios-create"><a href="#axios-create" class="headerlink" title="axios.create()"></a>axios.create()</h3><p>这个方法不是能直接发起请求的，而是创建一个Axios实例，然后在通过实例的<code>request()</code>方法或者其他实例上的方法去发起请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create an instance using the config defaults provided by the library</span></span><br><span class="line"><span class="comment">// At this point the timeout config value is `0` as is the default for the library</span></span><br><span class="line"><span class="keyword">const</span> instance = axios.create();</span><br><span class="line"></span><br><span class="line">instance.get(<span class="string">'/longRequest'</span>, &#123;</span><br><span class="line">  timeout: <span class="number">5000</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="axios-method"><a href="#axios-method" class="headerlink" title="axios[method]()"></a><code>axios[method]()</code></h3><p>这个方法比较直观，根据请求的<code>method</code>，可以选择对应的请求方法，比如get请求可以使用<code>axios.get</code>，post请求可以使用<code>axios.post</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">axios.get(<span class="string">'/user/12345'</span>)</span><br><span class="line">  .then(<span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(response.data);</span><br><span class="line">    <span class="built_in">console</span>.log(response.status);</span><br><span class="line">    <span class="built_in">console</span>.log(response.statusText);</span><br><span class="line">    <span class="built_in">console</span>.log(response.headers);</span><br><span class="line">    <span class="built_in">console</span>.log(response.config);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>这些方法其实都是封装了<code>axios.request()</code>方法的，只是把传入的参数中<code>method</code>固定下来。</p>
+<h3 id="new-axios-Axios"><a href="#new-axios-Axios" class="headerlink" title="new axios.Axios"></a>new axios.Axios</h3><p>这个也是用来创建axios实例的，然后再用axios实例去调方法实现调起请求。</p>
+<h3 id="axios-request"><a href="#axios-request" class="headerlink" title="axios.request()"></a>axios.request()</h3><p><code>request()</code>是axios中最重要的方法之一，上面所有的调起请求的方式都是基于这个方法，也是我们下面学习源码最先解读的内容。</p>
+<h2 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h2><h3 id="关键函数request-的实现"><a href="#关键函数request-的实现" class="headerlink" title="关键函数request()的实现"></a>关键函数request()的实现</h3><p>其实<code>request()</code>方法的源码非常少，很容易理解。主要分成两个部分，第一部分是整理合并<code>config</code>，第二部分是将拦截器的函数入栈<code>chain</code>，然后用<code>Promise</code>来执行。</p>
+<p>这两个部分虽然没有提到发请求，但显而易见的是用<code>Promise</code>来执行时肯定是发了请求的。我们一步步来解读。</p>
+<p>首先，第一部分是整理合并<code>config</code>。在这里，请求的配置除了传参进来的<code>config</code>之外，还有在<code>axios.defaults</code>中的配置。所以，需要先拿到<code>config</code>，然后跟<code>axios.defaults</code>得到本次请求的配置。</p>
+<p><code>request()</code>方法的源码中，对<code>config</code>做了统一格式的处理。因为我们知道<code>request()</code>方法的传参其实支持不止一个。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一种传参方式</span></span><br><span class="line">axios.request(&#123;</span><br><span class="line">  url: <span class="string">'/api'</span>,</span><br><span class="line">  method: <span class="string">'get'</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二种传参方式</span></span><br><span class="line">axios.request(<span class="string">'/api'</span>, &#123;</span><br><span class="line">  method: <span class="string">'get'</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>所以会先判断<code>config</code>是否是<code>String</code>类型，如果是，则判断为传入<code>url</code>，第二个传参才是<code>config</code>，否则第一个传参就是<code>config</code>。同时也要判断没有传<code>config</code>的可能</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios.request 源码</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> config === <span class="string">'string'</span>) &#123;</span><br><span class="line">  config = <span class="built_in">arguments</span>[<span class="number">1</span>] || &#123;&#125;;</span><br><span class="line">  config.url = <span class="built_in">arguments</span>[<span class="number">0</span>];</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  config = config || &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后就可以合并请求配置了。源码中使用了<code>mergeConfig()</code>这个方法来处理两个配置对象的合并。这个方法内部其实是针对axios的所有配置做了专门的处理。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config = mergeConfig(<span class="keyword">this</span>.defaults, config);</span><br></pre></td></tr></table></figure>
+<h4 id="合并配置方法mergeConfig"><a href="#合并配置方法mergeConfig" class="headerlink" title="合并配置方法mergeConfig()"></a>合并配置方法<code>mergeConfig()</code></h4><p>这个方法传参只有两个，<code>config1</code>和<code>config2</code>。内部处理的流程是声明了三类配置属性的数组<code>valueFromConfig2Keys</code>, <code>mergeDeepPropertiesKeys</code>, <code>defaultToConfig2Keys</code>，然后针对这三类做针对性的浅拷贝，深拷贝，默认值处理，接着再处理除这三类配置属性外其他配置属性的赋值，最后返回最终完整配置对象。</p>
+<p>从整个处理流程来说，我认为方法中主要处理的三类配置属性应该是比较主要的配置，而且因为各自配置的不同需要分别处理。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios mergeConfig 源码</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * valueFromConfig2Keys这个数组保存有需要从用户获得的配置项</span></span><br><span class="line"><span class="comment">  * mergeDeepPropertiesKeys这个数组保存有需要深拷贝的配置项</span></span><br><span class="line"><span class="comment">  * defaultToConfig2Keys这个数组保存有axios已有默认值的配置项</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">var</span> valueFromConfig2Keys = [<span class="string">'url'</span>, <span class="string">'method'</span>, <span class="string">'data'</span>];</span><br><span class="line"><span class="keyword">var</span> mergeDeepPropertiesKeys = [<span class="string">'headers'</span>, <span class="string">'auth'</span>, <span class="string">'proxy'</span>, <span class="string">'params'</span>];</span><br><span class="line"><span class="keyword">var</span> defaultToConfig2Keys = [</span><br><span class="line">  <span class="string">'baseURL'</span>, <span class="string">'url'</span>, <span class="string">'transformRequest'</span>, <span class="string">'transformResponse'</span>, <span class="string">'paramsSerializer'</span>,</span><br><span class="line">  <span class="string">'timeout'</span>, <span class="string">'withCredentials'</span>, <span class="string">'adapter'</span>, <span class="string">'responseType'</span>, <span class="string">'xsrfCookieName'</span>,</span><br><span class="line">  <span class="string">'xsrfHeaderName'</span>, <span class="string">'onUploadProgress'</span>, <span class="string">'onDownloadProgress'</span>,</span><br><span class="line">  <span class="string">'maxContentLength'</span>, <span class="string">'maxBodyLength'</span>, <span class="string">'validateStatus'</span>, <span class="string">'maxRedirects'</span>, <span class="string">'httpAgent'</span>,</span><br><span class="line">  <span class="string">'httpsAgent'</span>, <span class="string">'cancelToken'</span>, <span class="string">'socketPath'</span>, <span class="string">'responseEncoding'</span></span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<p><code>valueFromConfig2Keys</code>这类比较简单，但需要用户提供的，直接赋值即可：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios mergeConfig 源码</span></span><br><span class="line"><span class="comment">// 利用utils.forEach处理需要从用户获得的配置项</span></span><br><span class="line">utils.forEach(valueFromConfig2Keys, <span class="function"><span class="keyword">function</span> <span class="title">valueFromConfig2</span>(<span class="params">prop</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> config2[prop] !== <span class="string">'undefined'</span>) &#123;</span><br><span class="line">    config[prop] = config2[prop];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>mergeDeepPropertiesKeys</code>这类配置的值类型可能是对象，需要做深拷贝：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios mergeConfig 源码</span></span><br><span class="line"><span class="comment">// 利用utils.forEach处理可能需要深拷贝的配置项</span></span><br><span class="line">utils.forEach(mergeDeepPropertiesKeys, <span class="function"><span class="keyword">function</span> <span class="title">mergeDeepProperties</span>(<span class="params">prop</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (utils.isObject(config2[prop])) &#123; <span class="comment">// 如果config2配置项值为对象，则使用深拷贝赋值</span></span><br><span class="line">    config[prop] = utils.deepMerge(config1[prop], config2[prop]);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> config2[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 如果 config2配置项不为undefined，则直接赋值</span></span><br><span class="line">    config[prop] = config2[prop];</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (utils.isObject(config1[prop])) &#123; <span class="comment">// 以上判断完config2，就判断config1的配置值是否为Object，是着使用深拷贝赋值</span></span><br><span class="line">    config[prop] = utils.deepMerge(config1[prop]);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> config1[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 否则判断不为undefined就直接赋值</span></span><br><span class="line">    config[prop] = config1[prop];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>defaultToConfig2Keys</code>这类配置是已有默认配置，所以可以使用默认值赋值。但内部还是做了<code>undefined</code>的判断，因为<code>axios.default</code>的配置值用户是可以修改的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios mergeConfig 源码</span></span><br><span class="line"><span class="comment">// 利用utils.forEach来处理其他axios已有默认值的配置项</span></span><br><span class="line">utils.forEach(defaultToConfig2Keys, <span class="function"><span class="keyword">function</span> <span class="title">defaultToConfig2</span>(<span class="params">prop</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> config2[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 如果config2中有配置且不为undefined，则赋值</span></span><br><span class="line">    config[prop] = config2[prop];</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> config1[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 否则判断config1中配置不为undefined，则赋值</span></span><br><span class="line">    config[prop] = config1[prop];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>最后的部分就是集合三个分类的配置属性，去筛选出不在这其中的用户配置属性，再去处理赋值，只做浅拷贝。这些配置可能用户也会在<code>axios.default</code>上设置默认值，所以也要考虑处理默认值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios mergeConfig 源码</span></span><br><span class="line"><span class="comment">// 合并所有前面已处理赋值的配置属性</span></span><br><span class="line"><span class="keyword">var</span> axiosKeys = valueFromConfig2Keys</span><br><span class="line">  .concat(mergeDeepPropertiesKeys)</span><br><span class="line">  .concat(defaultToConfig2Keys);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 筛选出前面未处理到的用户配置属性</span></span><br><span class="line"><span class="keyword">var</span> otherKeys = <span class="built_in">Object</span></span><br><span class="line">  .keys(config2)</span><br><span class="line">  .filter(<span class="function"><span class="keyword">function</span> <span class="title">filterAxiosKeys</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> axiosKeys.indexOf(key) === <span class="number">-1</span>;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理前面未处理到的用户配置属性赋值</span></span><br><span class="line">utils.forEach(otherKeys, <span class="function"><span class="keyword">function</span> <span class="title">otherKeysDefaultToConfig2</span>(<span class="params">prop</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> config2[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 判断config2中配置非undefined则赋值</span></span><br><span class="line">    config[prop] = config2[prop];</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> config1[prop] !== <span class="string">'undefined'</span>) &#123; <span class="comment">// 否则再判断config1中是否有默认非undefined值，有则赋值</span></span><br><span class="line">    config[prop] = config1[prop];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="处理拦截器及请求"><a href="#处理拦截器及请求" class="headerlink" title="处理拦截器及请求"></a>处理拦截器及请求</h4><p>在这之前，先处理了请求的<code>method</code>，如果用户有传就将值改全小写，都没有就默认为<code>get</code>。</p>
+<p>接下来的部分我认为很精巧。在调请求之前，因为axios还支持请求拦截器跟响应拦截器，所以这里使用类栈的方案。</p>
+<p>先设置一个数组，这个数组默认有两个元素，一个是<code>dispatchRequest</code>，就是发送请求的方法，另一个是<code>undefined</code>。然后遍历请求拦截器，把其中的两个函数从数组的头部插入，再遍历响应拦截器，把两个函数从数组的尾部插入。这样一来，数组的结构就是从头到尾为就是按照请求的过程排好了请求拦截器一对对函数，然后是请求函数跟<code>undefined</code>，然后是响应拦截器一对对函数。</p>
+<p>然后声明一个<code>Promise.resolve()</code>后返回的<code>promise</code>, 把数组中从头部开始一对对函数的传入<code>promise.then()</code>中。</p>
+<p>这个操作可以利用<code>promise.then()</code>的特点，自动通过promise链去调用方法。如果请求拦截器中有报错，则最后不会调<code>dispatchRequest</code>方法并断掉。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios.request 源码</span></span><br><span class="line"><span class="comment">// Hook up interceptors middleware</span></span><br><span class="line"><span class="keyword">var</span> chain = [dispatchRequest, <span class="literal">undefined</span>];</span><br><span class="line"><span class="keyword">var</span> promise = <span class="built_in">Promise</span>.resolve(config);</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>.interceptors.request.forEach(<span class="function"><span class="keyword">function</span> <span class="title">unshiftRequestInterceptors</span>(<span class="params">interceptor</span>) </span>&#123;</span><br><span class="line">  chain.unshift(interceptor.fulfilled, interceptor.rejected);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">this</span>.interceptors.response.forEach(<span class="function"><span class="keyword">function</span> <span class="title">pushResponseInterceptors</span>(<span class="params">interceptor</span>) </span>&#123;</span><br><span class="line">  chain.push(interceptor.fulfilled, interceptor.rejected);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (chain.length) &#123;</span><br><span class="line">  promise = promise.then(chain.shift(), chain.shift());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后返回这个<code>promise</code>使得我们调请求时可以用promise的方法继续处理。</p>
+<h3 id="其他请求方法的实现"><a href="#其他请求方法的实现" class="headerlink" title="其他请求方法的实现"></a>其他请求方法的实现</h3><p>那么<code>request()</code>这个方法是怎么演变出这么多种调用方式的呢？</p>
+<p>首先，在<code>Axios</code>这个类下，提供了一堆<code>axios[method]()</code>的方法，作者是通过两个<code>forEach</code>来实现的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Axios 源码</span></span><br><span class="line"><span class="comment">// Provide aliases for supported request methods</span></span><br><span class="line"><span class="comment">// 这里提供了methods方法，是通过封装request来实现的，换言之所有逻辑都在request中</span></span><br><span class="line">utils.forEach([<span class="string">'delete'</span>, <span class="string">'get'</span>, <span class="string">'head'</span>, <span class="string">'options'</span>], <span class="function"><span class="keyword">function</span> <span class="title">forEachMethodNoData</span>(<span class="params">method</span>) </span>&#123;</span><br><span class="line">  <span class="comment">/*eslint func-names:0*/</span></span><br><span class="line">  Axios.prototype[method] = <span class="function"><span class="keyword">function</span>(<span class="params">url, config</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.request(utils.merge(config || &#123;&#125;, &#123;</span><br><span class="line">      method: method,</span><br><span class="line">      url: url</span><br><span class="line">    &#125;));</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">utils.forEach([<span class="string">'post'</span>, <span class="string">'put'</span>, <span class="string">'patch'</span>], <span class="function"><span class="keyword">function</span> <span class="title">forEachMethodWithData</span>(<span class="params">method</span>) </span>&#123;</span><br><span class="line">  <span class="comment">/*eslint func-names:0*/</span></span><br><span class="line">  Axios.prototype[method] = <span class="function"><span class="keyword">function</span>(<span class="params">url, data, config</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.request(utils.merge(config || &#123;&#125;, &#123;</span><br><span class="line">      method: method,</span><br><span class="line">      url: url,</span><br><span class="line">      data: data</span><br><span class="line">    &#125;));</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>然后引入的<code>axios</code>，实际是先调用了<code>createInstance()</code>方法，这个方法里声明一个<code>instance</code>的变量，通过<code>bind</code>方法得到了一个上下文为<code>Axios</code>实例的<code>Axios.prototype.request()</code>方法，最后返回<code>instance</code>。所以我们可以直接调用<code>axios</code>方法发请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// axios 源码</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createInstance</span>(<span class="params">defaultConfig</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 声明一个Axios实例</span></span><br><span class="line">  <span class="keyword">var</span> context = <span class="keyword">new</span> Axios(defaultConfig);</span><br><span class="line">  <span class="comment">// 返回一个function，this指向context，即Axios实例</span></span><br><span class="line">  <span class="comment">// 相当于instance(args)会变成Axios.prototype.request.apply(context, args)</span></span><br><span class="line">  <span class="keyword">var</span> instance = bind(Axios.prototype.request, context);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Copy axios.prototype to instance</span></span><br><span class="line">  <span class="comment">// 把Axios.prototype上的属性方法复制到instance上，this指向context</span></span><br><span class="line">  utils.extend(instance, Axios.prototype, context);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Copy context to instance</span></span><br><span class="line">  <span class="comment">// 把context复制到instance</span></span><br><span class="line">  utils.extend(instance, context);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 返回的instance上有Axios类上的方法，有Axios实例上所有属性跟方法</span></span><br><span class="line">  <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create the default instance to be exported</span></span><br><span class="line"><span class="keyword">var</span> axios = createInstance(defaults);</span><br></pre></td></tr></table></figure>
+<p>而<code>axios.create()</code>方法内部就是直接使用了<code>createInstance()</code>, <code>axios.Axios</code>就是直接暴露<code>Axios</code>类。</p>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>关于axios请求的源码分析就整理完了，下一篇会来了解一下axios是怎么实现请求取消的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/axios/" rel="tag"># axios</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary6/" rel="next" title="webpack4配置总结(六)">
+                <i class="fa fa-chevron-left"></i> webpack4配置总结(六)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#axios发起请求的方法"><span class="nav-number">1.</span> <span class="nav-text">axios发起请求的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#axios"><span class="nav-number">1.1.</span> <span class="nav-text">axios()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#axios-create"><span class="nav-number">1.2.</span> <span class="nav-text">axios.create()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#axios-method"><span class="nav-number">1.3.</span> <span class="nav-text">axios[method]()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new-axios-Axios"><span class="nav-number">1.4.</span> <span class="nav-text">new axios.Axios</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#axios-request"><span class="nav-number">1.5.</span> <span class="nav-text">axios.request()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内部实现"><span class="nav-number">2.</span> <span class="nav-text">内部实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关键函数request-的实现"><span class="nav-number">2.1.</span> <span class="nav-text">关键函数request()的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#合并配置方法mergeConfig"><span class="nav-number">2.1.1.</span> <span class="nav-text">合并配置方法mergeConfig()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#处理拦截器及请求"><span class="nav-number">2.1.2.</span> <span class="nav-text">处理拦截器及请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他请求方法的实现"><span class="nav-number">2.2.</span> <span class="nav-text">其他请求方法的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结尾"><span class="nav-number">2.3.</span> <span class="nav-text">结尾</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

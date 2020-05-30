@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,webpack," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇整理了webpack配置的四大配置概念。这篇来整理loader的使用。 loader因为我的项目是基于Vue全家桶及sass的，所以loader部分会有偏向这方面的介绍，使用TS，React全家桶及less的可以找一下相应的loader。 webpack打包模块时，会把模块拿到module这里的rules中做匹配，如果匹配到，则使用对应的loader进行解析。 因为loader有很多，不好整">
+<meta name="keywords" content="JavaScript,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack4配置总结(三)">
+<meta property="og:url" content="http://listentolife.github.io/2020/05/30/webpack-summary3/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="上一篇整理了webpack配置的四大配置概念。这篇来整理loader的使用。 loader因为我的项目是基于Vue全家桶及sass的，所以loader部分会有偏向这方面的介绍，使用TS，React全家桶及less的可以找一下相应的loader。 webpack打包模块时，会把模块拿到module这里的rules中做匹配，如果匹配到，则使用对应的loader进行解析。 因为loader有很多，不好整">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-30T13:24:04.840Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack4配置总结(三)">
+<meta name="twitter:description" content="上一篇整理了webpack配置的四大配置概念。这篇来整理loader的使用。 loader因为我的项目是基于Vue全家桶及sass的，所以loader部分会有偏向这方面的介绍，使用TS，React全家桶及less的可以找一下相应的loader。 webpack打包模块时，会把模块拿到module这里的rules中做匹配，如果匹配到，则使用对应的loader进行解析。 因为loader有很多，不好整">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2020/05/30/webpack-summary3/"/>
+
+
+
+
+
+  <title>webpack4配置总结(三) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/30/webpack-summary3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">webpack4配置总结(三)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-30T21:23:13+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇整理了webpack配置的四大配置概念。这篇来整理loader的使用。</p>
+<h3 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h3><p>因为我的项目是基于Vue全家桶及sass的，所以<code>loader</code>部分会有偏向这方面的介绍，使用TS，React全家桶及less的可以找一下相应的<code>loader</code>。</p>
+<p>webpack打包模块时，会把模块拿到<code>module</code>这里的<code>rules</code>中做匹配，如果匹配到，则使用对应的loader进行解析。</p>
+<p>因为<code>loader</code>有很多，不好整理，所以我这里就按照项目中不同文件模块所需要的<code>loader</code>来整理说明。</p>
+<h4 id="vue"><a href="#vue" class="headerlink" title="vue"></a>vue</h4><p>我们一般在基于vue全家桶项目目录中都会使用.vue文件来开发vue组件，所以.vue文件模块需要单独解析。而vue本身就有一个专门解析.vue文件的loader</p>
+<h5 id="vue-loader"><a href="#vue-loader" class="headerlink" title="vue-loader"></a>vue-loader</h5><p><code>vue-loader</code>是一个专门解析.vue文件的loader，顾名思义，只是解析.vue文件，并不能解析内部的写法。因为.vue文件一般会有三个部分，一个是template模块，用来写模板语言；一个是script模块，用来写组件的js部分；一个是style模块，用来写组件的css部分。template模块是通过vue的一个plugin插件来解析处理的，script模块跟style模块则提供出来自定义loader进行解析。</p>
+<p>所以在loader的配置上也比较简单：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.vue$/</span>,</span><br><span class="line">        use: <span class="string">'vue-loader'</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h4><p>我们的项目中最多的代码就是js代码了，而且现在js的标准已经到了ES2020，很多ES6及以上的标准都需要编译成ES5才能在各种浏览器中使用，所以在webpack打包中，我们也需要解析项目中的js代码。这里就需要使用<code>babel-loader</code>。</p>
+<h5 id="babel-loader"><a href="#babel-loader" class="headerlink" title="babel-loader"></a>babel-loader</h5><p>讲到babel，我们在webpack中使用的时候，其实有很多复杂的使用方式。这里先写一下在<code>module</code>中的内容：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        use: <span class="string">'babel-loader'</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>单单只是这样配置是不足以完成js代码的解析的。实际上，如果你的代码中使用了es6及以上标准的语法，还需要配合<code>.babelrc</code>配置文件。这个配置文件的配置内容也是可以直接卸载 <code>rules</code>中，但是因为配置内容比较多，所以最好独立出来。</p>
+<p>实际上，这里配置使用的<code>babel-loader</code>在解析代码时是调用了<code>@babel/core</code>，然后由<code>@babel/core</code>来转换代码。转换的过程中会调<code>.babelrc</code>配置文件中的配置。</p>
+<p>关于<code>.babelrc</code>文件中的配置介绍，我会另起一篇来做详细介绍。</p>
+<h4 id="css"><a href="#css" class="headerlink" title="css"></a>css</h4><p>css也是项目中非常重要的一部分。我的项目中使用了sass来开发css。这里就需要安装使用以下loader：</p>
+<h5 id="sass-loader"><a href="#sass-loader" class="headerlink" title="sass-loader"></a>sass-loader</h5><p><code>sass-loader</code>是用于解析sass语法的loader，使用这个loader时还需要安装<code>node-sass</code>依赖包。这个包是用于让sass可以在node端进行编译。</p>
+<p>安装<code>node-sass</code>也有一些比较麻烦的地方。因为这个包是为了sass能在node端进行编译，所以它的版本要求比较高，不同版本对应不同的node版本范围，需要根据自己的node环境进行选择。同时，安装也不太顺利，一般的依赖包可以直接使用npm进行下载安装，而<code>node-sass</code>直接使用npm下载容易失败，需要考虑更换淘宝源或者使用cnpm安装。</p>
+<h5 id="postcss-loader"><a href="#postcss-loader" class="headerlink" title="postcss-loader"></a>postcss-loader</h5><p><code>postcss-loader</code>简单的理解就是一个js工具，用来转化css代码，为css样式处理适配，抹平差异。因为不同浏览器的内核不一样，导致一些样式在各个浏览器中实现不一样。<code>postcss-loader</code>就是用来抹平浏览器之间的差异而出现的。可以让我们在开发时无需考虑这些问题。不过，为css样式加处理实际上不是这个loader本身实现的，而是通过如<code>autoprefixer</code>， <code>postcss-pxtorem</code>配合实现的，所以需要安装并配置。配置上也可以新建一个<code>postcss.config.js</code>。这个后面再单独整理。</p>
+<h5 id="css-loader"><a href="#css-loader" class="headerlink" title="css-loader"></a>css-loader</h5><p><code>css-loader</code>主要是用于解释<code>@import</code>和<code>url()</code>，会在<code>import/require()</code>后再解析它们。loader有比较多的配置项，这里因为我的项目中只需要使用要<code>importLoaders</code>这个配置项，所以就只介绍这个，其他的配置项可以在webpack官网上查看。<code>importLoaders</code>是用来指定在<code>css-loader</code>之前使用loader的数量。如下配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="string">'vue-style-loader'</span>,</span><br><span class="line">    <span class="string">'style-loader'</span>,</span><br><span class="line">    &#123;</span><br><span class="line">      loader: <span class="string">'css-loader'</span>, <span class="comment">// 用于编译@import和url()跟解析css</span></span><br><span class="line">      options: &#123;</span><br><span class="line">        <span class="comment">// 在 loader 前应用的 loader 的数量，意思是解析css时需要用到'postcss-loader','sass-loader'</span></span><br><span class="line">        <span class="comment">// 因为引入的css文件中可能是sass文件</span></span><br><span class="line">        <span class="comment">// 如配置1，则应用'postcss-loader'，如配置2，则应用'postcss-loader','sass-loader'</span></span><br><span class="line">        importLoaders: <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'postcss-loader'</span>,</span><br><span class="line">    <span class="string">'sass-loader'</span></span><br><span class="line">  ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>上面配置中，<code>importLoaders</code>设置了<code>2</code>，指定在<code>css-loader</code>之前使用2个loader，而且指定的loader就是<code>postcss-loader</code>跟<code>sass-loader</code>，即指定的loader位于<code>css-loader</code>右侧（下方）最近的数个loader。</p>
+<h5 id="style-loader"><a href="#style-loader" class="headerlink" title="style-loader"></a>style-loader</h5><p><code>style-loader</code>的作用是在DOM里插入<code>&lt;style&gt;</code>标签，并将css写入这个标签内。这个loader跟抽离css的插件<code>mini-css-extract-plugin</code>中的内置loader会冲突，所以当使用<code>mini-css-extract-plugin</code>插件时，因为需要用到其loader，所以需要分别使用，比如因为<code>mini-css-extract-plugin</code>插件只能在正式环境使用，需要使用其loader来辅助编译打包时处理抽离，所以正式环境下就不能使用<code>style-loader</code>了。</p>
+<h5 id="vue-style-loader"><a href="#vue-style-loader" class="headerlink" title="vue-style-loader"></a>vue-style-loader</h5><p><code>vue-style-loader</code>是配合<code>vue-loader</code>使用的。上面说到，<code>vue-loader</code>是用来解析.vue文件的，但是三个模块是需要分别解析的，而<code>vue-style-loader</code>就是用来解析.vue文件中的style模块的。官方文档介绍到，其实<code>vue-style-loader</code>是从<code>style-loader</code>fork并基于这个loader开发的，所以作用也跟<code>style-loader</code>一样。但是也有一些区别，增加了对ssr的支持，去掉了一些<code>style-loader</code>支持的功能，所以基于我们项目的需要，还是需要同时使用这两个loader。</p>
+<h5 id="css及sass打包配置"><a href="#css及sass打包配置" class="headerlink" title="css及sass打包配置"></a>css及sass打包配置</h5><p>基于这些loader，我们就可以进行配置，如sass需要通过<code>scss-loader</code>先做转化为css，然后再用<code>postcss-loader</code>处理加前缀，转单位，然后在使用<code>css-loader</code>处理<code>import/require()</code>语句，处理这些语句是对引入的文件又根据文件类型再使用<code>scss-loader</code>及<code>postcss-loader</code>进行处理。最后再把处理好的css代码通过<code>style-loader</code>，<code>vue-style-loader</code>插入到DOM中。</p>
+<p>如果是在正式环境打包，则不使用<code>style-loader</code>，而是使用<code>mini-css-extract-plugin</code>插件配合压缩css代码。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="string">'vue-style-loader'</span>, <span class="comment">// 用于编译.vue文件中css部分</span></span><br><span class="line">    isDev ? <span class="string">'style-loader'</span> : MiniCssExtractPlugin.loader, <span class="comment">// 一般使用MiniCssExtractPlugin就不使用style-loader</span></span><br><span class="line">    &#123;</span><br><span class="line">      loader: <span class="string">'css-loader'</span>, <span class="comment">// 用于编译@import和url()跟解析css</span></span><br><span class="line">      options: &#123;</span><br><span class="line">        <span class="comment">// 在 loader 前应用的 loader 的数量，意思是解析css时需要用到'postcss-loader','sass-loader'</span></span><br><span class="line">        <span class="comment">// 因为引入的css文件中可能是sass文件</span></span><br><span class="line">        <span class="comment">// 如配置1，则应用'postcss-loader'，如配置2，则应用'postcss-loader','sass-loader'</span></span><br><span class="line">        importLoaders: <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'postcss-loader'</span>, <span class="comment">// 支持增加声明前缀，需要安装autoprefixer，并在postcss.config.js中配置</span></span><br><span class="line">    <span class="string">'sass-loader'</span> <span class="comment">// sass编译，还需要安装node-sass依赖。安装node-sass建议使用cnpm</span></span><br><span class="line">  ]</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">  test: <span class="regexp">/\.scss$/</span>,</span><br><span class="line">  use: [</span><br><span class="line">    <span class="string">'vue-style-loader'</span>,</span><br><span class="line">    isDev ? <span class="string">'style-loader'</span> : MiniCssExtractPlugin.loader, </span><br><span class="line">    <span class="string">'css-loader'</span>,</span><br><span class="line">    <span class="string">'postcss-loader'</span>,</span><br><span class="line">    <span class="string">'sass-loader'</span></span><br><span class="line">  ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="其他文件"><a href="#其他文件" class="headerlink" title="其他文件"></a>其他文件</h4><p>项目中通常还需要使用各种其他格式的文件，如文字图标会使用到<code>woff</code>，<code>ttf</code>，<code>eot</code>，<code>svg</code>这些格式的文件，图片文件一般有<code>jpg</code>，<code>jpeg</code>，<code>png</code>，<code>gif</code>，<code>svg</code>等格式。一般我们会考虑使用外部链接或者本地文件的形式引入。这里我们主要需要打包处理的是本地文件，所以就需要用到以下这些loader。</p>
+<h5 id="file-loader"><a href="#file-loader" class="headerlink" title="file-loader"></a>file-loader</h5><p><code>file-loader</code>就是打包文件时会默认使用文件内容生成MD5哈希值然后使用这个哈希值作为这个文件名字保存到打包目录中，并且不会修改扩展名。<code>file-loader</code>也要一些配置可以使用，这里简单介绍几个：<code>name</code>可以指定打包文件的命名，自定义的命名跟前面打包文件命名类似，可以使用<code>[name]</code>(原文件名),<code>[ext]</code>(原扩展名),<code>[hash]</code>(哈希值),<code>[path]</code>(原路径),<code>[N]</code>(正则匹配第N个)；<code>publicPath</code>指定路径前缀，方便使用CDN；<code>outputPath</code>指定打包目录。</p>
+<h5 id="url-loader"><a href="#url-loader" class="headerlink" title="url-loader"></a>url-loader</h5><p><code>url-loader</code>功能类似于<code>file-loader</code>，但是它有一个特点，就是可以根据文件的大小进行不用的打包处理，如小于一个特定的大小，则会打包返回一个DataURL的格式。比如一张图片小于10k，则直接转成DataURL打包存放在调用的文件中，这样会不需要再引用文件了。对于线上使用来说，客户端不需要为这个小文件发多一次请求。当然，这个需要配置<code>limit</code>属性。</p>
+<h5 id="其他文件的打包配置"><a href="#其他文件的打包配置" class="headerlink" title="其他文件的打包配置"></a>其他文件的打包配置</h5><p><code>file-loader</code>跟<code>url-loader</code>各有不同，可以根据不同文件使用不同的loader，比如字体文件可以直接使用<code>file-loader</code>，图片类文件可以使用<code>url-loader</code>来分类处理：大小较小的图片可以直接打包进文件中，较大的图片可以打包引入文件中。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  test: <span class="regexp">/\.(woff|ttf|eot|svg)$/</span>,</span><br><span class="line">  use: <span class="string">'file-loader'</span> <span class="comment">// 用于解析通过import/require()引入的文件或外部链接</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">  test: <span class="regexp">/\.(jpe?g|png|gif|svg)$/</span>,</span><br><span class="line">  use: &#123;</span><br><span class="line">    loader: <span class="string">'url-loader'</span>, <span class="comment">// 用于把文件编译为base64格式</span></span><br><span class="line">    options: &#123;</span><br><span class="line">      name: <span class="string">"image/[contentHash].[ext]"</span>, <span class="comment">// 超过大小将使用file-loader解析，name为file-loader的配置，contentHash为图片的hash戳，ext是后缀</span></span><br><span class="line">      limit: <span class="number">100</span> * <span class="number">1024</span>, <span class="comment">// 尺寸限制</span></span><br><span class="line">      esModule: <span class="literal">false</span> <span class="comment">// 启用CommonJS模块语法</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下一篇整理一下<code>babel</code>跟<code>postcss-loader</code>的配置。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary2/" rel="next" title="webpack4配置总结(二)">
+                <i class="fa fa-chevron-left"></i> webpack4配置总结(二)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary4/" rel="prev" title="webpack4配置总结(四)">
+                webpack4配置总结(四) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#loader"><span class="nav-number">1.</span> <span class="nav-text">loader</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#vue"><span class="nav-number">1.1.</span> <span class="nav-text">vue</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#vue-loader"><span class="nav-number">1.1.1.</span> <span class="nav-text">vue-loader</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#javascript"><span class="nav-number">1.2.</span> <span class="nav-text">javascript</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#babel-loader"><span class="nav-number">1.2.1.</span> <span class="nav-text">babel-loader</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#css"><span class="nav-number">1.3.</span> <span class="nav-text">css</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#sass-loader"><span class="nav-number">1.3.1.</span> <span class="nav-text">sass-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#postcss-loader"><span class="nav-number">1.3.2.</span> <span class="nav-text">postcss-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#css-loader"><span class="nav-number">1.3.3.</span> <span class="nav-text">css-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#style-loader"><span class="nav-number">1.3.4.</span> <span class="nav-text">style-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vue-style-loader"><span class="nav-number">1.3.5.</span> <span class="nav-text">vue-style-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#css及sass打包配置"><span class="nav-number">1.3.6.</span> <span class="nav-text">css及sass打包配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他文件"><span class="nav-number">1.4.</span> <span class="nav-text">其他文件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#file-loader"><span class="nav-number">1.4.1.</span> <span class="nav-text">file-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#url-loader"><span class="nav-number">1.4.2.</span> <span class="nav-text">url-loader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他文件的打包配置"><span class="nav-number">1.4.3.</span> <span class="nav-text">其他文件的打包配置</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

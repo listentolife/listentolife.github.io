@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JavaScript,webpack," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇整理了babel跟postcss-loader的配置，结束了webpack的loader部分。这边开始整理plugins。 pluginsplugins插件是用来拓展webpack功能的。他们会在整个webpack打包构建过程中生效，执行相关的任务。插件与laoder不同，loader主要是处理某一些源文件的，用完就不需要了，但是插件是在一直作用于构建中。 使用插件时，需要先npm安装插件，">
+<meta name="keywords" content="JavaScript,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack4配置总结(五)">
+<meta property="og:url" content="http://listentolife.github.io/2020/05/30/webpack-summary5/index.html">
+<meta property="og:site_name" content="Listentolife">
+<meta property="og:description" content="上一篇整理了babel跟postcss-loader的配置，结束了webpack的loader部分。这边开始整理plugins。 pluginsplugins插件是用来拓展webpack功能的。他们会在整个webpack打包构建过程中生效，执行相关的任务。插件与laoder不同，loader主要是处理某一些源文件的，用完就不需要了，但是插件是在一直作用于构建中。 使用插件时，需要先npm安装插件，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-30T13:25:27.069Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack4配置总结(五)">
+<meta name="twitter:description" content="上一篇整理了babel跟postcss-loader的配置，结束了webpack的loader部分。这边开始整理plugins。 pluginsplugins插件是用来拓展webpack功能的。他们会在整个webpack打包构建过程中生效，执行相关的任务。插件与laoder不同，loader主要是处理某一些源文件的，用完就不需要了，但是插件是在一直作用于构建中。 使用插件时，需要先npm安装插件，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://listentolife.github.io/2020/05/30/webpack-summary5/"/>
+
+
+
+
+
+  <title>webpack4配置总结(五) | Listentolife</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Listentolife</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">简单就好</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archive" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/30/webpack-summary5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">webpack4配置总结(五)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-30T21:24:53+08:00">
+                2020-05-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇整理了<code>babel</code>跟<code>postcss-loader</code>的配置，结束了webpack的<code>loader</code>部分。这边开始整理<code>plugins</code>。</p>
+<h3 id="plugins"><a href="#plugins" class="headerlink" title="plugins"></a><code>plugins</code></h3><p><code>plugins</code>插件是用来拓展webpack功能的。他们会在整个webpack打包构建过程中生效，执行相关的任务。插件与<code>laoder</code>不同，<code>loader</code>主要是处理某一些源文件的，用完就不需要了，但是插件是在一直作用于构建中。</p>
+<p>使用插件时，需要先<code>npm</code>安装插件，然后在<code>plugins</code>属性下添加插件的实例。<code>plugins</code>属性接受的值是一个数组。</p>
+<p>插件有很多，根据项目的需求使用的插件也不一样，不像loader那种可能比较固定。所以这里就结合项目需求来整理插件。</p>
+<h4 id="DefinePlugin"><a href="#DefinePlugin" class="headerlink" title="DefinePlugin"></a><code>DefinePlugin</code></h4><p>我们一般会需要在项目全局上设置一些常量，比如不同环境下，可能需要设定版本，不同的请求域名，可能需要标识常量来区分测试环境跟生产环境。但是在开发项目时，这些值可能需要在打包前根据打包的环境不同手动修改。如果常量不多还好，如果很多，容易改错，或者忘记修改，导致项目上线不正常。</p>
+<p><code>DefinePlugin</code>是webapck官方插件，这个插件允许创建一个在编译时可以配置的全局常量。这个插件就可以很好的解决这个问题。</p>
+<p>这个插件允许用户自定义键值对，其中对键值有四个判断处理：</p>
+<blockquote>
+<ol>
+<li>如果这个值是一个字符串，它会被当作一个代码片段来使用。   </li>
+<li>如果这个值不是字符串，它会被转化为字符串(包括函数)。   </li>
+<li>如果这个值是一个对象，它所有的 key 会被同样的方式定义。   </li>
+<li>如果在一个 key 前面加了 typeof,它会被定义为 typeof 调用。</li>
+</ol>
+</blockquote>
+<p>使用时，直接使用常量即可，如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack配置</span></span><br><span class="line"><span class="keyword">const</span> webpack =  <span class="built_in">require</span>(<span class="string">'webpack'</span>);</span><br><span class="line"><span class="keyword">let</span> isDev = env.development;</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> webpack.DefinePlugin(&#123; <span class="comment">// 可以在项目中拿到当前环境变量</span></span><br><span class="line">    <span class="string">'NODE_ENV'</span>: <span class="built_in">JSON</span>.stringify(isDev ? <span class="string">'dev'</span> : <span class="string">'prod'</span>),</span><br><span class="line">  &#125;),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 项目中业务代码</span></span><br><span class="line"><span class="keyword">if</span> (NODE_ENV === <span class="string">'dev'</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="vue-loader-plugin"><a href="#vue-loader-plugin" class="headerlink" title="vue-loader plugin"></a>vue-loader plugin</h4><p>当项目是基于Vuejs开发时，webpack就需要配置vue-loader plugin。通过官方文档可以知道，这个插件就是用来处理.vue文件中各个模块匹配不同<code>loader</code>。如前面.js文件配置的loader会应用到.vue文件中的script模块，.css文件，.scss文件配置的loader会应用到.vue文件中的style模块。</p>
+<p>这个插件不是独立的，是配置<code>vue-loader</code>的时候同时需要使用到的，在<code>vue-loader/lib/plugin</code>目录下。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> VueLoaderPlugin = <span class="built_in">require</span>(<span class="string">'vue-loader/lib/plugin'</span>);</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> VueLoaderPlugin(), <span class="comment">// 作用是处理匹配.vue文件的rule</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h4 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a><code>html-webpack-plugin</code></h4><p>前面写了这么一系列的配置，但是有个关键的问题，就是打包后的文件会从哪里引用。因为是网页，所以一定需要用一个html文件来引用。但是手动创建一个比较麻烦。这里就可以使用<code>html-webpack-plugin</code>这个插件。</p>
+<p>这个插件可以自动生成一个html文件，并使用<code>script</code>标签引入打包后的文件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HtmlWebpackPlugin = <span class="built_in">require</span>(<span class="string">'html-webpack-plugin'</span>);</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> HtmlWebpackPlugin(),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>上面就是最简单的配置，打包之后会生成一个<code>index.html</code>。</p>
+<p>这个插件也支持配置。详细的配置项可以通过官网查看。这里简单介绍几个配置项：</p>
+<p><code>template</code>用来配置生成<code>index.html</code>基于的模板，值是模板在项目中的相对路径或者绝对路径。</p>
+<p><code>filename</code>用来配置生成html文件的命名，默认为<code>index.html</code>。</p>
+<p><code>minify</code>用来配置在打包生产环境时生成的html文件压缩设置。这个配置项默认在生成环境下为true，也可以手动配置压缩哪些，比如去除空白，删除注释等。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HtmlWebpackPlugin = <span class="built_in">require</span>(<span class="string">'html-webpack-plugin'</span>);</span><br><span class="line"><span class="keyword">let</span> isDev = env.development;</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> HtmlWebpackPlugin(&#123; <span class="comment">// 自动生成html文件</span></span><br><span class="line">    template: path.resolve(__dirname, <span class="string">'../public/index.html'</span>), <span class="comment">// 配置生成HTML文件的模板</span></span><br><span class="line">    filename: <span class="string">'index.html'</span>, <span class="comment">// 生成html文件的命名</span></span><br><span class="line">    minify: !isDev &amp;&amp; &#123;</span><br><span class="line">      removeComments: !isDev, <span class="comment">// 移除注释</span></span><br><span class="line">      removeAttributeQuotes: !isDev, <span class="comment">// 移除引号</span></span><br><span class="line">      collapseWhitespace: !isDev <span class="comment">// 折叠空白</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h4 id="html-webpack-tags-plugin"><a href="#html-webpack-tags-plugin" class="headerlink" title="html-webpack-tags-plugin"></a><code>html-webpack-tags-plugin</code></h4><p>我们在项目中不免会需要在html文件中直接引入一些文件，比如用来重写标签一般样式的css文件，项目中涉及微信api时需要引入相关的js文件。这些文件我们当然可以直接利用<code>html-webpack-plugin</code>，把需要引入文件写到html模板文件中，然后打包的时候直接生成。不过这样肯定有些人觉得不够优雅。那么就可以试试使用<code>html-webpack-tags-plugin</code>这个插件。</p>
+<p><code>html-webpack-tags-plugin</code>这个插件支持在打包的时候把配置文件自动引入到html文件中。这样我们就可以在webpack配置中对引入的文件一目了然。</p>
+<p><code>html-webpack-tags-plugin</code>也有很多配置项，我这里也只是对几个用上的配置项做介绍，其他配置项可以根据项目需求使用。</p>
+<p><code>tags</code>用来指定需要插入的文件列表。这个配置项接受一个数组，这个数据的元素可以是字符串，表示引入的文件地址，也可以是一个json格式，可以配置除了引入文件的地址<code>path</code>之外其他配置。如<code>type</code>指定文件类型，<code>publicPath</code>指定文件路径前是否需要应用<code>publicPath</code>。</p>
+<p><code>append</code>用来指定是否将<code>tags</code>中列出的文件在打包文件位置前引入。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HtmlWebpackTagsPlugin = <span class="built_in">require</span>(<span class="string">'html-webpack-tags-plugin'</span>);</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> HtmlWebpackTagsPlugin(&#123; <span class="comment">// 在html文件中插入引用文件</span></span><br><span class="line">    tags: [</span><br><span class="line">      &#123;</span><br><span class="line">        path: <span class="string">'//res.wx.qq.com/open/js/jweixin-1.4.0.js'</span>,</span><br><span class="line">        type: <span class="string">'js'</span>,</span><br><span class="line">        publicPath: <span class="literal">false</span>, <span class="comment">//不在路径面前应用publicPath </span></span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    append: <span class="literal">false</span>, <span class="comment">//插入顺序在打包文件前面</span></span><br><span class="line">  &#125;),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h4 id="clean-webpack-plugin"><a href="#clean-webpack-plugin" class="headerlink" title="clean-webpack-plugin"></a><code>clean-webpack-plugin</code></h4><p><code>clean-webpack-plugin</code>这个插件是用来在打包输出文件之前，清理打包输出目录文件的工具。一般我们配置的打包输出目录是固定的，每次打包如果不清除目录内的文件，会导致目录内的文件越来越多。在这种情况下，我们可以使用这个插件来清除。</p>
+<p>这里有一个实际使用的问题。旧版本的<code>clean-webpack-plugin</code>不会清除隐藏文件及目录，但是新版本中会完全清除。这就导致出现一个问题。在实际业务中，打包目录有可能就是远程仓库对应的目录，那么目录中是会有被隐藏的.git目录。如果直接使用新版的插件，打包时也会把.git目录清除，导致无法使用推送代码。</p>
+<p>我查了官方文档及很多博客，也没有找到比较合适的解决方案，但是还是找到了<code>cleanOnceBeforeBuildPatterns</code>这个配置项。这个配置项可以指定哪些文件需要清除的。它接受一个数组，数组的每一项都是一个正则。默认为全部清除。我就使用这个配置项来排除.git目录。最后是得到使用以下配置可以达到保留.git目录，其他文件清除的效果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; CleanWebpackPlugin &#125; = <span class="built_in">require</span>(<span class="string">'clean-webpack-plugin'</span>);</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> CleanWebpackPlugin(&#123; <span class="comment">// 输出打包文件前清除旧的打包文件</span></span><br><span class="line">    cleanOnceBeforeBuildPatterns: [<span class="string">'**/*'</span>, <span class="string">'!\.git'</span>, <span class="string">'!\.git/**/*'</span>]</span><br><span class="line">  &#125;)</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h4 id="mini-css-extract-plugin"><a href="#mini-css-extract-plugin" class="headerlink" title="mini-css-extract-plugin"></a><code>mini-css-extract-plugin</code></h4><p>这个插件用来抽离css代码到一个单独的style文件。官方介绍有以下特点：1. 异步加载；2. 无重复编译；3. 使用简便；4. 针对css。</p>
+<p>使用的时候，除了需要在<code>plugins</code>中new一个插件的实例，还需要在<code>loader</code>上配置对css打包上使用插件对应的loader。</p>
+<p><code>mini-css-extract-plugin</code>也有一些配置项，最常用的就是<code>filename</code>及<code>chunkFilename</code>，用来配置css文件的命名。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MiniCssExtractPlugin = <span class="built_in">require</span>(<span class="string">'mini-css-extract-plugin'</span>);</span><br><span class="line"><span class="keyword">let</span> isDev = env.development;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">        use: [</span><br><span class="line">          <span class="comment">// ...</span></span><br><span class="line">          isDev ? <span class="string">'style-loader'</span> : MiniCssExtractPlugin.loader, <span class="comment">// 一般使用MiniCssExtractPlugin就不使用style-loader</span></span><br><span class="line">          <span class="comment">// ...</span></span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    !isDev &amp;&amp; <span class="keyword">new</span> MiniCssExtractPlugin(&#123; <span class="comment">// 将css单独打包成一个文件的插件，它为每个包含css的js文件都创建一个css文件。它支持css和sourceMaps的按需加载。</span></span><br><span class="line">      filename: <span class="string">'main.css'</span></span><br><span class="line">    &#125;),</span><br><span class="line">  ].filter(<span class="built_in">Boolean</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="webpack-bundle-analyzer"><a href="#webpack-bundle-analyzer" class="headerlink" title="webpack-bundle-analyzer"></a><code>webpack-bundle-analyzer</code></h4><p>这个插件是用来分析打包文件的，目的是让打包的项目以图表的形式展示给开发者，可以直观的分析项目打包文件的情况，为优化做判断。配置这个插件后，在打包完成之后，会启动http服务器打开一个页面来显示打包文件的情况。</p>
+<p>使用也比较简单，也有一些配置项，这里项目中没有用到，就简单略过：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; BundleAnalyzerPlugin &#125; = <span class="built_in">require</span>(<span class="string">'webpack-bundle-analyzer'</span>);</span><br><span class="line"></span><br><span class="line">plugins: [</span><br><span class="line">  <span class="keyword">new</span> BundleAnalyzerPlugin() <span class="comment">// 打包代码分析</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>接下来将整理剩下的webpack配置中剩下的部分。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary4/" rel="next" title="webpack4配置总结(四)">
+                <i class="fa fa-chevron-left"></i> webpack4配置总结(四)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/30/webpack-summary6/" rel="prev" title="webpack4配置总结(六)">
+                webpack4配置总结(六) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Listentolife</p>
+              <p class="site-description motion-element" itemprop="description">Listentolife's Blog</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archive">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/listentolife" target="_blank" title="GitHub">
+                      GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:listentolife@qq.com" target="_blank" title="E-Mail">
+                      E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#plugins"><span class="nav-number">1.</span> <span class="nav-text">plugins</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DefinePlugin"><span class="nav-number">1.1.</span> <span class="nav-text">DefinePlugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vue-loader-plugin"><span class="nav-number">1.2.</span> <span class="nav-text">vue-loader plugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#html-webpack-plugin"><span class="nav-number">1.3.</span> <span class="nav-text">html-webpack-plugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#html-webpack-tags-plugin"><span class="nav-number">1.4.</span> <span class="nav-text">html-webpack-tags-plugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clean-webpack-plugin"><span class="nav-number">1.5.</span> <span class="nav-text">clean-webpack-plugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mini-css-extract-plugin"><span class="nav-number">1.6.</span> <span class="nav-text">mini-css-extract-plugin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#webpack-bundle-analyzer"><span class="nav-number">1.7.</span> <span class="nav-text">webpack-bundle-analyzer</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Listentolife</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+<span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+<span id="showDays"></span>
+
+<script>
+	var birthDay = new Date('04/23/2018');
+	var now = new Date();
+	var duration = now.getTime() - birthDay.getTime();
+	var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+	document.getElementById('showDays').innerHTML='本站已运行' + total + '天';
+</script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

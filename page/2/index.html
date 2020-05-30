@@ -245,6 +245,1267 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2020/05/05/work-summary10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/05/work-summary10/" itemprop="url">工作总结(10) - 处理文件流</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-05T15:46:58+08:00">
+                2020-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结将整理一下如何处理文件流。</p>
+<ul>
+<li>图片blob对象转为本地地址</li>
+</ul>
+<p>一般图片blob对象转为本地地址的需求场景是需要后端生成一个二维码，一般返回是一个blob对象，然后前端需要通过这个blob对象生成一张图片展示出来。</p>
+<p>这个实现的方案比较简单，主要依靠web API <code>URL.createObjectURL()</code>。所以首先需要判断浏览器是否支持<code>URL.createObjectURL()</code>方法。</p>
+<p>发请求的时候，因为需要后端返回一个blob类型，所以请求头需要设置<code>responseType</code>为<code>blob</code>，返回就是blob对象。</p>
+<p>然后调用<code>URL.createObjectURL()</code>方法，把blob对象传入，这个方法将创建并返回一个URL对象，这个url就可以用于页面上图片的显示。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里使用axios来演示</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.URL.createObjectURL) &#123;</span><br><span class="line">  <span class="keyword">this</span>.axios.post(api, &#123;</span><br><span class="line">    url: url</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    responseType: <span class="string">'blob'</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> url = <span class="built_in">window</span>.URL.createObjectURL(response.data)</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不过MDN上有提示到如果不需要这些URL对象的时候，最好通过<code>URL.revokeObjectURL()</code>方法来释放掉，虽然浏览器在document卸载的时候会自动释放这些URL对象。这个情况需要根据业务需要进行处理了。</p>
+<ul>
+<li>文档blob对象转为文档文件下载</li>
+</ul>
+<p>处理文档blob对象转文档文件也是要涉及到图片blob对象转图片地址的处理，不过因为文档文件的格式各有不同，下载的文件还有文件名，而且转出来的文档文件还需要实现下载，所以实现的步骤就比较多。</p>
+<p>首先，发请求的时候仍然需要按照上述请求图片blob对象一样，请求头需要设置<code>responseType</code>为<code>blob</code>。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里使用axios来演示</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.URL.createObjectURL) &#123;</span><br><span class="line">  <span class="keyword">this</span>.axios.post(api, &#123;</span><br><span class="line">    url: url</span><br><span class="line">  &#125;, &#123;</span><br><span class="line">    responseType: <span class="string">'blob'</span></span><br><span class="line">  &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>响应返回之后，响应头中有一个值需要用到，<code>Content-Disposition</code>。<code>Content-Disposition</code>中提供了文件的默认文件名，一般格式为<code>attachment;filename=FileName.txt</code>。所以我们需要先获取到文件的文件名：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> fileName = res.headers[<span class="string">'content-disposition'</span>].split(<span class="string">';'</span>)[<span class="number">1</span>].split(<span class="string">'='</span>)[<span class="number">1</span>];</span><br><span class="line"><span class="comment">// 如果涉及到文件名为中文，以上代码最后得到的字符串可能是一串乱码，所以才要再做一步处理</span></span><br><span class="line"><span class="comment">// decodeURIComponent方法传入一个编码后的部分URI，返回一个解码后URI字符串</span></span><br><span class="line"><span class="comment">// escape方法可以生成新的由十六进制转义序列替换的字符串，但方法已经被Web标准废弃，MDN建议使用 encodeURI 或 encodeURIComponent 代替</span></span><br><span class="line"><span class="comment">// decodeURI方法返回一个给定编码统一资源标识符(URI)的未编码版本的新字符串</span></span><br><span class="line">fileName = <span class="built_in">decodeURI</span>(<span class="built_in">escape</span>(<span class="built_in">decodeURIComponent</span>(fileName)));</span><br></pre></td></tr></table></figure>
+<p>下一步就是要把blob对象转化为文档文件。因为不同文件的文件类型不同，如果返回的blob对象的文档类型不是对应的文件类型（可以通过blob对象中的<code>type</code>或者响应头的<code>Content-Type</code>获得），则需要把blob对象先转为对应文件类型的blob对象，然后调用<code>URL.createObjectURL()</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是转为xlxs格式，'application/vnd.ms-excel;charset=utf-8'是xlxs的固定写法</span></span><br><span class="line"><span class="keyword">let</span> url = <span class="built_in">window</span>.URL.createObjectURL(<span class="keyword">new</span> Blob([res.data], &#123;<span class="attr">type</span>: <span class="string">'application/vnd.ms-excel;charset=utf-8'</span>&#125;));</span><br></pre></td></tr></table></figure>
+<p>因为还要实现自动下载，所以可以生成一个a标签，link属性指向上述生成的url，然后js控制点击，就可以实现下载:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> link = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">link.style.display = <span class="string">'none'</span>;</span><br><span class="line">link.href = url;</span><br><span class="line">link.setAttribute(<span class="string">'download'</span>, filename);</span><br><span class="line"><span class="built_in">document</span>.body.appendChild(link);</span><br><span class="line">link.click();</span><br></pre></td></tr></table></figure>
+<p>完整代码就不贴了，基本实现流程就是这样。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/12/06/Axios-Encapsulation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/06/Axios-Encapsulation/" itemprop="url">封装axios</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-06T22:15:03+08:00">
+                2019-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/Axios/" itemprop="url" rel="index">
+                    <span itemprop="name">Axios</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近做项目中，我尝试对axios做封装，以简化操作逻辑。所以这篇主要整理一下在项目中封装axios。</p>
+<p>axios本身有create方法，可以处理各种请求，有拦截器，有cancelToken，可以根据请求的不同做不同的处理。封装的目的，就是让请求独立，的拦截可以分类，同时需要使用cancelToken的请求可以很方便的使用，把axios封装到一个类中，把axios的功能集中起来，调用的时候只要创建一个实例就可以了。</p>
+<p>因此，这里封装就声明了一个<code>Ajaxquest</code>类，引入的时候其实是引入一个<code>Ajaxquest</code>实例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Ajaxquest &#123;</span><br><span class="line">// ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default new Ajaxquest()</span><br></pre></td></tr></table></figure>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>一般我们在使用axios的时候，有一些属性是可以设置固定的，比如timeout，baseURL等等，这里我把这些属性放在constructor中来初始化化:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">constructor () &#123;</span><br><span class="line">    this.baseURL = baseUrl</span><br><span class="line">    this.withCredentials = true</span><br><span class="line">    this.timeout = 60000</span><br><span class="line">    this.cancelToken = null // 关于cancelToken后面会单独整理</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="request"><a href="#request" class="headerlink" title="request"></a>request</h3><p>这个<code>Ajaxquest</code>类在外部使用的时候是直接使用它的实例的，所以实际是调用实例的方法来使用，而且一般我们调用axios都是设置一些配置，所以我们需要有一个<code>request</code>的方法，这个方法支持传入axios的配置，然后在方法里面处理请求跟拦截。</p>
+<p>axios的请求方法比较多，比如<code>axios.create(options)</code>，<code>axios.get(options)</code>等。这里我们直接使用<code>axios.create(options)</code>，因为它的灵活性更高，可以配置methods：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">request (config) &#123;</span><br><span class="line">    // ...</span><br><span class="line">    const service = axios.create(&#123;</span><br><span class="line">        baseURL: this.baseURL,</span><br><span class="line">        withCredentials: this.withCredentials,</span><br><span class="line">        timeout: this.timeout</span><br><span class="line">    &#125;)</span><br><span class="line">    // ...</span><br><span class="line">    return service(config)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>return service(config)</code>之前，我们还要处理一步拦截，因为很多时候，一些请求是需要在头部添加一些信息的，而这些信息有些是通用的，有些是个别请求要求携带的，所以可以通过<code>config</code>传进来，然后再传到拦截器中处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">request (config) &#123;</span><br><span class="line">    // ...</span><br><span class="line">    const service = axios.create(&#123;</span><br><span class="line">        baseURL: this.baseURL,</span><br><span class="line">        withCredentials: this.withCredentials,</span><br><span class="line">        timeout: this.timeout</span><br><span class="line">    &#125;)</span><br><span class="line">    service.interceptors.request.use(config =&gt; this._interceptorsRequest(config), error =&gt; &#123;</span><br><span class="line">        console.log(&apos;service error: &apos;, error)</span><br><span class="line">        // Do something with request error</span><br><span class="line">        return Promise.reject(error)</span><br><span class="line">    &#125;)</span><br><span class="line">    service.interceptors.response.use(response =&gt; this._interceptorsResponse(response), error =&gt; this._interceptorsReject(error))</span><br><span class="line">    return service(config)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里面拦截器中的callback，除了请求发送前拦截错误的callback，其他都写成内部方法。这些callback的作用是对所有请求的共性拦截处理。</p>
+<h3 id="拦截"><a href="#拦截" class="headerlink" title="拦截"></a>拦截</h3><p>拦截器有请求前的拦截跟请求完毕后的拦截，每个拦截都会处理两个callback，因为请求前报错的处理比较少，只是打印报错信息跟返回Promise reject，所以只简单写了callback函数，没有写成内部方法。</p>
+<p>请求前的拦截一般是为了配置头部信息，不在<code>request</code>方法的<code>axios.create()</code>中处理只是为了分开处理，是可以放在一起处理的。一些请求不需要配置头部信息，直接过滤掉，然后定义一些配置头部字段的，判断请求配置中是否带有这些属性，有则配置对应的头部信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">_interceptorsRequest (config) &#123;</span><br><span class="line">    //当url为/admin/Image ,/admin/File, 不设置X-token请求头,图片和文件上传接口特殊要求</span><br><span class="line">    if (/*判断哪些请求不需要配置头部信息*/) &#123;</span><br><span class="line">        return config</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    // 自定义配置头部信息的属性，判断带有这些属性，就配置</span><br><span class="line">    if (config.areaID) &#123;</span><br><span class="line">        config.headers[&apos;x-area-id&apos;] = config.areaID</span><br><span class="line">        delete config.areaID</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    console.log(&apos;service config: &apos;, config)</span><br><span class="line">    return config</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请求完成之后，也做拦截，把请求成功跟失败后的共性处理分别独立放到一个callback中。</p>
+<p>请求成功之后，一些全局性的信息就可以在拦截器中处理。比如用户的信息更新，就可以在拦截器中直接处理；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_interceptorsResponse (response) &#123;</span><br><span class="line">    console.log(&apos;response success: &apos;, response)</span><br><span class="line">    const config = response.config</span><br><span class="line">    // 处理全局信息</span><br><span class="line">    return response</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>如果请求失败了，拦截就可以做一些请求失败的报错信息打印。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 这里用了vant的Toast组件</span><br><span class="line">_interceptorsReject (error) &#123;</span><br><span class="line">    console.log(&apos;response fail response: &apos;, error.response)</span><br><span class="line"></span><br><span class="line">    if (error.message === &apos;cancel a request&apos;) return Promise.reject(error)</span><br><span class="line"></span><br><span class="line">    // 打印错误信息</span><br><span class="line">    let errorMessage = &apos;服务器繁忙，请刷新页面重试！&apos;</span><br><span class="line">    if (error.response &amp;&amp; error.response.headers[&apos;x-info&apos;] !== undefined &amp;&amp; error.response.headers[&apos;x-info&apos;] !== &apos;&apos;) &#123;</span><br><span class="line">        errorMessage = decodeURIComponent(error.response.headers[&apos;x-info&apos;])</span><br><span class="line">    &#125; else if (error.message) &#123;</span><br><span class="line">        errorMessage = error.message.toLowerCase()</span><br><span class="line">        if (errorMessage.indexOf(&apos;timeout&apos;) &gt; -1) &#123;</span><br><span class="line">            errorMessage = &apos;服务器长时间未响应，请刷新页面重试！&apos;</span><br><span class="line">        &#125; else if (errorMessage.indexOf(&apos;abort&apos;) &gt; -1) &#123;</span><br><span class="line">            errorMessage = &apos;服务器连接中断 abort！&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    Toast.fail(errorMessage)</span><br><span class="line"></span><br><span class="line">    return Promise.reject(error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="cancelToken"><a href="#cancelToken" class="headerlink" title="cancelToken"></a>cancelToken</h3><p>axios提供了cancelToken来处理取消请求。这里我们也来实现cancelToken的封装。</p>
+<p>因为我们导出的是实例，写请求方法的时候只是调用了<code>request()</code>方法，所以需要提供另一个方法来处理取消请求。另外，因为cancelToken的处理是需要在请求的时候先创建一个cancel token，所以就是说需要在调用<code>request()</code>方法时提出需要创建cancel token，所以在<code>request()</code>方法需要增加一个逻辑：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">request (config) &#123;</span><br><span class="line">    // ...</span><br><span class="line">    if (config.cancelToken) &#123;</span><br><span class="line">        this.cancelToken = axios.CancelToken.source()</span><br><span class="line">    &#125;</span><br><span class="line">    // 接着再处理service跟拦截器</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样外部传入一个<code>cancelToken</code>的布尔值，方法内部判断是否为真，是则创建cancelToken。</p>
+<p>使用的时候，当需要取消请求，就可以直接调用<code>abort()</code>方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">abort (notice = &apos;cancel a request&apos;) &#123;</span><br><span class="line">    console.log(&apos;abort&apos;)</span><br><span class="line">    if (this.cancelToken) &#123;</span><br><span class="line">        this.cancelToken.cancel(notice)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>这个封装其实只是一个结构的封装，内部的配置可以根据不同的项目，不同的请求分类去做差异化的处理。封装的功能也主要是一些常用的请求处理，有其他需求还可以在这个基础上继续封装。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/12/06/work-summary9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/06/work-summary9/" itemprop="url">工作总结(9) - 关于移动端底部评论框效果的实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-06T22:11:05+08:00">
+                2019-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前在工作总结(六)中就整理了自己实现的移动端底部评论框的方案。这个方案整体效果可以，但是还是有些细节不够好。最近项目中再次遇到同样的需求，重新做了分析，用另一种不那么复杂的方案又实现了一次。这里就来总结一下这次实现方案。</p>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>这次的需求跟上次的一样，只是因为考虑到可能有多个地方复用，所以打算做成一个底部评论框组件。需求是底部有一个假的评论栏，点击之后会弹出真的评论栏，并附着在底部和软键盘。</p>
+<p>这个需求之前实现的思路是切换评论栏的布局，然后短时间内监听距离视窗顶部的高度来调整。这个方案能实现效果，但是在软键盘升起的时候会出现抖动现象。所以这次改变思路，直接使用绝对定位布局处理。</p>
+<p>之前其实也考虑过这个思路，但是因为只考虑了评论框做绝对定位，所以那种处理的方案需要一直计算位置。这次思路的实现，是把整个页面的布局做调整：body元素直接限定高度为视窗高度，内容分块也全部使用绝对定位，内容的滚动是在内容块内处理。这样，评论框是相对于body做绝对定位，位置一定在视窗的底部。</p>
+<p>这次还是用vue来实现。</p>
+<h3 id="页面处理"><a href="#页面处理" class="headerlink" title="页面处理"></a>页面处理</h3><p>页面有几个需要处理的地方。因为每个页面都是一个vue组件，所以只要组件最外层限定为视窗的高度，body的高度就跟视窗高度一致，同时设置为相对定位：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">min-height</span>: <span class="number">100vh</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.wrapper</span> &#123;</span><br><span class="line">  <span class="attribute">position</span>: relative;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">100vh</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后<code>.wrapper</code>内的所有子节点都要使用绝对定位。内容块如果高度超过视窗高度，一般可以使用<code>overflow:auto</code>来处理，不过在移动端的效果有个不太好的情况的滑动不流畅，这个问题可以使用下面的写法处理：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">height</span>: <span class="number">100vh</span>;</span><br><span class="line"><span class="attribute">overflow</span>: auto;</span><br><span class="line">-webkit-<span class="attribute">overflow</span>-scrolling : touch;</span><br><span class="line"></span><br><span class="line">&amp;::-webkit-scrollbar &#123; /* WebKit的浏览器隐藏滚动条 */</span><br><span class="line">    display: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="遮罩层的设计"><a href="#遮罩层的设计" class="headerlink" title="遮罩层的设计"></a>遮罩层的设计</h3><p>一般评论框弹起是需要用户避免操作其他功能，所以这里在评论组件上增加一个全屏的遮罩层。而且增加一个点击隐藏的功能。这个功能必须要点击遮罩层才能触发，所以用vue开发就是使用<a href="mailto:`@click.self" target="_blank" rel="noopener">`@click.self</a>`来设计点击事件。</p>
+<h3 id="评论框的设计"><a href="#评论框的设计" class="headerlink" title="评论框的设计"></a>评论框的设计</h3><p>因为这个页面的效果先是视窗底部有一个假的评论框，点击之后这个假的评论框会隐藏，真的评论框会弹出来，所以实际上是需要做两个，但是这个假的评论框并不影响这些评论框的设计，所以只要保证它的布局时绝对定位就可以了。</p>
+<p>首先，这个评论框的布局一样是绝对定位，定位在组件最外层元素的底部，也即在视窗的底部，这样当软键盘弹起的时候，整个页面被顶起，评论框依然能固定在页面的底部，贴着软键盘的顶部，而且不需要做任何计算高度的处理。</p>
+<p>这里需要注意的是，评论框的绝对定位必须使用<code>bottom</code>属性来定位，而不能用<code>top</code>属性，因为使用<code>top</code>属性的情况下，因为软键盘弹起，视窗高度被压缩，会导致评论框还是按<code>top</code>属性的设置隐藏到软键盘后面，而用<code>bottom</code>属性可以使评论框一直定位在视窗的底部，所以不会被隐藏。</p>
+<p>还有一个会影响效果的，是需要设计评论框的高度。因为在iOS上，当H5的input标签获得聚焦，弹出软键盘时，iOS会先把页面所有fixed定位改成绝对定位，然后判断输入框的位置，根据判断滚动页面。一方面软键盘的弹出会导致视窗高度变小，这会影响使用vh布局的样式，另一方面是滚动页面也会让从fixed定位改绝对定位的容器上移，而且高度不确定。所以最后会导致本身输入框会上移，然后视窗缩小也是顶起，最后效果就会变成输入框偏移更多，显示不全或各种难堪的页面显示。因此可以先设定一个高度，然后在输入框获得聚焦时把高度改高一些，这样在经历视窗缩小跟滚动之后，评论框的显示效果也不会差。这里就不上代码了，思路已经整理了。</p>
+<p>实际开发出来的效果还是可以的。这里说的效果是安卓跟iOS13版本之前。安卓效果最好，而且其实在输入框获得聚焦的时候也不需要调整评论框高度的。但因为自iOS13出来之后，这个方案实现的效果跟实际效果又有了新的偏差：软键盘弹起后，当输入框失焦时，软键盘虽然隐藏了，但是视窗竟然没有恢复，导致页面下方原来软键盘的部分空白。这个原因目前不明，当然我只在我们公司的app上测试出来，并没有在其他地方测试过，可能跟webview有关。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/12/06/work-summary8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/06/work-summary8/" itemprop="url">工作总结(8)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-06T22:08:23+08:00">
+                2019-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结将整理一下如何实现html生成图片。</p>
+<p>生成图片一般的思路都是将需要生成图片的dom绘制到canvas中，再调用<code>canvas.toDataURL()</code>将绘制好的canvas转成file对象，然后再上传服务器，拿到线上地址，再显示出来。</p>
+<p>最麻烦的就是将dom绘制到canvas，摘自网上的说法，需要先遍历需要生成图片区域的所有元素，提取DOM数，然后获取渲染之后的每个DOM节点的内联、外链CSS属性，最后将样式转换成canvas的属性，利用offset等属性辅助摆放位置，将节点对应到canvas上。所以更多人实现的方案是使用第三方库<code>html2canvas</code>。</p>
+<p><code>html2canvas</code>用法也很简单，就是一个<code>html2canvas()</code>方法，传入需要生成图片的dom跟配置，然后这个方法支持Promise，可以使用<code>html2canvas(dom).then</code>方法写入一个回调函数，拿到绘制完成的<code>canvas</code>，就可以完成接下来的处理了。</p>
+<p>这里整理一下开发中遇到的需求跟处理。一般生成的图片会跟页面显示不同，因为可能会加一些内容。这样就需要在调用<code>html2canvas()</code>方法先调整需要生成图片的dom的样式，改成需要的样式效果。然后在回调函数中，等拿到<code>canvas</code>之后，再把dom的样式恢复。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用vue开发</span></span><br><span class="line"><span class="comment">// 先引入html2canvas</span></span><br><span class="line">htmlToImage () &#123;</span><br><span class="line">  <span class="comment">// 返回一个Promise，调用的时候可以知道什么时候结束，支持异步处理</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 保存需要修改的样式的当前值</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 设置需要打印的样式的宽高</span></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 调用$nextTick确保样式已经更新</span></span><br><span class="line">    <span class="keyword">this</span>.$nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 调用html2canvas，传入需要生成图片的dom跟配置，配置可以参考官网</span></span><br><span class="line">      html2canvas(<span class="keyword">this</span>.$refs.print, &#123;</span><br><span class="line">        allowTaint: <span class="literal">true</span>, <span class="comment">// 不允许跨域图片污染画布</span></span><br><span class="line">        useCORS: <span class="literal">true</span>,  <span class="comment">// 允许加载跨域图片</span></span><br><span class="line">        width: <span class="keyword">this</span>.$refs.print.offsetWidth, <span class="comment">// canvas宽度</span></span><br><span class="line">        height: <span class="keyword">this</span>.$refs.print.offsetHeight, <span class="comment">// canvas高度</span></span><br><span class="line">      &#125;).then(<span class="function"><span class="params">canvas</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 拿到的就是绘制了dom的canvas</span></span><br><span class="line">        <span class="comment">// 恢复修改前的样式</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="关于图片模糊的问题"><a href="#关于图片模糊的问题" class="headerlink" title="关于图片模糊的问题"></a>关于图片模糊的问题</h3><p>上面的操作可以拿到canvas，然后就可以转file对象，上传，拿到服务端链接，然后打开一看，图片很模糊。</p>
+<p>这个问题也很常见，一方面跟设备的dpi有关，另一方面跟生成的图片太小，拉伸之后也会出现这个问题。所以解决的方案是在调用<code>html2canvas()</code>方法先把需要生成图片的dom的整体样式放大数倍，然后再生成图片，同时在调用方法时设置<code>dpi</code>跟<code>scale</code>两个配置，这样能保证图片效果。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">htmlToImage () &#123;</span><br><span class="line">  <span class="comment">// 返回一个Promise，调用的时候可以知道什么时候结束，支持异步处理</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// //保存需要修改的样式的当前值</span></span><br><span class="line">    <span class="keyword">let</span> height = <span class="keyword">this</span>.$refs.print.offsetHeight;</span><br><span class="line">    <span class="keyword">let</span> width = <span class="keyword">this</span>.$refs.print.offsetWidth;</span><br><span class="line">    <span class="comment">// //设置需要打印的样式的宽高</span></span><br><span class="line">    <span class="keyword">this</span>.$refs.print.style.height = height * <span class="number">2</span> + <span class="string">'px'</span>;</span><br><span class="line">    <span class="keyword">this</span>.$refs.print.style.width = width * <span class="number">2</span> + <span class="string">'px'</span>;</span><br><span class="line">    <span class="comment">// 调用$nextTick确保样式已经更新</span></span><br><span class="line">    <span class="keyword">this</span>.$nextTick(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 调用html2canvas，传入需要生成图片的dom跟配置，配置可以参考官网</span></span><br><span class="line">      html2canvas(<span class="keyword">this</span>.$refs.print, &#123;</span><br><span class="line">        dpi: <span class="built_in">window</span>.devicePixelRatio * <span class="number">2</span>, <span class="comment">// dpi设置 每英寸的像素</span></span><br><span class="line">        scale: <span class="number">2</span>, <span class="comment">// 放大倍数</span></span><br><span class="line">        allowTaint: <span class="literal">true</span>, <span class="comment">// 不允许跨域图片污染画布</span></span><br><span class="line">        useCORS: <span class="literal">true</span>,  <span class="comment">// 允许加载跨域图片</span></span><br><span class="line">        width: <span class="keyword">this</span>.$refs.print.offsetWidth, <span class="comment">// canvas宽度</span></span><br><span class="line">        height: <span class="keyword">this</span>.$refs.print.offsetHeight, <span class="comment">// canvas高度</span></span><br><span class="line">      &#125;).then(<span class="function"><span class="params">canvas</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 拿到的就是绘制了dom的canvas</span></span><br><span class="line">        <span class="comment">// 恢复修改前的样式</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="关于跨域图片不显示的问题"><a href="#关于跨域图片不显示的问题" class="headerlink" title="关于跨域图片不显示的问题"></a>关于跨域图片不显示的问题</h3><p>所以又按照上面的思路改了一下，图片是终于清晰了，但是还有一个问题没解决，就是本来应该显示的图片没有出现。这个问题我搜索过之后才知道原来是图片跨域的问题。</p>
+<p>一般图片跨域没什么问题，但是在canvas上，跨域图片会导致画布被污染，所以跨域图片不会被绘制到canvas上，最终生成的图片也没有正常显示该图片。</p>
+<p>解决这个问题，我试过一些网上的简单的处理，都无效，所以只能把跨域图片转为本地图片，再设置<code>html2canvas()</code>的<code>useCORS</code>为<code>true</code>。</p>
+<p>跨域图片转为本地图片，目前我的解决方案是让服务器返回二进制数据，然后转成Blob对象，再调用window下的<code>createObjectURL()</code>方法转成本地图片url。</p>
+<h3 id="关于base64转Blob对象转file对象"><a href="#关于base64转Blob对象转file对象" class="headerlink" title="关于base64转Blob对象转file对象"></a>关于base64转Blob对象转file对象</h3><p>这个问题打算单独整理，就不再这里写了。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/12/06/work-summary7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/06/work-summary7/" itemprop="url">工作总结(7)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-06T22:06:58+08:00">
+                2019-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
+                    <span itemprop="name">Vue</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
+                    <span itemprop="name">工作总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>这篇工作总结会整理一下使用Canvas实现随机生成验证码。</p>
+<p>随机生成验证码是基于canvas绘制而成的，最基本的实现是随机生成多位验证码，然后验证码的每一位码按不同的颜色，大小，倾斜角度跟位置来绘制到画布上。更上一层是增加干扰项，比如划线，非验证码范围字符，验证码扭曲，定时更新验证码等等。这里实现的验证码只是增加了干扰项跟点击更新，定时更新可以实现，但这里就不整理了。</p>
+<p>这里的代码实现基于vue实现的。</p>
+<h3 id="初始化工作"><a href="#初始化工作" class="headerlink" title="初始化工作"></a>初始化工作</h3><p>要实现随机验证码，有两个基本要素：canvas画布，随机生成的验证码(这里演示4位验证码)字符范围。</p>
+<p>canvas绘制不难，主要是使用绘制的方法，这个后面整理。先要在页面上获得canvas画布，这一步需要在<code>mounted</code>中执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- html template --&gt;</span><br><span class="line">&lt;canvas id=&quot;verCode&quot;&gt;&lt;/canvas&gt;</span><br><span class="line"></span><br><span class="line">// js</span><br><span class="line">data () &#123;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br><span class="line">mounted () &#123;</span><br><span class="line">  this.initCanvas();</span><br><span class="line">&#125;,</span><br><span class="line">methods: &#123;</span><br><span class="line">  initCanvas () &#123;</span><br><span class="line">    this.container = document.querySelector(&apos;#verCode&apos;);</span><br><span class="line">    this.width = this.container.width;</span><br><span class="line">    this.height = this.container.height;</span><br><span class="line">    this.ctx = this.container.getContext(&apos;2d&apos;);</span><br><span class="line">    this.ctx.textBaseline = &apos;bottom&apos;;</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面通过<code>.getContext(&#39;2d&#39;)</code>获取了画布，然后在获得画布的宽高，设置了画布的文字基线。</p>
+<h3 id="生成code"><a href="#生成code" class="headerlink" title="生成code"></a>生成code</h3><p>接下来就是生成code。生成code是比较简单的，思路是从特定的字符集合中随机取出字符组成code。这里把特定的字符放到一个字符串中，然后随机生成数组下标，取出字符串。随机生成的code的长度可以从外部传进来，也可以使用默认的四位：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">getCode () &#123;</span><br><span class="line">    let chars = &apos;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&apos;.split(&apos;&apos;);</span><br><span class="line">    let code = [];</span><br><span class="line">    let radix = chars.length;</span><br><span class="line">    for (let i = 0; i &lt; this.num; i++) &#123;</span><br><span class="line">        code[i] = chars[0 | Math.random() * radix];</span><br><span class="line">    &#125;</span><br><span class="line">    this.code = code.join(&apos;&apos;);</span><br><span class="line">    console.log(this.code);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="画code"><a href="#画code" class="headerlink" title="画code"></a>画code</h3><p>生成code之后，就可以开始在canvas画布上画code了。这里用到的是canvas的<code>fillText()</code>方法，这个方法可以把文字绘画到canvas上。在调用<code>fillText()</code>方法之前，还可以给文字增加属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">drawCode () &#123;</span><br><span class="line">    for (let i = 0; i &lt; this.num; i++) &#123;</span><br><span class="line">        let x = (this.width - 20) / this.num * i + 15;</span><br><span class="line">        let y = this.randomNum(this.height * 0.92, this.height * 0.92);</span><br><span class="line">        let deg = this.randomNum(-45, 45);</span><br><span class="line">        let txt = this.code.charAt(i);</span><br><span class="line"></span><br><span class="line">        this.ctx.fillStyle = this.randomColor(10, 100);</span><br><span class="line">        this.ctx.font = `$&#123;this.randomNum(80, 100)&#125;px SimHei`;</span><br><span class="line">        this.ctx.translate(x, y);</span><br><span class="line">        this.ctx.rotate(deg * Math.PI / 180);</span><br><span class="line">        this.ctx.fillText(txt, 0, 0);</span><br><span class="line">        this.ctx.rotate(-deg * Math.PI / 180);</span><br><span class="line">        this.ctx.translate(-x, -y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="干扰项"><a href="#干扰项" class="headerlink" title="干扰项"></a>干扰项</h3><p>干扰项一般增加直线跟曲线就可以了，如果想要更复杂，也是可以增加符号干扰的，不过要注意控制样式，否则真的会干扰到用户的判断。</p>
+<p>这里我爸直线跟曲线的绘画分成两个方法来调用了。绘制的数量我都按code的长度来控制。然后在一定范围内随机生成长度，位置坐标，颜色等。最后调用canvas绘制路线的方法绘制即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">drawLine () &#123;</span><br><span class="line">    for (let i = 0; i &lt; this.num; i++) &#123;</span><br><span class="line">        this.ctx.strokeStyle = this.randomColor(90, 180);</span><br><span class="line">        this.ctx.beginPath();</span><br><span class="line">        this.ctx.moveTo(this.randomNum(0, this.width), this.randomNum(0, this.height));</span><br><span class="line">        this.ctx.lineTo(this.randomNum(0, this.width), this.randomNum(0, this.height));</span><br><span class="line">        this.ctx.stroke();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line">drawArc () &#123;</span><br><span class="line">    for (let i = 0; i &lt; this.num; i++) &#123;</span><br><span class="line">        this.ctx.fillStyle = this.randomColor(0, 255);</span><br><span class="line">        this.ctx.beginPath();</span><br><span class="line">        this.ctx.arc(this.randomNum(0, this.width), this.randomNum(0, this.height), 1, 0, 2 * Math.PI);</span><br><span class="line">        this.ctx.fill();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="点击刷新验证码及验证"><a href="#点击刷新验证码及验证" class="headerlink" title="点击刷新验证码及验证"></a>点击刷新验证码及验证</h3><p>点击刷新验证码实现很简单，给canvas增加一个点击监听事件，点击之后调用<code>getCode()</code>方法就可以完成刷新。</p>
+<p>验证验证码的实现是先实现一个验证方法，然后在父组件使用验证码组件是使用<code>this.$refs</code>来调用验证码组件的验证方法，传入用户输入的code进行比对，然后返回一个布尔值。</p>
+<p>以上就是验证码组件的实现。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/wechat-mini-project-listentoweather-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/25/wechat-mini-project-listentoweather-II/" itemprop="url">微信小程序开发-倾听天气(二)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T23:04:07+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/微信小程序/" itemprop="url" rel="index">
+                    <span itemprop="name">微信小程序</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>我的微信小程序，倾听天气终于更新了0.2.1版本了，这个版本页面效果要比第一版的好很多了，主要的原因在于我申请的和风天气开发者权限通过了，所以获得更多的数据。比如24小时内间隔2小时的天气数据，最近7天的天气数据。</p>
+<p>因此我的小程序所展示的数据可以更加详细。此外，我又在iconfont.cn搜集了一些icon来优化小程序的展示，并给逐小时天气预报做了一个折线图。下面我就以这几点来整理一下小程序的开发。</p>
+<h3 id="申请过程"><a href="#申请过程" class="headerlink" title="申请过程"></a>申请过程</h3><p>这里就简单说一下申请的过程：和风天气的认证个人开发者很简单。只要申请的时候实名并提供自己的作品中使用了和风天气的api即可。我是在完成了倾听天气的第一版之后申请中，中间还给他们发了一封邮件，因为申请的信息要求的作品选项没有包括微信小程序，所以我发了邮件去咨询了一下。很快就回复了我微信小程序可以申请。所以我在申请的时候直接在作品一栏写明是微信小程序倾听天气。虽然那天刚好申请后隔天是周末，但到了周日就来邮件说申请通过了，周末都处理申请，好厉害的样子…</p>
+<p>之后我在我的小程序中就发现原来3天的天气预报数据变成7天了，说明api的权限已经开好了。</p>
+<h3 id="开发总结"><a href="#开发总结" class="headerlink" title="开发总结"></a>开发总结</h3><p>这里整理一下在0.2.1版本中涉及到的一些开发总结。主要分微信小程序滚动组件，iconfront引入及canvas绘制折线图。</p>
+<h4 id="滚动组件scroll-view"><a href="#滚动组件scroll-view" class="headerlink" title="滚动组件scroll-view"></a>滚动组件<code>scroll-view</code></h4><p>之前整个小程序中都没有用到这个组件是因为没有太多的数据需要做这样的显示。不过当原来3天的天气预报数据变成7天之后，在屏幕上横着显示7天的数据就比较拥挤了，所以这个时候就需要用到滚动组件<code>scroll-view</code>了。</p>
+<p><code>scroll-view</code>用起来不难，首先需要有一个父级组件包住<code>scroll-view</code>，然后通过<code>scroll-x</code>或<code>scroll-y</code>来控制滚动的方向。最后，如果是垂直方向的滚动需要给<code>scroll-view</code>增加一个高度的样式，而如果是水平方向的话，给父级标签增加一个固定宽度就可以了。</p>
+<p>我这是因为是要水平方向展示7天的天气预报数据，所以我给组件<code>scroll-view</code>一个父级组件，固定width为<code>100%</code>，然后给组件<code>scroll-view</code>一个类，这里使用flex布局，让内部的子组件都并排在一行内，并固定宽度。这样的基本完成了水平滚动的实现了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;view class=&apos;forecast-wrapper&apos; wx:if=&quot;forecast.daily_forecast&quot;&gt;</span><br><span class="line">  &lt;scroll-view scroll-x enable-flex class=&apos;scroll-view-x&apos;&gt;</span><br><span class="line">    &lt;view</span><br><span class="line">      wx:for=&quot;&#123;&#123; forecast.daily_forecast &#125;&#125;&quot;</span><br><span class="line">      wx:for-index=&quot;index&quot;</span><br><span class="line">      wx:for-item=&quot;item&quot;</span><br><span class="line">      wx:key=&quot;item.date&quot;</span><br><span class="line">      class=&apos;forecast-item&apos;</span><br><span class="line">    &gt;</span><br><span class="line">      &lt;!-- --&gt;</span><br><span class="line">    &lt;/view&gt;</span><br><span class="line">  &lt;/scroll-view&gt;</span><br><span class="line">&lt;/view&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.forecast-wrapper &#123;</span><br><span class="line">  width: 100%;</span><br><span class="line">  overflow: hidden;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.scroll-view-x &#123;</span><br><span class="line">  // display: flex;</span><br><span class="line">  width: auto;</span><br><span class="line">  white-space: nowrap;</span><br><span class="line">  // flex-wrap: nowrap 测试无效</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.forecast-item &#123;</span><br><span class="line">  display: inline-block;</span><br><span class="line">  width: 20%;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>scroll-view</code>组件的<code>enable-flex</code>属性相当于直接设置flex布局。还有很多属性可以设置，比如<code>scroll-into-view</code>滚动到某一子节点，<code>enable-back-to-top</code>支持垂直方向滚动的点击屏幕顶部后滚动条返回顶部，等等。具体可以去读官网文档。</p>
+<h4 id="iconfont引入"><a href="#iconfont引入" class="headerlink" title="iconfont引入"></a>iconfont引入</h4><p>其实iconfont的引入本应没什么可以说的，但是鉴于微信小程序中写样式的文件叫wxss文件，我们平时写的样式文件是css，所以还是有点不一样的。</p>
+<p>网上找到的解决方案一般都是先下载icon文件，然后把.ttf文件转码base64格式，然后再放到对应的wxss文件中，最后再引用。</p>
+<p>但是我嫌这种方案比较复杂，而且需要下载icon文件存放在目录下也可能需要费些空间(我的项目还好，只是想找懒)。都知道微信小程序是有限项目大小的，所以有没有更好的方案。</p>
+<p>有，很简单，就是通过iconfont直接生成unicode，把unicode复制放到wxss文件中，再下载icon文件，把icon的css样式在复制放到wxss文件中(我是直接放到app.wxss中，暂时先这样处理)，然后就可以快速的使用了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**iconfont online**/</span><br><span class="line">@font-face &#123;</span><br><span class="line">  font-family: &apos;iconfont&apos;;  /* project id 1265794 */</span><br><span class="line">  src: url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.eot&apos;);</span><br><span class="line">  src: url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.eot?#iefix&apos;) format(&apos;embedded-opentype&apos;),</span><br><span class="line">  url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.woff2&apos;) format(&apos;woff2&apos;),</span><br><span class="line">  url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.woff&apos;) format(&apos;woff&apos;),</span><br><span class="line">  url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.ttf&apos;) format(&apos;truetype&apos;),</span><br><span class="line">  url(&apos;//at.alicdn.com/t/font_1265794_rsipcjqri8.svg#iconfont&apos;) format(&apos;svg&apos;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**iconfont.css**/</span><br><span class="line">.iconfont &#123;</span><br><span class="line">  font-family: &quot;iconfont&quot; !important;</span><br><span class="line">  font-size: 16px;</span><br><span class="line">  font-style: normal;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就不需要把icon文件都放到项目中了。</p>
+<p>目前项目中已经大面积的使用icon显示一些信息了，比如天气状态，生活指数，一些常用的功能icon。看起来要比原来纯文字的效果要好很多。</p>
+<h4 id="canvas绘制"><a href="#canvas绘制" class="headerlink" title="canvas绘制"></a>canvas绘制</h4><p>canvas绘制应该是这一版本中最难的部分。原本想引入ECharts微信小程序版来实现24小时温度折线图的，但是因为没有用过，一下子使用有难度，再者最近看到不少canvas绘制图表的博文，所以想自己试试，所以最后选择了canvas绘制。</p>
+<p>其实canvas绘制不难，它的操作逻辑就是在页面上建立一张画布，然后用坐标标识绘制的关键点，最后把方法当成指令这样使用就可以了，剩下就是想画好看点就用一些。</p>
+<p>首先还是要对数据做处理。绘制一个24小时逐小时温度折线图需要确定要画布的宽跟高，这样才能确定最高温度跟最低温度的y轴值，最近时间温度跟最远时间温度的x轴值；然后找到所有温度数据中的最大值刚跟最小值，可以确定每个温度阶的间隔值，最后再计算每个时间温度对应的坐标。</p>
+<p>这里我使用<code>wx.getSystemInfo</code>来获得屏幕的宽度，然后动态的计算画布的宽度跟高度(宽度为屏幕宽度，高度为宽度的1/5)。再用<code>getTmps</code>方法获得温度数据的数组跟最高最低温度值。最后用<code>getCoordinate</code>方法计算获得所有的坐标，最后在<code>drawHourly</code>方法中绘制。</p>
+<p>微信小程序中canvas的绘制跟H5中有一点区别，但逻辑是一样的。首先要创建一个<code>content</code>，然后根据折线图的需要绘制线，绘制圆，绘制最大温度跟最小温度标识，最后把<code>content</code>绑定到页面上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">drawHourly(arr, maxCoo, minCoo, maxTmp, minTmp) &#123;</span><br><span class="line">  var context = wx.createContext();</span><br><span class="line">  context.draw(); // 清空</span><br><span class="line">  context.setStrokeStyle(&quot;#fff&quot;);</span><br><span class="line">  context.setLineWidth(1);</span><br><span class="line">  context.moveTo(arr[0].x, arr[0].y);</span><br><span class="line">  for (let i = 1; i &lt; arr.length; i++) &#123;</span><br><span class="line">    context.lineTo(arr[i].x, arr[i].y);</span><br><span class="line">  &#125;</span><br><span class="line">  context.stroke();</span><br><span class="line">    </span><br><span class="line">  for (let i = 0; i &lt; arr.length; i++) &#123;</span><br><span class="line">    // 设置描边颜色</span><br><span class="line">    context.setStrokeStyle(&quot;#ffffff&quot;);</span><br><span class="line">    context.moveTo(arr[i].x, arr[i].y);</span><br><span class="line">    context.arc(arr[i].x, arr[i].y, 2, 0, 2 * Math.PI, false);</span><br><span class="line">    context.closePath();</span><br><span class="line">    // 填充路径</span><br><span class="line">    // context.fill();</span><br><span class="line">    context.stroke();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  context.setFontSize(10);</span><br><span class="line">  context.setFillStyle(&quot;#fff&quot;);</span><br><span class="line">  context.fillText(`$&#123;maxTmp&#125;℃`, maxCoo.x - 10, maxCoo.y + 5);</span><br><span class="line">  context.fillText(`$&#123;minTmp&#125;℃`, minCoo.x - 10, minCoo.y + 5);</span><br><span class="line"></span><br><span class="line">  wx.drawCanvas(&#123;</span><br><span class="line">    canvasId: &apos;hourlyCanvas&apos;,</span><br><span class="line">    actions: context.getActions()</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个绘制也是比较简单，也没有做效果更好的平滑曲线，达到效果就可以了。</p>
+<p>以上就是新版本倾听天气小程序开发的整理。接下来会做新的优化，具体会在下一个版本出来后再整理。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/wechat-mini-project-listentoweather-I/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Listentolife">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Listentolife">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/08/25/wechat-mini-project-listentoweather-I/" itemprop="url">微信小程序开发-倾听天气(一)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-25T22:57:19+08:00">
+                2019-08-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/微信小程序/" itemprop="url" rel="index">
+                    <span itemprop="name">微信小程序</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近开始尝试开发微信小程序。之前多多少少了解了微信小程序的开发，了解了wxml，wxss，wxs跟一些微信小程序的api，但是并没有什么想法应该要拿什么来练手。最近找到和风天气(<a href="https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。" target="_blank" rel="noopener">https://www.heweather.com/)有向普通开发者提供开发api，看了文档也觉得文档很友好，数据也很足够，所以就想尝试开发一款天气预报的微信小程序。</a></p>
+<p>简单的说，最基本的需要是用户需要查看所在地的天气情况跟最近几天的天气预报，并获得一些建议，而和风天气开放给普通用户也有这些信息，所以这个需求可以很容易实现。目前我也是打算实现最基础的展示功能先上线，走完整个开发到上线的流程，看看有什么坑。</p>
+<p>话不多说，先上小程序码，可以去看看效果：</p>
+<p><img src="../images/gh_49128d023947_258.jpg" alt="倾听天气 小程序码"></p>
+<h3 id="创建小程序账号"><a href="#创建小程序账号" class="headerlink" title="创建小程序账号"></a>创建小程序账号</h3><p>第一步，肯定是要到微信公众平台申请一个小程序的账号，这个账号需要一个未申请过微信账号或其他开发账号的邮箱，然后申请之后还需要一个管理员。申请之后，可以得到一个AppID，这个AppID就是你开发小程序时需要绑定的。</p>
+<p>然后就下载微信开发者工具，安装。打开工具，选择小程序，然后在新建项目那里，在AppID填入你刚才注册获得的Appid。选择好目录，项目名称跟后端服务（目前我没有使用云服务，但计划之后的版本会加入），点击新建即可新建小程序项目。</p>
+<h3 id="腾讯地图开发者及和风天气开发者账号"><a href="#腾讯地图开发者及和风天气开发者账号" class="headerlink" title="腾讯地图开发者及和风天气开发者账号"></a>腾讯地图开发者及和风天气开发者账号</h3><p>从需求中分析到，需要获得用户的定位信息跟天气数据，前者可以通过微信小程序内置api获取，后者可以通过和风天气api获取。不过长远考虑可以获得更多地图数据以丰富小程序的功能，所以这里一并申请了腾讯地图开发者。</p>
+<p>其实申请也不难，腾讯地图api是在腾讯位置服务申请的开发者账号，只要用QQ或微信扫一下二维码就可以注册成功了，简直0操作成本。然后在控制台的key管理那里创建新密钥。通过这个密钥就可以获得腾讯地图的数据了</p>
+<p>注册和风天气的开发者账号也不难，进入官网之后进行注册。开发者的权限是跟开发者账号绑定的，一般的开发者（比如我）可以直接注册普通开发者，然后创建key，就可以获得最基础的数据。如果要申请认证开发者就需要提供开发上线的应用（目前我上线小程序之后就开始申请了）。申请就还需要提供个人信息了，但是因为小程序没有链接，所以我就直接写让他们去微信里面搜索了……</p>
+<p>最后，还需要在微信公众平台，小程序账号的开发一栏，进入开发设置，设置服务器域名的request合法域名。设置的是把接口的域名添加进去。注意，这个操作每个月是有显示修改次数的。</p>
+<p>这样，就完成了开发前的准备了。</p>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><p>开发的过程耗时不长，只是因为每天比较忙，所以只能腾三个晚上每天大概6个小时从各种注册到开发到上线申请。</p>
+<p>遇到的坑也不算太多，简单的百度一下也可以解决，不过既然是整理开发过程，我觉得还是可以拿一些出来说说的：</p>
+<h4 id="用户权限"><a href="#用户权限" class="headerlink" title="用户权限"></a>用户权限</h4><p>因为是第一个版本，没打算获取用户太多信息，只需要获得定位信息就可以了，所以目前只获取用户定位权限。</p>
+<p>现在微信小程序的用户权限都需要做多一些配置。比如获取定位权限，就需要先在app.json配置permission：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  &quot;permission&quot;: &#123;</span><br><span class="line">    &quot;scope.userLocation&quot;: &#123;</span><br><span class="line">      &quot;desc&quot;: &quot;你的位置信息将用于获取你所在地区的天气信息&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再在js文件中调用<code>wx.getLocation()</code>方法，这里我是在index.js中onLoad中调用<code>getUserLocation()</code>，在这个方法中获取定位的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">onLoad: function () &#123;</span><br><span class="line">  // 获取用户经纬度</span><br><span class="line">  this.getUserLocation()</span><br><span class="line">&#125;,</span><br><span class="line">getUserLocation () &#123;</span><br><span class="line">  wx.getLocation(&#123;</span><br><span class="line">    type: &apos;gcj02&apos;,</span><br><span class="line">    success: res =&gt; &#123;</span><br><span class="line">      this.updateLocation(res);</span><br><span class="line">    &#125;,</span><br><span class="line">    fail: err =&gt; &#123;</span><br><span class="line">      console.log(err)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="腾讯位置服务获取位置描述"><a href="#腾讯位置服务获取位置描述" class="headerlink" title="腾讯位置服务获取位置描述"></a>腾讯位置服务获取位置描述</h4><p>毕竟是腾讯的产品，腾讯位置服务也有微信小程序JS SDK，不需要使用API调用。引入的方法也不难。</p>
+<p>前面已经获得了key，然后在腾讯位置服务页面下载SDK，然后放到项目目录下（我的项目是放在了util目录下）。再在js文件中引入，并声明一个实例（官网也有详细的代码介）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 引入腾讯地图SDK核心类</span><br><span class="line">let QQMapWX = require(&apos;./qqmap-wx-jssdk.min.js&apos;);</span><br><span class="line"></span><br><span class="line">// 实例化地图API核心类</span><br><span class="line">let qqmapsdk = new QQMapWX(&#123;</span><br><span class="line">  key: config.MAP_API_KEY</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样就可以开始使用了。前面已经获得了用户的位置信息，这个位置信息主要可以获得位置的经纬度，然后我们就要考虑使用经纬度获取位置的描述信息了。这个可以使用腾讯位置服务SDK的逆地址解析接口<code>reverseGeocoder(options:Object)</code>。</p>
+<p>这个接口可以不传入任何字段，默认为当前位置坐标。然后返回的是经纬度对应的地理描述信息，不传则返回的是当前位置的描述信息。这个就有点有趣了，也就是可能可以绕过微信小程序的用户授权，直接获取用户的地理信息。不过为了不出问题，我们还是通过用户授权获取位置信息吧。</p>
+<h4 id="和风天气获取常规天气数据"><a href="#和风天气获取常规天气数据" class="headerlink" title="和风天气获取常规天气数据"></a>和风天气获取常规天气数据</h4><p>天气数据我通过和风天气的常规天气数据api获取的。前面已经获取了和风天气普通开发者的key了，这里使用<code>wx.request</code>向接口<code>https://free-api.heweather.net/s6/weather/{weather-type}?{parameters}</code>发出请求。接口的要求官网也是有说明的，这里就不多说。我是把腾讯位置服务跟和风天气的请求操作都做了封装，放在util目录的<code>api.js</code>中，这样可以减少在页面js文件中写请求内容，请求操作统一开发。这里我使用了<code>Promise.all</code>把常规天气数据请求都包起来了，方便全部请求完成之后再关闭加载弹窗。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">getHefengData (lat, lon) &#123;</span><br><span class="line">  wx.showLoading(&#123;</span><br><span class="line">    title: &apos;获取天气信息中&apos;,</span><br><span class="line">  &#125;)</span><br><span class="line">  Promise.all([this.getWthNow(lat, lon), this.getWthForecast(lat, lon), this.getWthHourly(lat, lon), this.getWthLifestyle(lat, lon)]).then(res =&gt; &#123;</span><br><span class="line">    wx.hideLoading();</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="wxs的使用"><a href="#wxs的使用" class="headerlink" title="wxs的使用"></a>wxs的使用</h4><p>因为微信小程序不支持在wxml中做数据处理，所以wxs的出现我觉得是js到wxml的中介物。数据或者状态通过wxs的处理后才能渲染到wxml。</p>
+<p>比如说这个项目中，接口获取的天气状态码需要转换成天气状态描述跟对应的图标，这个时候就需要通过wxs的处理。所以，在微信小程序中，js扮演的角色更多是获取数据，保存状态，数据通过wxs的处理变成需要渲染的内容放到wxml中。</p>
+<p>使用也不难，新建一个对应的wxs，把处理逻辑放进去，通过<code>&lt;wxs src=&quot;./xxx.wxs&quot; module=&quot;xxx&quot; /&gt;</code>引入到wxml中，然后通过<code>xxx.fn</code>来使用方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;text class=&apos;iconfont &#123;&#123;tools.getCondIcon(now.now.cond_code)&#125;&#125;&apos;&gt;&lt;/text&gt;</span><br></pre></td></tr></table></figure>
+<p>因为和风天气的天气状态比较多，所以我把天气状态对应的描述都放到<code>app.wxs</code>中，再在<code>index.wxs</code>引用。</p>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>页面设计其实比较简陋，所以没什么好写的，而且显示的都是文字，展示效果并不那么好，所以等之后的迭代有比较好的设计再看有没有什么可以整理的吧。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/08/25/promise-realize/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -870,1215 +2131,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/06/work-summary4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/06/work-summary4/" itemprop="url">工作总结(4)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T23:28:05+08:00">
-                2019-05-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这篇工作总结，会整理一些比较零散的开发内容。</p>
-<h3 id="Element-UI相关"><a href="#Element-UI相关" class="headerlink" title="Element-UI相关"></a>Element-UI相关</h3><h4 id="el-scrollbar组件"><a href="#el-scrollbar组件" class="headerlink" title="el-scrollbar组件"></a>el-scrollbar组件</h4><p>在查ElementUI官方文档的时候，你会发现找不到滚动相关的组件，但实际上是有一个关于滚动相关的组件，只是没有文档。就是el-scrollbar组件。</p>
-<p>这个组件可以在查官方文档页面元素的时候找到，我是因为官方文档左右独立滚动而发现的。我们可以查查它的源码。</p>
-<p>源码中，在scrollbar/src下有main.js文件，这个文件中就有关于srollbar的实现源码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">props: &#123;</span><br><span class="line">    native: Boolean, // 是否显示滚动条</span><br><span class="line">    wrapStyle: &#123;&#125;, // 外层容器el-scrollbar__wrap同层的style样式</span><br><span class="line">    wrapClass: &#123;&#125;, // 外层容器el-scrollbar__view同层的class样式</span><br><span class="line">    viewClass: &#123;&#125;, // 内层容器el-scrollbar__view同层的style样式</span><br><span class="line">    viewStyle: &#123;&#125;, // 内层容器el-scrollbar__view同层的class样式</span><br><span class="line">    noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能</span><br><span class="line">    tag: &#123;</span><br><span class="line">        type: String,</span><br><span class="line">        default: &apos;div&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>上面就是我们使用el-scrollbar组件时可以传入的prop：<code>native</code>是用于判断是否显示滚动条，从源码的实现来看，滚动条是ElementUI自己实现的，也就是如果需要显示滚动条，可以考虑使用这个组件；<code>noresize</code>是用于判断是否需要监听尺寸变化事件，如果滚动内容的长度固定不变，可以设置为true以优化性能；<code>tag</code>是用于指定内层容器渲染的标签。知道这些，我们就可以知道怎么使用el-scrollbar组件了。</p>
-<p>我们再看看ElementUI官网是怎么使用它的：以官网导航栏为例，在<code>.el-scrollbar</code>的父类<code>.page-component</code>上设定了高度为100%，然后在<code>.el-scrollbar</code>同层增加<code>.page-component__nav</code>类实现导航栏的样式，最后在内层容器内使用<code>.side-nav</code>再设定100%的高度。</p>
-<p>我自己使用的过程中是在内层容器内使用一个类设定固定的高度，然后就可以实现滚动效果。</p>
-<h4 id="el-table-表头跟表格宽度不一致"><a href="#el-table-表头跟表格宽度不一致" class="headerlink" title="el-table 表头跟表格宽度不一致"></a>el-table 表头跟表格宽度不一致</h4><p>我在开发中发现了这个问题，在网上也发现有很多人遇到这个问题，目前我使用的解决方案是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/* 解决elementUI表头跟表格宽度不一致 */</span><br><span class="line">body .el-table th.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">body .el-table colgroup.gutter &#123;</span><br><span class="line">    display: table-cell!important;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="安卓跟iOS的坑"><a href="#安卓跟iOS的坑" class="headerlink" title="安卓跟iOS的坑"></a>安卓跟iOS的坑</h3><h4 id="new-Date-转换时间戳"><a href="#new-Date-转换时间戳" class="headerlink" title="new Date()转换时间戳"></a>new Date()转换时间戳</h4><p>在iOS的微信H5开发中，使用<code>new Date(&#39;2019-5-4&#39;)</code>会出现报错，究其原因是iOS下不能使用<code>-</code>，应该使用<code>/</code>，即<code>new Date(&#39;2019/5/4&#39;)</code>。</p>
-<h4 id="安卓非body标签无滚动条"><a href="#安卓非body标签无滚动条" class="headerlink" title="安卓非body标签无滚动条"></a>安卓非body标签无滚动条</h4><p>在开发的过程中，我们发现在安卓系统中，页面中除了body之外其他标签都无法传滚动条，但是iOS系统就会有。这种情况下我们可以自己实现或借助一些UI框架实现滚动条。如果选择借助的话，可以考虑ElementUI的el-scrollbar组件(前面在分析源码的时候就有这样一个prop)，也可以考虑better-scroll插件，通过配置来实现滚动条。</p>
-<h3 id="前端开发的占位图"><a href="#前端开发的占位图" class="headerlink" title="前端开发的占位图"></a>前端开发的占位图</h3><p>其实开发中如果能考虑上占位图的话，对用户的使用体验是有很高的提升的。以往通过加载条来表示加载会让用户觉得加载时间很长，而使用占位图则会给用户一种页面逐渐加载完毕的效果。</p>
-<p>网上有很多推荐的占位图实现方案，有给未加载数据的容器加占位图样式的，有在数据加载完毕前先画一些占位容器的。这里就不一一细讲，主要是找到一个觉得挺不错的插件可以方便占位图的实现的：vue-content-loader。</p>
-<p>这个插件是通过实现SVG组件来完成占位图，看起来效果还不错，而且官方还给出一个页面可以通过拉拽，数据调整实现占位图组件。</p>
-<p>另外，它还有一个React版本。虽然我还没有使用过，不知道效果如何，但是我觉得应该是很有尝试的必要的。</p>
-<h3 id="vue中的图片懒加载"><a href="#vue中的图片懒加载" class="headerlink" title="vue中的图片懒加载"></a>vue中的图片懒加载</h3><p>除了占位图的加载优化，图片的懒加载也是前端开发中比较常见的加载优化点。在一个页面上，如果需要加载的图片很多，一般都会考虑优先加载第一版的图片，等用户滚动页面时，出现在窗口内的图片才会被加载。</p>
-<p>这里可以使用vue-lazyload插件。这个插件使用起来非常简单。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// npm</span><br><span class="line">$ npm i vue-lazyload -S</span><br><span class="line"></span><br><span class="line">//main.js</span><br><span class="line">// 引入</span><br><span class="line">import VueLazyload from &apos;vue-lazyload&apos;</span><br><span class="line">// 注册</span><br><span class="line">Vue.use(VueLazyload)</span><br><span class="line">// 配置</span><br><span class="line">Vue.use(VueLazyload, &#123;</span><br><span class="line">  preLoad: 1.3,</span><br><span class="line">  error: &apos;dist/error.png&apos;,</span><br><span class="line">  loading: &apos;dist/loading.gif&apos;,</span><br><span class="line">  attempt: 1</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 例子</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li v-for=&quot;img in list&quot;&gt;</span><br><span class="line">        &lt;img v-lazy=&quot;img.src&quot; &gt;</span><br><span class="line">    &lt;/li&gt;</span><br><span class="line">&lt;/ul&gt;</span><br></pre></td></tr></table></figure>
-<p>以上是截取官方文档的部分代码。这样就可以完成简单的图片懒加载了。还有很多配置可以使用。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/04/work-summary3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/04/work-summary3/" itemprop="url">工作总结(3)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T22:23:25+08:00">
-                2019-05-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Axios/" itemprop="url" rel="index">
-                    <span itemprop="name">Axios</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Axios/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>上一篇整理了一些关于vuejs的内容，这篇来整理一些axios的内容。</p>
-<h3 id="axios请求状态拦截"><a href="#axios请求状态拦截" class="headerlink" title="axios请求状态拦截"></a>axios请求状态拦截</h3><p>axios是平时用的比较多的用于http请求的库，平时用的比较多的相信是<code>axios.get()</code>，<code>axios.post()</code>，拦截器<code>axios.interceptors.request.use</code>及<code>axios.interceptors.response.use</code>。其实axios还可以自定义很多配置(具体可以参考这里：<a href="http://www.axios-js.com/zh-cn/docs/#%E8%AF%B7%E6%B1%82%E9%85%8D%E7%BD%AE" target="_blank" rel="noopener">http://www.axios-js.com/zh-cn/docs/#%E8%AF%B7%E6%B1%82%E9%85%8D%E7%BD%AE</a> ）。</p>
-<p>我这里主要想说的是，axios在自定义配置上，可以自定义拦截的范围。下面是文档中给出的配置项<code>validateStatus</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    // `validateStatus` 定义对于给定的HTTP 响应状态码是 resolve 或 reject  promise 。如果 `validateStatus` 返回 `true` (或者设置为 `null` 或 `undefined`)，promise 将被 resolve; 否则，promise 将被 reject</span><br><span class="line">    validateStatus: function (status) &#123;</span><br><span class="line">        return status &gt;= 200 &amp;&amp; status &lt; 300; // default</span><br><span class="line">    &#125;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过这项配置，可以让axios判断请求返回的内容根据状态码应该返回resolve还是reject。这个配置可以搭配axios拦截器使用比较好。</p>
-<h3 id="axios请求取消"><a href="#axios请求取消" class="headerlink" title="axios请求取消"></a>axios请求取消</h3><p>实际开发中会有这样的需求：用户在快速操作中会发出很多请求，但其实有些请求已经不需要了或者因为用户的来回切换出现不必要的重新请求。这种情况下就要考虑能否取消掉已经发出的请求。</p>
-<p>在axios中就可以通过方法<code>CancelToken.source</code>创建cancel token进行请求取消。在vue开发中，你可以先声明一个canceltoken的状态，然后在不需要请求的地方执行<code>source.cancel()</code>。</p>
-<p>演示代码来源：<a href="http://www.axios-js.com/zh-cn/docs/#%E5%8F%96%E6%B6%88" target="_blank" rel="noopener">http://www.axios-js.com/zh-cn/docs/#%E5%8F%96%E6%B6%88</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const CancelToken = axios.CancelToken;</span><br><span class="line">const source = CancelToken.source();</span><br><span class="line"></span><br><span class="line">axios.get(&apos;/user/12345&apos;, &#123;</span><br><span class="line">    cancelToken: source.token</span><br><span class="line">&#125;).catch(function(thrown) &#123;</span><br><span class="line">    if (axios.isCancel(thrown)) &#123;</span><br><span class="line">        console.log(&apos;Request canceled&apos;, thrown.message);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 处理错误</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">axios.post(&apos;/user/12345&apos;, &#123;</span><br><span class="line">    name: &apos;new name&apos;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    cancelToken: source.token</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 取消请求（message 参数是可选的）</span><br><span class="line">source.cancel(&apos;Operation canceled by the user.&apos;);</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/05/04/work-summary2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/05/04/work-summary2/" itemprop="url">工作总结(2)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-04T22:21:47+08:00">
-                2019-05-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>忙了一段时间，刚好有一堆可以总结的内容。这里我会先整理一下vuejs相关的内容。</p>
-<h3 id="关于vuejs的watch侦听器的用法"><a href="#关于vuejs的watch侦听器的用法" class="headerlink" title="关于vuejs的watch侦听器的用法"></a>关于vuejs的watch侦听器的用法</h3><p>一般都知道vuejs的watch侦听器的用法，watch就是用来响应数据的变化的。数据的每一次变化，都会调用相应的侦听回调。比如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 官方演示代码的部分截取</span><br><span class="line">watch: &#123;</span><br><span class="line">    // 如果 `question` 发生改变，这个函数就会运行</span><br><span class="line">    question: function (newQuestion, oldQuestion) &#123;</span><br><span class="line">        this.answer = &apos;Waiting for you to stop typing...&apos;</span><br><span class="line">        this.debouncedGetAnswer()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>但是上面这种侦听器只能侦听数据变化，换句话说，数据的第一次赋值是不会触发这个侦听方法的。所以这里就需要用到<code>immediate</code>这个属性了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 上面部分官方演示代码的修改</span><br><span class="line">watch: &#123;</span><br><span class="line">  question: &#123;</span><br><span class="line">	  // 设置immediate为true之后，该回调将会在侦听开始之后被立即调用</span><br><span class="line">	  immediate: true,</span><br><span class="line">	  handler: function (newQuestion, oldQuestion) &#123;</span><br><span class="line">      this.answer = &apos;Waiting for you to stop typing...&apos;</span><br><span class="line">      this.debouncedGetAnswer()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>还有一种情况是，需要侦听的数据是一个Object类型，上面的回调是不会被触发的，因为Vue的侦听默认情况下是handler 只监听这个Object对象它的引用的变化，不能侦听到Object内部属性的添加或删减，所以需要用到<code>deep</code>这个属性：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 上面部分官方演示代码的修改，假定question是一个Object类型的数据</span><br><span class="line">watch: &#123;</span><br><span class="line">    question: &#123;</span><br><span class="line">	    // 设置deep为true之后，就能做深度侦听</span><br><span class="line">	    deep: true,</span><br><span class="line">	    handler: function (newQuestion, oldQuestion) &#123;</span><br><span class="line">            // ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<h3 id="vue-router路由懒加载-组件按需引用"><a href="#vue-router路由懒加载-组件按需引用" class="headerlink" title="vue-router路由懒加载(组件按需引用)"></a>vue-router路由懒加载(组件按需引用)</h3><p>关于vue-router路由懒加载，应该是一个比较常规的操作，路由懒加载可以让项目在运行时减少不必要的代码加载，或者按运行时不同的需求加载部分代码，这样可以减少加载时间。</p>
-<p>一开始用的方案是webpack的require.ensure()实现按需加载。webpack的中文文档叫代码分割（参考：<a href="https://webpack.js.org/api/module-methods/#requireensure" target="_blank" rel="noopener">https://webpack.js.org/api/module-methods/#requireensure</a> ）。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require.ensure(dependencies: String[], callback: function(require), chunkName: String)</span><br></pre></td></tr></table></figure>
-<p>这个方法传入三个参数：dependencies传入的是依赖的集合，在执行回调函数之前会声明集合中所有的依赖；callback传入的是回调函数，当所有依赖加载完毕之后，webpack就会执行这个回调函数；chunkName是提供给这个特定的 require.ensure() 的 chunk 的名称。通过提供 require.ensure() 不同执行点相同的名称，我们可以保证所有的依赖都会一起放进相同的 文件束(bundle)。</p>
-<p>这样，就可以在vue-router中实现按需加载了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const Login = resolve =&gt; &#123;</span><br><span class="line">    require.ensure([], () =&gt; &#123;</span><br><span class="line">        resolve(require(&apos;./views/Login/index.vue&apos;))</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const routes = [&#123;</span><br><span class="line">    path: &apos;/login&apos;,</span><br><span class="line">    name: &apos;login&apos;,</span><br><span class="line">    component: Login</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
-<p>vue-router官方文档也提供了一种方案，写法上更简单：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/* 下面是一种特殊注释，可以在打包时说明打包到什么异步块中 */</span><br><span class="line">const routes = [&#123;</span><br><span class="line">    path: &apos;/login&apos;,</span><br><span class="line">    name: &apos;login&apos;,</span><br><span class="line">    component: () =&gt; import(/* webpackChunkName: &quot;login&quot; */ &apos;./views/Login/index.vue&apos;)</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
-<h3 id="Vue-use"><a href="#Vue-use" class="headerlink" title="Vue.use"></a>Vue.use</h3><p>我们都知道vue.use是用于注册安装插件的，一般用的比较多的地方是一些UI框架的按需引入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import &#123;</span><br><span class="line">    Upload,</span><br><span class="line">    Progress</span><br><span class="line">&#125; from &apos;element-ui&apos;;</span><br><span class="line">Vue.use(Upload);</span><br><span class="line">Vue.use(Progress);</span><br></pre></td></tr></table></figure>
-<p>这里其实我只是想说一下，vue.use其实是可以链式使用的，因为源码中，vue.use在执行完之后会return this，而this指向的是vue本身，所以是可以链式使用的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import &#123;</span><br><span class="line">    Upload,</span><br><span class="line">    Progress</span><br><span class="line">&#125; from &apos;element-ui&apos;;</span><br><span class="line">Vue.use(Upload).use(Progress);</span><br></pre></td></tr></table></figure>
-<h3 id="多个UI框架组件冲突"><a href="#多个UI框架组件冲突" class="headerlink" title="多个UI框架组件冲突"></a>多个UI框架组件冲突</h3><p>一般其实不会出现这种情况，但难不了会出现，需要有解决方案。比如在一个项目中，有一部分页面是公众号H5，而其他页面是手机端页面，他们因为需求不同导致需要用不同UI框架的同名组件，这种情况下，可以尝试在引入时使用不同的命名：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import &#123;</span><br><span class="line">  Dialog</span><br><span class="line">&#125; from &apos;vant&apos;;</span><br><span class="line">Vue.use(Dialog);</span><br><span class="line"></span><br><span class="line">import &#123;</span><br><span class="line">    Dialog as muDialog</span><br><span class="line">&#125; from &apos;muse-ui&apos;;</span><br><span class="line">Vue.use(muDialog);</span><br></pre></td></tr></table></figure>
-<p>延伸一下：如果是一个文件中有多个需要引入的方法，但同时这些方法都放在同一个文件中，在引入时可以直接写成<code>import { * as xxx } from &#39;./xxx.vue</code>，使用时就可以通过<code>xxx.xx</code>形式来使用。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/03/13/work-summary1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/13/work-summary1/" itemprop="url">工作总结(1)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-13T23:14:46+08:00">
-                2019-03-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/工作总结/" itemprop="url" rel="index">
-                    <span itemprop="name">工作总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天来做点学习总结，这些学习总结都是从工作中整理来的，自然做了总结，就比较容易积累经验，提高以后的工作效率了。好吧，开始吧。</p>
-<h3 id="Vuejs中图片的引入问题"><a href="#Vuejs中图片的引入问题" class="headerlink" title="Vuejs中图片的引入问题"></a>Vuejs中图片的引入问题</h3><p>这里指的图片引入问题是这样的： 一般开发使用比较多vue-cli脚手架，然后我在开发过程中遇到的是在项目其他位置存放的图片，虽然引入的路径是正确的，但是无法显示到页面上。我在网上搜索了不少这样的问题，有些是在打包后发现的。</p>
-<p>目前有几个方案是可行的：</p>
-<ol>
-<li><p>把图片全部放到vue-cli脚手架生成的assets文件夹中，这个文件夹本身也放着vue-cli自带的图片。这个文件夹中的图片可以直接通过路径引入，而且能够正常的显示到页面上；</p>
-</li>
-<li><p>不改变图片的位置，直接通过<code>import imageXX from &#39;path&#39;</code>的方法引入到文件中。这种方式可以通过变量来引用图片的路径，也是可以正常的显示到页面上。但是在css样式中就实现不了，可能要在模板上直接通过<code>:style=&quot;background-image:...&quot;</code>来实现，比较麻烦；</p>
-</li>
-<li><p>同上方案，但是是通过<code>require(&#39;path&#39;)</code>的方法引入到文件中。问题一样，就是对于css的样式实现来说比较困难；</p>
-</li>
-<li><p>网上还有一种方案是在<code>build/utils.js</code>中找到<code>ExtractTextPlugin</code>位置在对象中加入这句<code>publicPath: &#39;../../&#39;</code>。这个方案没有试过，因为在vue-cli3中，文件结构有变化了，我猜测这个可能要写到<code>vue.config.js</code>中。以后有机会再测试。</p>
-</li>
-</ol>
-<h3 id="关于手机号码的正则表达式"><a href="#关于手机号码的正则表达式" class="headerlink" title="关于手机号码的正则表达式"></a>关于手机号码的正则表达式</h3><p>这个简单带过，这个正则表达式就是<code>/^1(3|4|5|7|8)\d{9}$/</code>。</p>
-<p>不过，有个地方需要关注的，就是在使用<code>reg.test(str)</code>时，reg正则表达式不要带<code>g</code>修饰符。我们都知道，<code>g</code>是匹配全部可匹配结果，比如说：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let str = &apos;aaaaaaaa&apos;</span><br><span class="line">const reg1 = /a/</span><br><span class="line">const reg2 = /a/g</span><br><span class="line">str.match(reg1) // [&quot;a&quot;, index: 0, input: &quot;aaaaaaaa&quot;]</span><br><span class="line">str.match(reg2) // [&quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;]</span><br></pre></td></tr></table></figure>
-<p>不带<code>g</code>时，字符串从左到右匹配，只要匹配成功就停止匹配；带<code>g</code>时，同样的匹配方向，但是会一直匹配到整个字符串结束。<br>在使用<code>reg.test(str)</code>时，如果带修饰符<code>g</code>，在第一次验证时是从字符串第一位开始，但是如果有第二次验证时，就会从第一次验证结束的位置开始验证。这样就可能导致两次验证结果不同：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">const reg=/\./g</span><br><span class="line">reg.test(0.5) // true，第一次验证从字符串第一位开始</span><br><span class="line">reg.test(0.5) // false,因为接着上一次的字符串位置查找，没找到正则匹配的内容，所以结果是false，false以后，index会自动归0</span><br><span class="line">reg.test(0.5) // true</span><br></pre></td></tr></table></figure>
-<p>所以，在做<code>reg.test(str)</code>验证时，正则表达式最好不带修饰符<code>g</code>。</p>
-<h3 id="关于CSS背景图片的设置"><a href="#关于CSS背景图片的设置" class="headerlink" title="关于CSS背景图片的设置"></a>关于CSS背景图片的设置</h3><p>这里要提的是，CSS背景图片是可以同时设置多张的，而且每张背景图片的样式都可以设置，但是我在开发中发现设置了repeat的背景图片会覆盖掉排在后面的图片，所以最好是把这张图片的顺序放在最后，参考如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">background-image: url(&quot;bg_top.jpg&quot;), url(&quot;bg_bottom.png&quot;), url(&quot;bg_middle.jpg&quot;);</span><br><span class="line">background-repeat: no-repeat, no-repeat, repeat;</span><br><span class="line">background-position: top, bottom, center;</span><br></pre></td></tr></table></figure>
-<h3 id="关于rem布局"><a href="#关于rem布局" class="headerlink" title="关于rem布局"></a>关于rem布局</h3><p>rem布局其实还是挺不错的，可以动态的屏幕宽度来设置html的font-size，并且调整所所有元素的样式。可以参考网上关于网易rem布局的原理。</p>
-<h3 id="关于axios跟promise"><a href="#关于axios跟promise" class="headerlink" title="关于axios跟promise"></a>关于axios跟promise</h3><p>这里留一个promise配合axios开发的参考代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// api</span><br><span class="line">export const submitApi = function (url, params, xxx) &#123;</span><br><span class="line">  return new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">    axios.post(url, params, &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        XXX: xxx</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;).then(res =&gt; &#123;</span><br><span class="line">      resolve(res);</span><br><span class="line">    &#125;).catch(error =&gt; &#123;</span><br><span class="line">      reject(error);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用</span><br><span class="line">submitApi(url, params, xxx).then(res =&gt; &#123;</span><br><span class="line">  if (res.status === 200) &#123;</span><br><span class="line">    console.log(res.data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).catch(error =&gt; &#123;</span><br><span class="line">  console.log(&apos;something wrong!&apos;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>先这些吧。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/03/10/NewJourney/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/10/NewJourney/" itemprop="url">新的开始</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-10T16:56:05+08:00">
-                2019-03-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/other/" itemprop="url" rel="index">
-                    <span itemprop="name">其他</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近家里来了新的小成员，所有事情都围着他团团转。这几天终于能放松一点点，想着为了以后在工作上能效率高一些，折腾了一下给电脑加个ssd，重装了系统，结果忘记备份写好的好几篇博客稿子……</p>
-<p>都怪自己没有及时的安排发布，还好所有资料也就丢失了这几篇稿子，后面还可以找时间再补回来。</p>
-<p>把自己的事情做好才是最重要的，整理好，准备迎接各种新的开始。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/02/09/Mouse-Event-Attributes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/02/09/Mouse-Event-Attributes/" itemprop="url">JavaScript鼠标事件中event的各种x/y属性梳理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-09T19:48:05+08:00">
-                2019-02-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/杂谈/" itemprop="url" rel="index">
-                    <span itemprop="name">杂谈</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近在敲代码的时候遇到关于JavaScript事件中求各种长宽，涉及到event中各种x/y，所以尝试做一些梳理。</p>
-<p>这里说的event是指js中鼠标事件event的实例属性，而各种x/y就是指以下这些：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">e.clientX/e.clientY</span><br><span class="line">e.screenX/e.screenY</span><br><span class="line">e.offsetX/offsetY</span><br><span class="line">e.pageX/e.pageY</span><br><span class="line">e.layerX/e.layerX</span><br><span class="line">e.x/e.y</span><br></pre></td></tr></table></figure>
-<h3 id="关于各种x-y属性的描述"><a href="#关于各种x-y属性的描述" class="headerlink" title="关于各种x/y属性的描述"></a>关于各种x/y属性的描述</h3><p>在网上找了一些资料，对于这些属性都有描述。<a href="http://www.w3school.com.cn" target="_blank" rel="noopener">http://www.w3school.com.cn</a> w3c给出了clientX/Y跟screenX/Y的描述，不过为了统一，我选择了阮一峰的一份JavaScript教程(<a href="https://wangdoc.com/javascript/events/mouse.html" target="_blank" rel="noopener">https://wangdoc.com/javascript/events/mouse.html</a>) 中的描述：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MouseEvent.clientX属性返回鼠标位置相对于浏览器窗口左上角的水平坐标（单位像素）</span><br><span class="line">MouseEvent.clientY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.screenX属性返回鼠标位置相对于屏幕左上角的水平坐标（单位像素），</span><br><span class="line">MouseEvent.screenY属性返回垂直坐标。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.offsetX属性返回鼠标位置与目标节点左侧的padding边缘的水平距离（单位像素）</span><br><span class="line">MouseEvent.offsetY属性返回与目标节点上方的padding边缘的垂直距离。这两个属性都是只读属性。</span><br><span class="line"></span><br><span class="line">MouseEvent.pageX属性返回鼠标位置与文档左侧边缘的距离（单位像素），</span><br><span class="line">MouseEvent.pageY属性返回与文档上侧边缘的距离（单位像素）。它们的返回值都包括文档不可见的部分。这两个属性都是只读。</span><br></pre></td></tr></table></figure>
-<p><code>layerX/e.layerX</code>跟<code>x/y</code>则没有找到比较权威的描述。</p>
-<p>这些描述看完还是有点稀里糊涂的，不过可以看出，这些属性的值都是相对的，是有参考坐标的，比如浏览器，屏幕，目标节点，文档等。所以我们就试试在代码中获得更深入的理解。</p>
-<h3 id="代码实现实例属性"><a href="#代码实现实例属性" class="headerlink" title="代码实现实例属性"></a>代码实现实例属性</h3><p>这里尝试做一个简单的演示项目，body中如下结构：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;canvas-wrapper&quot;&gt;</span><br><span class="line">  &lt;div id=&quot;container&quot;&gt;&lt;/div&gt;</span><br><span class="line">  &lt;canvas id=&quot;canvas&quot; height=&quot;2000&quot; width=&quot;2000&quot;&gt;&lt;/canvas&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
-<p><code>div#container</code>元素是作为鼠标事件的目标节点，而<code>canvas</code>画布则是用于绘出点击事件的坐标跟垂直线。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* &#123;</span><br><span class="line">  margin: 0px;</span><br><span class="line">  padding: 0px;</span><br><span class="line">  box-sizing: border-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由于这几个实例属性中有一些是涉及页面可视，所以给<code>div#container</code>元素绝对定位，脱离文档流；为了页面可以上下左右滚动，所以<code>body</code>跟<code>canvas</code>元素的尺寸都很大。<br>而且为了减少盒模型的影响，所以设置了<code>box-sizing: border-box;</code></p>
-<p>js逻辑部分，给<code>div#container</code>添加鼠标点击事件，回调函数中返回event，把event中的这些关于x/y的实例属性通过new传入一个位置构造函数的实例中，通过实例来绘出点击点跟各个x/y属性的线。</p>
-<h3 id="x-y各属性的表现梳理"><a href="#x-y各属性的表现梳理" class="headerlink" title="x/y各属性的表现梳理"></a>x/y各属性的表现梳理</h3><p><img src="https://listentolife.cc/images/pos.PNG" alt="代码中各x/y属性的演示"></p>
-<p>这张截图是在浏览器向左向下滚动后(浏览器的上边贴着绿色线，浏览器的左边贴着绿色线)，点击（点击点中心为黑点中心）触发事件得到的绘图。</p>
-<h4 id="clientX-clientY-amp-x-y"><a href="#clientX-clientY-amp-x-y" class="headerlink" title="clientX/clientY &amp; x/y"></a><code>clientX</code>/<code>clientY</code> &amp; <code>x</code>/<code>y</code></h4><p><code>clientX</code>/<code>clientY</code>在点击事件触发时是等于点击点到浏览器的上边跟左边，说明 <strong><code>clientX</code>/<code>clientY</code>的参考坐标轴是沿着浏览器的上边为x轴，浏览器的左边为y轴</strong> 。跟目标节点的<code>border</code>，<code>margin</code>跟<code>padding</code>没有关系。<br>相同的<code>x</code>/<code>y</code>在表现上也一样。不过最好使用的时候使用前者。</p>
-<h4 id="layerX-layerY"><a href="#layerX-layerY" class="headerlink" title="layerX/layerY"></a><code>layerX</code>/<code>layerY</code></h4><p><code>layerX</code>/<code>layerY</code>在点击事件触发之后显示出来是点击点到目标节点的边界，而且是在目标节点的边框上。目标节点的样式是有添加<code>border</code>跟<code>padding</code>样式的，而这个属性绘出的线跟目标节点的边框相交但不超出，说明 <strong><code>layerX</code>/<code>layerY</code>的参考坐标轴是沿着目标节点的上边界（有边框则是沿着上边框）为x轴，目标节点的左边界（有边框则是沿着左边框）为y轴</strong> 。跟目标节点的<code>margin</code>，页面的可视范围没有关系。</p>
-<h4 id="offsetX-offsetY"><a href="#offsetX-offsetY" class="headerlink" title="offsetX/offsetY"></a><code>offsetX</code>/<code>offsetY</code></h4><p><code>offsetX</code>/<code>offsetY</code>跟<code>layerX</code>/<code>layerY</code>很接近，但是它跟目标节点的边框没有相交，也就是当目标节点没有边框的情况下，<code>offsetX</code>/<code>offsetY</code>跟<code>layerX</code>/<code>layerY</code>的值是相等的。<strong><code>offsetX</code>/<code>offsetY</code>的参考坐标轴是沿着目标节点的上边界为x轴，目标节点的左边界为y轴</strong> 。跟目标节点的<code>margin</code>，页面的可视范围没有关系。</p>
-<h4 id="pageX-pageY"><a href="#pageX-pageY" class="headerlink" title="pageX/pageY"></a><code>pageX</code>/<code>pageY</code></h4><p><code>pageX</code>/<code>pageY</code>在点击事件触发之后显示出来是点击点到文档页面的边界，及时是页面发生了滚动，这个属性仍然显示的是点击点在文档页面的相对位置。所以 <strong><code>pageX</code>/<code>pageY</code>的参考坐标轴是沿着文档页面的上边界为x轴，文档页面的左边界为y轴</strong> 。跟目标节点，页面的可视范围没有关系。</p>
-<h4 id="screenX-screenY"><a href="#screenX-screenY" class="headerlink" title="screenX/screenY"></a><code>screenX</code>/<code>screenY</code></h4><p><code>screenX</code>/<code>screenY</code>代码中没有绘制，原因在于这个属性的坐标是整个屏幕，跟浏览器无关，所以无法绘制展示出来。</p>
-<p>上述就是鼠标事件event中关于x/y属性的梳理。文中的代码已上传github：<br><a href="https://github.com/listentolife/mouseEventPositionAttributes" target="_blank" rel="noopener">https://github.com/listentolife/mouseEventPositionAttributes</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://listentolife.github.io/2019/01/16/Vuejs-keepAlive/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Listentolife">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Listentolife">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/01/16/Vuejs-keepAlive/" itemprop="url">Vue.js keep-alive组件</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T22:15:21+08:00">
-                2019-01-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaScript</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaScript/Vue/" itemprop="url" rel="index">
-                    <span itemprop="name">Vue</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>有时候会觉得学习vue像在寻宝一样。因为vue中有很多很有用的组件，像之前写的关于插槽组件的那篇一样，我也是认为插槽组件很有用，可以更好的实现组件复用。这篇主要整理keep-alive组件的内容。</p>
-<p>keep-alive组件是Vue的内置组件，能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。</p>
-<p>keep-alive组件可以使用到动态组件<code>&lt;component&gt;</code>，也可以使用到路由组件<code>&lt;router-view&gt;</code>上：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 使用到动态组件上</span><br><span class="line">&lt;keep-alive&gt;</span><br><span class="line">  &lt;compunent :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">// 使用到路由组件上</span><br><span class="line">&lt;keep-alive&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
-<p>keep-alive组件内可以由多个子组件，但是要求只能同时渲染一个子组件，也就是多子组件时，可以使用<code>v-if</code>，<code>v-else</code>，但不支持<code>v-for</code>。</p>
-<p>它有三个props：<code>include</code>，<code>exclude</code>，<code>max</code>。</p>
-<h3 id="include"><a href="#include" class="headerlink" title="include"></a><code>include</code></h3><p><code>include</code>支持组件名匹配字符串或正则表达式的组件被缓存。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive include=&quot;book&quot;&gt;</span><br><span class="line">  &lt;!-- 将缓存name为book的组件，name为movie的组件将不会被缓存 --&gt;</span><br><span class="line">  &lt;component&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;keep-alive include=&quot;a,b&quot;&gt;</span><br><span class="line">  &lt;!-- 将缓存name为a或者b的组件，结合动态组件使用 --&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 使用正则表达式，需使用v-bind --&gt;</span><br><span class="line">&lt;keep-alive :include=&quot;/a|b/&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 动态匹配判断是否缓存 --&gt;</span><br><span class="line">&lt;keep-alive :include=&quot;[&apos;books&apos;, &apos;movies&apos;] &quot;&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="exclude"><a href="#exclude" class="headerlink" title="exclude"></a><code>exclude</code></h3><p><code>exclude</code>跟<code>include</code>刚好相反，组件名不匹配字符串或正则表达式的组件才会被缓存。用法跟<code>include</code>一样。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive exclude=&quot;book&quot;&gt;</span><br><span class="line">  &lt;!-- 除name为book的组件之外其他组件都会被缓存，如name为movie的组件 --&gt;</span><br><span class="line">  &lt;component&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;keep-alive exclude=&quot;a,b&quot;&gt;</span><br><span class="line">  &lt;!-- 将不缓存name为a或者b的组件 --&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 使用正则表达式，需使用v-bind --&gt;</span><br><span class="line">&lt;keep-alive :exclude=&quot;/a|b/&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 动态匹配判断是否缓存 --&gt;</span><br><span class="line">&lt;keep-alive :exclude=&quot;[&apos;books&apos;, &apos;movies&apos;] &quot;&gt;</span><br><span class="line">  &lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="max"><a href="#max" class="headerlink" title="max"></a><code>max</code></h3><p><code>max</code>表示最多可以缓存多少个组件实例。一旦这个数字达到了，在新实例被创建之前，已缓存组件中最久没有被访问的实例会被销毁掉。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 最多只能缓存10个组件实例，而且是最新被访问的组件实例才会被缓存 --&gt;</span><br><span class="line">&lt;keep-alive :max=&quot;10&quot;&gt;</span><br><span class="line">  &lt;component :is=&quot;view&quot;&gt;&lt;/component&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2129,7 +2181,7 @@
               
                 <a href="/archive">
               
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">49</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2140,7 +2192,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2151,7 +2203,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">61</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

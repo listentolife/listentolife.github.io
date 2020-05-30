@@ -4,6 +4,181 @@
 
     
   <url>
+    <loc>http://listentolife.github.io/2020/05/30/axios-source-analysis1/</loc>
+    <lastmod>2020-05-30T13:28:23.996Z</lastmod>
+    <data>
+        <display>
+        <title>axios源码学习(一)：通过axios有多少种方法可以发起请求？</title>
+        <pubTime>2020-05-30T13:27:10.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>axios</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="axios" url="http://listentolife.github.io/categories/JavaScript/axios/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary6/</loc>
+    <lastmod>2020-05-30T13:26:23.420Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(六)</title>
+        <pubTime>2020-05-30T13:25:37.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary5/</loc>
+    <lastmod>2020-05-30T13:25:27.069Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(五)</title>
+        <pubTime>2020-05-30T13:24:53.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary4/</loc>
+    <lastmod>2020-05-30T13:24:48.556Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(四)</title>
+        <pubTime>2020-05-30T13:24:09.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary3/</loc>
+    <lastmod>2020-05-30T13:24:04.840Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(三)</title>
+        <pubTime>2020-05-30T13:23:13.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary2/</loc>
+    <lastmod>2020-05-30T13:23:07.522Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(二)</title>
+        <pubTime>2020-05-30T13:22:19.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://listentolife.github.io/2020/05/30/webpack-summary1/</loc>
+    <lastmod>2020-05-30T13:22:15.181Z</lastmod>
+    <data>
+        <display>
+        <title>webpack4配置总结(一)</title>
+        <pubTime>2020-05-30T13:21:07.000Z</pubTime>
+        
+        <tag>JavaScript</tag>
+         
+        <tag>webpack</tag>
+         
+         
+           
+             
+              <breadCrumb title="JavaScript" url="http://listentolife.github.io/categories/JavaScript/"/>
+          
+             
+              <breadCrumb title="webpack" url="http://listentolife.github.io/categories/JavaScript/webpack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://listentolife.github.io/2020/05/05/promise-test/</loc>
     <lastmod>2020-05-05T07:57:15.143Z</lastmod>
     <data>
